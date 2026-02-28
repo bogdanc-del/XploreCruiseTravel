@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cruise Details — XploreCruiseTravel</title>
+  <meta name="description" content="View cruise itinerary, cabin prices, and inclusions. Request the best price from our cruise experts.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body data-page="detail">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header__inner">
+      <a href="../index.html" class="header__logo">
+        <svg viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="17" stroke="#c9a84c" stroke-width="2"/><path d="M8 22 C12 14, 18 10, 28 18" stroke="#c9a84c" stroke-width="2" fill="none"/><path d="M14 16 L18 8 L22 16" stroke="#fff" stroke-width="1.5" fill="none"/><line x1="18" y1="8" x2="18" y2="24" stroke="#fff" stroke-width="1.5"/></svg>
+        <span>Xplore<span class="logo-accent">Cruise</span>Travel</span>
+      </a>
+      <nav class="nav">
+        <ul class="nav__links">
+          <li><a href="listing.html" class="nav__link" data-i18n="nav_cruises">Cruises</a></li>
+          <li><a href="about.html" class="nav__link" data-i18n="nav_about">About Us</a></li>
+          <li><a href="contact.html" class="nav__link" data-i18n="nav_contact">Contact</a></li>
+        </ul>
+        <div class="nav__actions">
+          <button class="lang-toggle" onclick="toggleLang()">RO</button>
+          <a href="contact.html" class="nav__cta" data-i18n="nav_request_offer">Request Offer</a>
+        </div>
+        <button class="mobile-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Detail Hero -->
+  <section class="detail-hero" id="detail-hero-img" style="background-size:cover;background-position:center;position:relative">
+    <div style="position:absolute;inset:0;background:linear-gradient(rgba(10,22,40,0.7),rgba(10,22,40,0.9))"></div>
+    <div class="container" style="position:relative;z-index:2">
+      <div class="detail-hero__breadcrumb">
+        <a href="../index.html">Home</a> / <a href="listing.html" data-i18n="nav_cruises">Cruises</a> / <span id="detail-title">...</span>
+      </div>
+      <h1 id="detail-title" style="margin-top:var(--space-md)">Loading...</h1>
+      <div style="display:flex;gap:var(--space-xl);margin-top:var(--space-lg);flex-wrap:wrap">
+        <span style="color:rgba(255,255,255,0.7)">🚢 <strong id="detail-ship" style="color:var(--white)"></strong></span>
+        <span style="color:rgba(255,255,255,0.7)">🏢 <strong id="detail-line" style="color:var(--white)"></strong></span>
+        <span style="color:rgba(255,255,255,0.7)">🌙 <strong id="detail-nights" style="color:var(--white)"></strong></span>
+        <span style="color:rgba(255,255,255,0.7)">📍 <strong id="detail-departure" style="color:var(--white)"></strong></span>
+        <span style="color:rgba(255,255,255,0.7)">📅 <strong id="detail-date" style="color:var(--white)"></strong></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Detail Content -->
+  <section class="section">
+    <div class="container">
+      <div class="detail-content" id="detail-main">
+        <!-- Main Column -->
+        <div>
+          <!-- Itinerary -->
+          <div style="margin-bottom:var(--space-2xl)">
+            <h3 data-i18n="detail_itinerary">Itinerary</h3>
+            <table class="itinerary-table" style="margin-top:var(--space-md)">
+              <thead>
+                <tr>
+                  <th data-i18n="detail_day">Day</th>
+                  <th data-i18n="detail_port">Port</th>
+                  <th data-i18n="detail_arrival">Arrival</th>
+                  <th data-i18n="detail_departure">Departure</th>
+                </tr>
+              </thead>
+              <tbody id="itinerary-body"></tbody>
+            </table>
+          </div>
+
+          <!-- Cabins -->
+          <div style="margin-bottom:var(--space-2xl)">
+            <h3 data-i18n="detail_cabins">Cabin Categories & Prices</h3>
+            <table class="cabin-table" style="margin-top:var(--space-md)">
+              <thead>
+                <tr>
+                  <th data-i18n="detail_cabin_type">Cabin Type</th>
+                  <th data-i18n="detail_price_from">From (per person)</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="cabin-body"></tbody>
+            </table>
+            <p style="margin-top:var(--space-sm);font-size:0.8rem;color:var(--gray-400);font-style:italic" data-i18n="detail_subject">Subject to availability. Final price confirmed upon enquiry.</p>
+          </div>
+
+          <!-- Included/Excluded -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:var(--space-xl);margin-bottom:var(--space-2xl)">
+            <div>
+              <h4 style="color:var(--success);margin-bottom:var(--space-md)" data-i18n="detail_included">What's Included</h4>
+              <ul id="included-list" style="list-style:none;display:flex;flex-direction:column;gap:8px;color:var(--gray-500)"></ul>
+            </div>
+            <div>
+              <h4 style="color:var(--gray-400);margin-bottom:var(--space-md)" data-i18n="detail_excluded">Not Included</h4>
+              <ul id="excluded-list" style="list-style:none;display:flex;flex-direction:column;gap:8px;color:var(--gray-400)"></ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="detail-sidebar">
+          <!-- Price Card -->
+          <div class="sidebar-card">
+            <div style="text-align:center">
+              <p style="font-size:0.8rem;color:var(--gray-400);text-transform:uppercase;letter-spacing:0.05em" data-i18n="card_from">From</p>
+              <p style="font-size:2.5rem;font-weight:700;color:var(--primary)" id="sidebar-price">€---</p>
+              <p style="font-size:0.85rem;color:var(--gray-400)" data-i18n="card_per_person">/person</p>
+            </div>
+            <div style="margin-top:var(--space-xl);display:flex;flex-direction:column;gap:var(--space-sm)">
+              <a href="contact.html" class="btn btn--primary" style="width:100%;justify-content:center" data-i18n="detail_request_price">Request Best Price</a>
+              <a href="tel:+40000000000" class="btn btn--outline" style="width:100%;justify-content:center" data-i18n="cta_call">Call Us Now</a>
+              <a href="https://wa.me/40000000000" class="btn btn--whatsapp" style="width:100%;justify-content:center" data-i18n="cta_whatsapp">WhatsApp</a>
+            </div>
+          </div>
+
+          <!-- Advisor Note -->
+          <div class="sidebar-card" style="background:rgba(201,168,76,0.05);border-color:rgba(201,168,76,0.2)">
+            <h4 style="display:flex;align-items:center;gap:var(--space-sm)">
+              <span>💡</span>
+              <span data-i18n="detail_advisor_note">Advisor's Tip</span>
+            </h4>
+            <p id="advisor-note" style="margin-top:var(--space-sm);font-size:0.9rem;color:var(--gray-500);line-height:1.7"></p>
+          </div>
+
+          <!-- Advisor -->
+          <div class="sidebar-card">
+            <div style="display:flex;align-items:center;gap:var(--space-md)">
+              <div style="width:50px;height:50px;border-radius:50%;background:var(--gray-100);display:flex;align-items:center;justify-content:center;font-size:1.5rem">👨‍✈️</div>
+              <div>
+                <strong>Alexandra Ionescu</strong>
+                <p style="font-size:0.8rem;color:var(--gray-400)">Senior Cruise Consultant</p>
+              </div>
+            </div>
+          </div>
+
+          <a href="listing.html" class="btn btn--outline" style="width:100%;justify-content:center;margin-top:var(--space-md)" data-i18n="detail_back">← Back to Cruises</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__bottom">
+        <span>© 2026 XploreCruiseTravel. <span data-i18n="footer_rights">All rights reserved.</span></span>
+        <span data-i18n="footer_partner">Official partner of Croaziere.Net</span>
+      </div>
+    </div>
+  </footer>
+
+  <a href="https://wa.me/40000000000" class="whatsapp-float" aria-label="WhatsApp">
+    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/></svg>
+  </a>
+
+  <script src="../js/i18n.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

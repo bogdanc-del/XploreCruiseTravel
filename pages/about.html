@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About Us — XploreCruiseTravel</title>
+  <meta name="description" content="Meet the cruise experts at XploreCruiseTravel. Years of experience helping travellers find perfect cruise holidays.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body data-page="about">
+
+  <header class="header">
+    <div class="header__inner">
+      <a href="../index.html" class="header__logo">
+        <svg viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="17" stroke="#c9a84c" stroke-width="2"/><path d="M8 22 C12 14, 18 10, 28 18" stroke="#c9a84c" stroke-width="2" fill="none"/><path d="M14 16 L18 8 L22 16" stroke="#fff" stroke-width="1.5" fill="none"/><line x1="18" y1="8" x2="18" y2="24" stroke="#fff" stroke-width="1.5"/></svg>
+        <span>Xplore<span class="logo-accent">Cruise</span>Travel</span>
+      </a>
+      <nav class="nav">
+        <ul class="nav__links">
+          <li><a href="listing.html" class="nav__link" data-i18n="nav_cruises">Cruises</a></li>
+          <li><a href="about.html" class="nav__link nav__link--active" data-i18n="nav_about">About Us</a></li>
+          <li><a href="contact.html" class="nav__link" data-i18n="nav_contact">Contact</a></li>
+        </ul>
+        <div class="nav__actions">
+          <button class="lang-toggle" onclick="toggleLang()">RO</button>
+          <a href="contact.html" class="nav__cta" data-i18n="nav_request_offer">Request Offer</a>
+        </div>
+        <button class="mobile-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
+      </nav>
+    </div>
+  </header>
+
+  <section class="detail-hero">
+    <div class="container">
+      <h1 data-i18n="about_title">About XploreCruiseTravel</h1>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container container--narrow">
+      <div class="fade-in" style="font-size:1.1rem;line-height:1.8;color:var(--gray-500)">
+        <p data-i18n="about_p1" style="margin-bottom:var(--space-xl)">We are a team of passionate cruise travel specialists dedicated to helping you discover the world by sea. As an authorized partner of Croaziere.Net, we offer access to thousands of cruise itineraries from the world's leading cruise lines.</p>
+        <p data-i18n="about_p2">Our mission is simple: to provide expert guidance, transparent pricing, and personalized service that turns your cruise dreams into reality.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Why Us -->
+  <section class="section section--light">
+    <div class="container">
+      <div class="section-header">
+        <h2 data-i18n="about_why_us">Why Choose Us</h2>
+      </div>
+      <div class="grid grid--3">
+        <div class="why-card fade-in" style="background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow-md)">
+          <div class="why-card__icon">🎯</div>
+          <h4>Personalized Service</h4>
+          <p>Every traveller is unique. We tailor our recommendations to your preferences, budget, and travel style.</p>
+        </div>
+        <div class="why-card fade-in" style="background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow-md)">
+          <div class="why-card__icon">🏆</div>
+          <h4>Expert Knowledge</h4>
+          <p>Our consultants have sailed on hundreds of ships. We know which cabin to pick and which excursion is worth it.</p>
+        </div>
+        <div class="why-card fade-in" style="background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow-md)">
+          <div class="why-card__icon">🤝</div>
+          <h4>Trusted Partnership</h4>
+          <p>As an official partner of Croaziere.Net, we provide access to verified offers from all major cruise lines.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Team -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <h2 data-i18n="about_team_title">Meet Our Experts</h2>
+      </div>
+      <div class="grid grid--4">
+        <div class="team-card fade-in">
+          <div class="team-card__avatar">👩‍💼</div>
+          <h4>Alexandra Ionescu</h4>
+          <p style="color:var(--secondary);font-size:0.85rem;margin-bottom:var(--space-sm)">Senior Cruise Consultant</p>
+          <p style="color:var(--gray-400);font-size:0.85rem">Mediterranean & River specialist. 8 years experience.</p>
+        </div>
+        <div class="team-card fade-in">
+          <div class="team-card__avatar">👨‍💼</div>
+          <h4>Mihai Popescu</h4>
+          <p style="color:var(--secondary);font-size:0.85rem;margin-bottom:var(--space-sm)">Luxury Cruise Expert</p>
+          <p style="color:var(--gray-400);font-size:0.85rem">Luxury & expedition specialist. 10 years experience.</p>
+        </div>
+        <div class="team-card fade-in">
+          <div class="team-card__avatar">👩‍💼</div>
+          <h4>Elena Marin</h4>
+          <p style="color:var(--secondary);font-size:0.85rem;margin-bottom:var(--space-sm)">Family Cruise Advisor</p>
+          <p style="color:var(--gray-400);font-size:0.85rem">Family & Caribbean specialist. 6 years experience.</p>
+        </div>
+        <div class="team-card fade-in">
+          <div class="team-card__avatar">👨‍💼</div>
+          <h4>Andrei Stanescu</h4>
+          <p style="color:var(--secondary);font-size:0.85rem;margin-bottom:var(--space-sm)">Northern Europe Expert</p>
+          <p style="color:var(--gray-400);font-size:0.85rem">Fjords & Northern Europe specialist. 5 years experience.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-section">
+    <div class="container">
+      <h2 data-i18n="cta_title">Ready to Set Sail?</h2>
+      <p data-i18n="cta_subtitle">Talk to our cruise experts today.</p>
+      <div class="cta-actions">
+        <a href="contact.html" class="btn btn--primary btn--lg" data-i18n="cta_request">Request an Offer</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__bottom">
+        <span>© 2026 XploreCruiseTravel. <span data-i18n="footer_rights">All rights reserved.</span></span>
+        <span data-i18n="footer_partner">Official partner of Croaziere.Net</span>
+      </div>
+    </div>
+  </footer>
+
+  <a href="https://wa.me/40000000000" class="whatsapp-float" aria-label="WhatsApp">
+    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/></svg>
+  </a>
+
+  <script src="../js/i18n.js"></script>
+  <script src="../js/app.js"></script>
+  <script>document.addEventListener('DOMContentLoaded', () => initScrollAnimations());</script>
+</body>
+</html>

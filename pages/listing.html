@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Cruise Offers — XploreCruiseTravel</title>
+  <meta name="description" content="Browse our full collection of cruise offers. Filter by destination, cruise line, duration and more. Mediterranean, Caribbean, Fjords, River cruises.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body data-page="listing">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header__inner">
+      <a href="../index.html" class="header__logo">
+        <svg viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="17" stroke="#c9a84c" stroke-width="2"/><path d="M8 22 C12 14, 18 10, 28 18" stroke="#c9a84c" stroke-width="2" fill="none"/><path d="M14 16 L18 8 L22 16" stroke="#fff" stroke-width="1.5" fill="none"/><line x1="18" y1="8" x2="18" y2="24" stroke="#fff" stroke-width="1.5"/></svg>
+        <span>Xplore<span class="logo-accent">Cruise</span>Travel</span>
+      </a>
+      <nav class="nav">
+        <ul class="nav__links">
+          <li><a href="listing.html" class="nav__link nav__link--active" data-i18n="nav_cruises">Cruises</a></li>
+          <li><a href="../index.html#destinations" class="nav__link" data-i18n="nav_destinations">Destinations</a></li>
+          <li><a href="about.html" class="nav__link" data-i18n="nav_about">About Us</a></li>
+          <li><a href="contact.html" class="nav__link" data-i18n="nav_contact">Contact</a></li>
+        </ul>
+        <div class="nav__actions">
+          <button class="lang-toggle" onclick="toggleLang()">RO</button>
+          <a href="contact.html" class="nav__cta" data-i18n="nav_request_offer">Request Offer</a>
+        </div>
+        <button class="mobile-toggle" aria-label="Menu"><span></span><span></span><span></span></button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Page Header -->
+  <section class="detail-hero">
+    <div class="container">
+      <h1 data-i18n="listing_title">All Cruise Offers</h1>
+      <p id="listing-count" style="color:rgba(255,255,255,0.6);margin-top:var(--space-sm)"></p>
+    </div>
+  </section>
+
+  <!-- Filters -->
+  <section style="padding:var(--space-xl) 0 0">
+    <div class="container">
+      <div class="filters-bar">
+        <div class="filters-bar__grid">
+          <div class="search-field">
+            <label data-i18n="search_destination">Destination</label>
+            <select id="filter-destination">
+              <option value="" data-i18n="search_dest_all">All Destinations</option>
+            </select>
+          </div>
+          <div class="search-field">
+            <label data-i18n="search_cruise_line">Cruise Line</label>
+            <select id="filter-cruise-line">
+              <option value="" data-i18n="search_line_all">All Lines</option>
+            </select>
+          </div>
+          <div class="search-field">
+            <label data-i18n="search_nights">Duration</label>
+            <select id="filter-nights">
+              <option value="" data-i18n="search_nights_all">Any Duration</option>
+              <option value="3-5">3-5 Nights</option>
+              <option value="6-9">6-9 Nights</option>
+              <option value="10-14">10-14 Nights</option>
+              <option value="15-99">15+ Nights</option>
+            </select>
+          </div>
+          <div class="search-field">
+            <label>Type</label>
+            <select id="filter-type">
+              <option value="">All Types</option>
+              <option value="ocean">Ocean</option>
+              <option value="river">River</option>
+              <option value="luxury">Luxury</option>
+            </select>
+          </div>
+          <div class="search-field">
+            <label data-i18n="listing_sort">Sort by</label>
+            <select id="sort-select">
+              <option value="price-asc" data-i18n="listing_sort_price_asc">Price: Low to High</option>
+              <option value="price-desc" data-i18n="listing_sort_price_desc">Price: High to Low</option>
+              <option value="nights" data-i18n="listing_sort_nights">Duration</option>
+              <option value="date" data-i18n="listing_sort_date">Departure Date</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Results -->
+  <section class="section">
+    <div class="container">
+      <div class="grid grid--3" id="listing-grid">
+        <!-- Dynamically rendered -->
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="container">
+      <h2 data-i18n="cta_title">Ready to Set Sail?</h2>
+      <p data-i18n="cta_subtitle">Talk to our cruise experts today.</p>
+      <div class="cta-actions">
+        <a href="contact.html" class="btn btn--primary btn--lg" data-i18n="cta_request">Request an Offer</a>
+        <a href="https://wa.me/40000000000" class="btn btn--whatsapp btn--lg" data-i18n="cta_whatsapp">WhatsApp</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__bottom">
+        <span>© 2026 XploreCruiseTravel. <span data-i18n="footer_rights">All rights reserved.</span></span>
+        <span data-i18n="footer_partner">Official partner of Croaziere.Net</span>
+      </div>
+    </div>
+  </footer>
+
+  <a href="https://wa.me/40000000000" class="whatsapp-float" aria-label="WhatsApp">
+    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.854 7.854 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.933 7.933 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.898 7.898 0 0 0 13.6 2.326zM7.994 14.521a6.573 6.573 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.557 6.557 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592zm3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.729.729 0 0 0-.529.247c-.182.198-.691.677-.691 1.654 0 .977.71 1.916.81 2.049.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232z"/></svg>
+  </a>
+
+  <script src="../js/i18n.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>
