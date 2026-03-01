@@ -27,7 +27,7 @@ export default function Footer() {
   ]
 
   return (
-    <footer className="bg-navy-900 text-navy-200">
+    <footer role="contentinfo" className="bg-navy-900 text-navy-200">
       {/* Main Footer */}
       <Container>
         <div className="grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
@@ -66,7 +66,7 @@ export default function Footer() {
           </div>
 
           {/* Quick Links */}
-          <div>
+          <nav aria-label="Footer navigation">
             <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gold-400">
               {t('footer_quick_links')}
             </h3>
@@ -82,10 +82,10 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
           {/* Legal */}
-          <div>
+          <nav aria-label="Legal links">
             <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-gold-400">
               {t('footer_legal')}
             </h3>
@@ -101,7 +101,7 @@ export default function Footer() {
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
           {/* Contact */}
           <div>
