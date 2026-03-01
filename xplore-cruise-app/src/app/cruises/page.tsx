@@ -187,6 +187,7 @@ export default function CruisesPage() {
   return (
     <>
       <Header />
+      <main id="main-content">
 
       {/* Hero Banner */}
       <section className="relative pt-20 pb-16 bg-gradient-to-br from-navy-950 via-navy-900 to-navy-800 overflow-hidden">
@@ -376,6 +377,7 @@ export default function CruisesPage() {
       </section>
 
       <ChatWidget />
+      </main>
       <Footer />
     </>
   )

@@ -12,6 +12,7 @@ export default function TermsPage() {
   return (
     <>
       <Header />
+      <main id="main-content">
       <section className="pt-20 pb-16 bg-gradient-to-br from-navy-950 via-navy-900 to-navy-800">
         <Container className="text-center py-12">
           <h1 className="text-3xl md:text-5xl font-bold text-white font-[family-name:var(--font-heading)] mb-4">
@@ -83,6 +84,7 @@ export default function TermsPage() {
           </div>
         </Container>
       </section>
+      </main>
 
       <Footer />
     </>

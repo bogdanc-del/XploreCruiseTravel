@@ -157,6 +157,7 @@ export default function HomePage() {
   return (
     <>
       <Header />
+      <main id="main-content">
 
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center justify-center bg-gradient-to-br from-navy-950 via-navy-900 to-navy-800 overflow-hidden">
@@ -167,6 +168,7 @@ export default function HomePage() {
           alt=""
           fill
           priority
+          fetchPriority="high"
           sizes="100vw"
           className="object-cover opacity-20"
           quality={60}
@@ -350,6 +352,7 @@ export default function HomePage() {
 
       {/* Chat Widget */}
       <ChatWidget />
+      </main>
 
       <Footer />
     </>

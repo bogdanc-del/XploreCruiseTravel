@@ -38,6 +38,13 @@ export function LocaleProvider({ children }: { children: React.ReactNode }) {
     setMounted(true)
   }, [])
 
+  // Update <html lang> attribute when locale changes
+  useEffect(() => {
+    if (mounted) {
+      document.documentElement.lang = locale
+    }
+  }, [locale, mounted])
+
   // Persist locale changes to localStorage
   const setLocale = useCallback((newLocale: Locale) => {
     setLocaleState(newLocale)

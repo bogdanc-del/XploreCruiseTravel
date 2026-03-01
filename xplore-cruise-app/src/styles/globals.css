@@ -11,7 +11,7 @@
   --color-navy-100: #d9e1ed;
   --color-navy-200: #b3c3db;
   --color-navy-300: #8da5c9;
-  --color-navy-400: #6787b7;
+  --color-navy-400: #5a7399;      /* Darkened from #6787b7 for WCAG AA contrast ≥4.5:1 on white */
   --color-navy-500: #4169a5;
   --color-navy-600: #345484;
   --color-navy-700: #273f63;
