@@ -281,7 +281,7 @@ export default function ContactPage() {
                       <EmailIcon className="w-5 h-5 text-gold-400" />
                     </div>
                     <div>
-                      <p className="text-xs text-navy-400 uppercase tracking-wider mb-1">Email</p>
+                      <p className="text-xs text-navy-300 uppercase tracking-wider mb-1">Email</p>
                       <a
                         href="mailto:xplorecruisetravel@gmail.com"
                         className="text-sm text-navy-200 hover:text-gold-400 transition-colors"
@@ -297,7 +297,7 @@ export default function ContactPage() {
                       <PhoneIcon className="w-5 h-5 text-gold-400" />
                     </div>
                     <div>
-                      <p className="text-xs text-navy-400 uppercase tracking-wider mb-1">
+                      <p className="text-xs text-navy-300 uppercase tracking-wider mb-1">
                         {locale === 'ro' ? 'Telefon' : 'Phone'}
                       </p>
                       <a
@@ -315,7 +315,7 @@ export default function ContactPage() {
                       <ClockIcon className="w-5 h-5 text-gold-400" />
                     </div>
                     <div>
-                      <p className="text-xs text-navy-400 uppercase tracking-wider mb-1">
+                      <p className="text-xs text-navy-300 uppercase tracking-wider mb-1">
                         {t('contact_hours')}
                       </p>
                       <p className="text-sm text-navy-200 whitespace-pre-line">
@@ -330,7 +330,7 @@ export default function ContactPage() {
                       <MapPinIcon className="w-5 h-5 text-gold-400" />
                     </div>
                     <div>
-                      <p className="text-xs text-navy-400 uppercase tracking-wider mb-1">
+                      <p className="text-xs text-navy-300 uppercase tracking-wider mb-1">
                         {t('contact_office')}
                       </p>
                       <p className="text-sm text-navy-200">
@@ -342,7 +342,7 @@ export default function ContactPage() {
 
                 {/* Contact person */}
                 <div className="mt-6 pt-6 border-t border-navy-700">
-                  <p className="text-xs text-navy-400 uppercase tracking-wider mb-2">
+                  <p className="text-xs text-navy-300 uppercase tracking-wider mb-2">
                     {locale === 'ro' ? 'Persoana de contact' : 'Contact Person'}
                   </p>
                   <div className="flex items-center gap-3">

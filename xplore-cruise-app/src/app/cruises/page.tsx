@@ -344,6 +344,9 @@ export default function CruisesPage() {
       {/* Cruise Grid */}
       <section className="py-12 bg-navy-50 min-h-[50vh]">
         <Container>
+          <h2 className="sr-only">
+            {locale === 'ro' ? 'Lista Croaziere' : 'Cruise Listings'}
+          </h2>
           {filteredCruises.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredCruises.map((cruise, i) => (
