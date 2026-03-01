@@ -22,166 +22,20 @@ const RouteMap = dynamic(() => import('@/components/cruise/RouteMap'), {
 import { eurToRon } from '@/lib/supabase'
 import type { Cruise } from '@/lib/supabase'
 
-// ============================================================
-// Demo cruise data (same as homepage/cruises page)
-// ============================================================
-
-const demoCruises: Cruise[] = [
-  {
-    id: '1', slug: 'western-mediterranean-discovery', title: 'Western Mediterranean Discovery', title_ro: 'Descoperirea Mediteranei de Vest',
-    cruise_type: 'ocean', nights: 7, price_from: 599, currency: 'EUR', departure_port: 'Barcelona, Spain',
-    departure_date: '2026-06-15', ports_of_call: ['Marseille', 'Genoa', 'Rome', 'Palermo', 'Valletta'], ports_of_call_ro: ['Marsilia', 'Genova', 'Roma', 'Palermo', 'Valletta'],
-    image_url: 'https://images.unsplash.com/photo-1548574505-5e239809ee19?w=800', gallery_urls: [],
-    included: ['Full-board meals', 'Entertainment', 'Pool & spa'], included_ro: ['Masa completa', 'Divertisment', 'Piscina & spa'],
-    excluded: ['Shore excursions', 'Premium drinks'], excluded_ro: ['Excursii terestre', 'Bauturi premium'],
-    tags: ['popular', 'family'], featured: true, active: true, source: 'manual',
-    cruise_line: 'MSC Cruises', ship_name: 'MSC Meraviglia', destination: 'Mediterranean', destination_ro: 'Mediterana', destination_slug: 'mediterranean',
-    description: 'Embark on a breathtaking 7-night journey through the heart of the Western Mediterranean. Departing from vibrant Barcelona, this cruise takes you to iconic ports including Marseille, Genoa, Rome, Palermo, and Valletta. Experience world-class cuisine, stunning coastal views, and rich cultural heritage at every stop.',
-    description_ro: 'Porniti intr-o calatorie impresionanta de 7 nopti prin inima Mediteranei de Vest. Plecand din vibranta Barcelona, aceasta croaziera va duce in porturi iconice precum Marsilia, Genova, Roma, Palermo si Valletta. Experimentati bucatarie de clasa mondiala, privelisti costiere uimitoare si patrimoniu cultural bogat la fiecare oprire.',
-    advisor_note: 'This is one of our most popular itineraries with excellent value for money. Book early for the best cabin selection. The stop in Rome allows enough time for a guided tour to the Colosseum.',
-    advisor_note_ro: 'Acesta este unul dintre cele mai populare itinerarii cu un raport calitate-pret excelent. Rezervati din timp pentru cea mai buna selectie de cabine. Oprirea in Roma permite timp suficient pentru un tur ghidat la Colosseum.',
-  },
-  {
-    id: '2', slug: 'greek-islands-turkey-voyage', title: 'Greek Islands & Turkey Voyage', title_ro: 'Insulele Grecesti si Turcia',
-    cruise_type: 'ocean', nights: 7, price_from: 649, currency: 'EUR', departure_port: 'Athens (Piraeus), Greece',
-    departure_date: '2026-06-10', ports_of_call: ['Mykonos', 'Kusadasi', 'Patmos', 'Rhodes', 'Santorini'], ports_of_call_ro: ['Mykonos', 'Kusadasi', 'Patmos', 'Rodos', 'Santorini'],
-    image_url: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800', gallery_urls: [],
-    included: ['All meals', 'Entertainment', 'Kids club'], included_ro: ['Toate mesele', 'Divertisment', 'Club copii'],
-    excluded: ['Drinks package', 'Excursions'], excluded_ro: ['Pachet bauturi', 'Excursii'],
-    tags: ['popular', 'romantic'], featured: true, active: true, source: 'manual',
-    cruise_line: 'Costa Cruises', ship_name: 'Costa Toscana', destination: 'Mediterranean', destination_ro: 'Mediterana', destination_slug: 'mediterranean',
-    description: 'Sail through the crystal-clear waters of the Aegean Sea on this enchanting 7-night Greek Islands and Turkey voyage. From the cosmopolitan charm of Mykonos to the ancient ruins of Kusadasi, every port offers a unique experience.',
-    description_ro: 'Navigati prin apele cristaline ale Marii Egee in aceasta calatorie fermecatoare de 7 nopti prin Insulele Grecesti si Turcia. De la farmecul cosmopolit al Mykonos pana la ruinele antice ale Kusadasi, fiecare port ofera o experienta unica.',
-  },
-  {
-    id: '3', slug: 'norwegian-fjords-explorer', title: 'Norwegian Fjords Explorer', title_ro: 'Explorator Fiorduri Norvegiene',
-    cruise_type: 'ocean', nights: 10, price_from: 1199, currency: 'EUR', departure_port: 'Southampton, UK',
-    departure_date: '2026-07-05', ports_of_call: ['Bergen', 'Geiranger', 'Alesund', 'Stavanger', 'Flam'], ports_of_call_ro: ['Bergen', 'Geiranger', 'Alesund', 'Stavanger', 'Flam'],
-    image_url: 'https://images.unsplash.com/photo-1507272931001-fc06c17e4f43?w=800', gallery_urls: [],
-    included: ['All meals', 'Entertainment', 'Fitness center'], included_ro: ['Toate mesele', 'Divertisment', 'Sala fitness'],
-    excluded: ['Shore excursions', 'Specialty dining'], excluded_ro: ['Excursii terestre', 'Restaurante speciale'],
-    tags: ['adventure', 'nature'], featured: true, active: true, source: 'manual',
-    cruise_line: 'Norwegian Cruise Line', ship_name: 'Norwegian Getaway', destination: 'Northern Europe', destination_ro: 'Europa de Nord', destination_slug: 'northern-europe',
-    description: 'Discover the majestic beauty of Norway on this 10-night fjords exploration. Sail past dramatic waterfalls, towering cliffs, and picturesque villages. Highlights include the UNESCO-listed Geiranger Fjord and the charming city of Bergen.',
-    description_ro: 'Descoperiti frumusetea maiestuoasa a Norvegiei in aceasta explorare de 10 nopti prin fiorduri. Navigati pe langa cascade dramatice, stanci impunatoare si sate pitoresti. Punctele principale includ Fiordul Geiranger, sit UNESCO, si orasul fermecator Bergen.',
-  },
-  {
-    id: '4', slug: 'romantic-danube-river-cruise', title: 'Romantic Danube River Cruise', title_ro: 'Croaziera Romantica pe Dunare',
-    cruise_type: 'river', nights: 8, price_from: 2299, currency: 'EUR', departure_port: 'Budapest, Hungary',
-    departure_date: '2026-06-20', ports_of_call: ['Bratislava', 'Vienna', 'Durnstein', 'Melk', 'Passau'], ports_of_call_ro: ['Bratislava', 'Viena', 'Durnstein', 'Melk', 'Passau'],
-    image_url: 'https://images.unsplash.com/photo-1514539079130-25950c84af65?w=800', gallery_urls: [],
-    included: ['All meals', 'Shore excursions', 'Wine tasting'], included_ro: ['Toate mesele', 'Excursii terestre', 'Degustare vin'],
-    excluded: ['Premium wines', 'Spa treatments'], excluded_ro: ['Vinuri premium', 'Tratamente spa'],
-    tags: ['romantic', 'cultural'], featured: true, active: true, source: 'manual',
-    cruise_line: 'Viking River Cruises', ship_name: 'Viking Longship Hild', destination: 'River Cruises', destination_ro: 'Croaziere Fluviale', destination_slug: 'river-cruises',
-    description: 'Glide along the legendary Danube on this romantic 8-night river cruise from Budapest to Passau. Enjoy included shore excursions, wine tastings in the Wachau Valley, and visits to imperial cities like Vienna and Bratislava.',
-    description_ro: 'Alunecati de-a lungul legendarei Dunari in aceasta croaziera romantica de 8 nopti de la Budapesta la Passau. Bucurati-va de excursii terestre incluse, degustari de vin in Valea Wachau si vizite in orase imperiale precum Viena si Bratislava.',
-  },
-  {
-    id: '5', slug: 'caribbean-perfect-day', title: 'Caribbean & Perfect Day', title_ro: 'Caraibe si Perfect Day',
-    cruise_type: 'ocean', nights: 7, price_from: 749, currency: 'EUR', departure_port: 'Miami, FL, USA',
-    departure_date: '2026-11-10', ports_of_call: ['CocoCay', 'Cozumel', 'Roatan', 'Costa Maya'], ports_of_call_ro: ['CocoCay', 'Cozumel', 'Roatan', 'Costa Maya'],
-    image_url: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800', gallery_urls: [],
-    included: ['All meals', 'Entertainment', 'Pool deck'], included_ro: ['Toate mesele', 'Divertisment', 'Punte piscina'],
-    excluded: ['Drink packages', 'WiFi'], excluded_ro: ['Pachet bauturi', 'WiFi'],
-    tags: ['family', 'tropical'], featured: true, active: true, source: 'manual',
-    cruise_line: 'Royal Caribbean', ship_name: 'Harmony of the Seas', destination: 'Caribbean', destination_ro: 'Caraibe', destination_slug: 'caribbean',
-    description: 'Escape to paradise on this 7-night Caribbean adventure departing from Miami. Visit Royal Caribbean\'s private island CocoCay, explore Mayan ruins in Cozumel, and dive into the crystal-clear waters of Roatan.',
-    description_ro: 'Evadati in paradis in aceasta aventura de 7 nopti in Caraibe cu plecare din Miami. Vizitati insula privata CocoCay a Royal Caribbean, explorati ruinele Maya din Cozumel si scufundati-va in apele cristaline din Roatan.',
-  },
-  {
-    id: '6', slug: 'adriatic-luxury-collection', title: 'Adriatic Luxury Collection', title_ro: 'Colectia de Lux Adriatica',
-    cruise_type: 'luxury', nights: 10, price_from: 4999, currency: 'EUR', departure_port: 'Venice, Italy',
-    departure_date: '2026-09-12', ports_of_call: ['Dubrovnik', 'Kotor', 'Corfu', 'Katakolon', 'Mykonos'], ports_of_call_ro: ['Dubrovnik', 'Kotor', 'Corfu', 'Katakolon', 'Mykonos'],
-    image_url: 'https://images.unsplash.com/photo-1599640842225-85d111c60e6b?w=800', gallery_urls: [],
-    included: ['Butler service', 'All drinks', 'Shore excursions', 'WiFi'], included_ro: ['Serviciu butler', 'Toate bauturile', 'Excursii terestre', 'WiFi'],
-    excluded: ['Premium spa packages'], excluded_ro: ['Pachete spa premium'],
-    tags: ['luxury', 'adults-only'], featured: true, active: true, source: 'manual',
-    cruise_line: 'Silversea', ship_name: 'Silver Moon', destination: 'Mediterranean', destination_ro: 'Mediterana', destination_slug: 'mediterranean',
-    description: 'Indulge in the ultimate luxury cruise experience through the Adriatic. From the romance of Venice to the dramatic cliffs of Kotor, this 10-night voyage features butler service, all-inclusive dining, and exclusive shore excursions.',
-    description_ro: 'Bucurati-va de experienta suprema de croaziera de lux prin Adriatica. De la romantismul Venetiei pana la stancile dramatice ale Kotorului, aceasta calatorie de 10 nopti include serviciu de butler, dining all-inclusive si excursii terestre exclusive.',
-  },
-]
+// Phase 2 imports
+import HeroGallery from '@/components/cruise/HeroGallery'
+import PortHighlight from '@/components/cruise/PortHighlight'
+import PortDrawer from '@/components/cruise/PortDrawer'
+import BeveragePackageTable from '@/components/cruise/BeveragePackageTable'
+import CruiseLineTerms from '@/components/cruise/CruiseLineTerms'
+import { CRUISE_LINE_TERMS } from '@/data/cruise-line-terms'
+import { getCruiseBySlugLocal, getSimilarCruises, FEATURED_CRUISES } from '@/data/cruises-database'
 
 // ============================================================
-// Cancellation policies by cruise line (source: croaziere.net)
+// Tab types
 // ============================================================
 
-interface CancellationTier {
-  period_en: string
-  period_ro: string
-  penalty: string
-  penalty_en?: string
-  penalty_ro?: string
-}
-
-const CANCELLATION_POLICIES: Record<string, {
-  tiers: CancellationTier[]
-  notes_en?: string
-  notes_ro?: string
-}> = {
-  'MSC Cruises': {
-    tiers: [
-      { period_en: 'More than 60 days before', period_ro: 'Mai mult de 60 zile inainte', penalty: '50 EUR/pers.' },
-      { period_en: '59 – 30 days before', period_ro: '59 – 30 zile inainte', penalty: '25%' },
-      { period_en: '29 – 22 days before', period_ro: '29 – 22 zile inainte', penalty: '40%' },
-      { period_en: '21 – 15 days before', period_ro: '21 – 15 zile inainte', penalty: '60%' },
-      { period_en: '14 – 6 days before', period_ro: '14 – 6 zile inainte', penalty: '80%' },
-      { period_en: 'Under 6 days / no-show', period_ro: 'Sub 6 zile / neprezentare', penalty: '100%' },
-    ],
-    notes_en: 'For cruises of 15+ nights the periods start earlier (90 days). Name changes: €50/person.',
-    notes_ro: 'Pentru croazierele de 15+ nopti perioadele incep mai devreme (90 zile). Schimbari de nume: 50 EUR/persoana.',
-  },
-  'Costa Cruises': {
-    tiers: [
-      { period_en: 'More than 60 days before', period_ro: 'Mai mult de 60 zile inainte', penalty: '100 EUR/pers.' },
-      { period_en: '59 – 30 days before', period_ro: '59 – 30 zile inainte', penalty: '20%' },
-      { period_en: '29 – 15 days before', period_ro: '29 – 15 zile inainte', penalty: '50%' },
-      { period_en: '14 – 8 days before', period_ro: '14 – 8 zile inainte', penalty: '75%' },
-      { period_en: '7 – 0 days / no-show', period_ro: '7 – 0 zile / neprezentare', penalty: '100%' },
-    ],
-    notes_en: 'Long-duration & World cruises have stricter policies (penalties start from 90 days). Last Minute offers: 100% penalty.',
-    notes_ro: 'Croazierele lungi si In Jurul Lumii au politici mai stricte (penalitati de la 90 zile). Oferte Last Minute: penalitate 100%.',
-  },
-  'Norwegian Cruise Line': {
-    tiers: [
-      { period_en: '29+ days before', period_ro: '29+ zile inainte', penalty: '20%' },
-      { period_en: '28 – 15 days before', period_ro: '28 – 15 zile inainte', penalty: '50%' },
-      { period_en: '14 – 8 days before', period_ro: '14 – 8 zile inainte', penalty: '75%' },
-      { period_en: '7 – 0 days / no-show', period_ro: '7 – 0 zile / neprezentare', penalty: '95%' },
-    ],
-  },
-  'Royal Caribbean': {
-    tiers: [
-      { period_en: '53+ days before', period_ro: '53+ zile inainte', penalty: 'Deposit (nerambursabil)', penalty_en: 'Deposit (non-refundable)', penalty_ro: 'Deposit (nerambursabil)' },
-      { period_en: '52 – 34 days before', period_ro: '52 – 34 zile inainte', penalty: '50%' },
-      { period_en: '33 – 18 days before', period_ro: '33 – 18 zile inainte', penalty: '75%' },
-      { period_en: '17 – 0 days / no-show', period_ro: '17 – 0 zile / neprezentare', penalty: '100%' },
-    ],
-    notes_en: 'For cruises of 15+ nights, the cancellation periods are stricter (from 123 days).',
-    notes_ro: 'Pentru croazierele de 15+ nopti, perioadele sunt mai stricte (de la 123 zile).',
-  },
-  'Viking River Cruises': {
-    tiers: [
-      { period_en: '120+ days before', period_ro: '120+ zile inainte', penalty: '250 EUR/pers.' },
-      { period_en: '119 – 90 days before', period_ro: '119 – 90 zile inainte', penalty: '25%' },
-      { period_en: '89 – 60 days before', period_ro: '89 – 60 zile inainte', penalty: '50%' },
-      { period_en: '59 – 30 days before', period_ro: '59 – 30 zile inainte', penalty: '75%' },
-      { period_en: 'Under 30 days / no-show', period_ro: 'Sub 30 zile / neprezentare', penalty: '100%' },
-    ],
-  },
-  'Silversea': {
-    tiers: [
-      { period_en: '120+ days before', period_ro: '120+ zile inainte', penalty: 'Deposit (nerambursabil)', penalty_en: 'Deposit (non-refundable)', penalty_ro: 'Deposit (nerambursabil)' },
-      { period_en: '119 – 90 days before', period_ro: '119 – 90 zile inainte', penalty: '25%' },
-      { period_en: '89 – 60 days before', period_ro: '89 – 60 zile inainte', penalty: '50%' },
-      { period_en: '59 – 31 days before', period_ro: '59 – 31 zile inainte', penalty: '75%' },
-      { period_en: '30 – 0 days / no-show', period_ro: '30 – 0 zile / neprezentare', penalty: '100%' },
-    ],
-    notes_en: 'Luxury cruise cancellation terms may vary. Contact us for specific conditions.',
-    notes_ro: 'Termenii de anulare pentru croazierele de lux pot varia. Contactati-ne pentru conditii specifice.',
-  },
-}
+type TabKey = 'overview' | 'itinerary' | 'included' | 'beverages' | 'cancellation' | 'terms'
 
 // ============================================================
 // Cruise Detail Page
@@ -195,6 +49,62 @@ export default function CruiseDetailPage() {
   )
 }
 
+// Helper: adapt API cruise data to Cruise type
+function apiToCruise(data: Record<string, unknown>): Cruise {
+  const INC_OCEAN = ['Full-board meals in main restaurant & buffet', 'Entertainment & shows', 'Pool & fitness center access', 'Kids club (where available)', 'Port taxes & fees']
+  const INC_OCEAN_RO = ['Pensiune completă în restaurantul principal și bufet', 'Spectacole și divertisment la bord', 'Acces piscină și centru fitness', 'Club copii (unde este disponibil)', 'Taxe portuare incluse']
+  const INC_RIVER = ['All meals on board', 'Wine & beer with lunch and dinner', 'Guided shore excursions', 'Wi-Fi on board', 'Port charges']
+  const INC_RIVER_RO = ['Toate mesele la bord', 'Vin și bere la prânz și cină', 'Excursii ghidate la țărm', 'Wi-Fi la bord', 'Taxe portuare']
+  const INC_LUXURY = ['All-inclusive beverages', 'Specialty dining at no extra charge', 'Shore excursions in every port', 'Wi-Fi & gratuities included', 'Butler service (suite guests)']
+  const INC_LUXURY_RO = ['Băuturi all-inclusive', 'Restaurante de specialitate fără cost suplimentar', 'Excursii în fiecare port', 'Wi-Fi și bacșișuri incluse', 'Serviciu de butler (suite)']
+  const EXC_OCEAN = ['Flights to/from embarkation port', 'Shore excursions', 'Specialty dining', 'Beverage packages', 'Spa treatments', 'Travel insurance']
+  const EXC_OCEAN_RO = ['Zbor către/de la portul de îmbarcare', 'Excursii la țărm', 'Restaurante de specialitate', 'Pachete de băuturi', 'Tratamente spa', 'Asigurare de călătorie']
+  const EXC_RIVER = ['Flights', 'Premium beverages', 'Gratuities', 'Travel insurance']
+  const EXC_RIVER_RO = ['Zboruri', 'Băuturi premium', 'Bacșișuri', 'Asigurare de călătorie']
+  const EXC_LUXURY = ['Flights', 'Premium spa treatments', 'Travel insurance']
+  const EXC_LUXURY_RO = ['Zboruri', 'Tratamente spa premium', 'Asigurare de călătorie']
+
+  const ct = data.cruise_type as string
+  const ports = (data.ports_of_call || []) as string[]
+  const gallery = (data.gallery_urls || []) as string[]
+  const itinerary = (data.itinerary || []) as { day: number; port: string; arrival: string | null; departure: string | null }[]
+
+  return {
+    id: data.id as string,
+    slug: data.slug as string,
+    title: data.title as string,
+    title_ro: data.title as string,
+    cruise_type: ct as Cruise['cruise_type'],
+    nights: data.nights as number,
+    price_from: data.price_from as number,
+    currency: (data.currency as string) || 'EUR',
+    departure_port: data.departure_port as string || '',
+    departure_port_ro: data.departure_port as string || '',
+    departure_date: data.departure_date as string || '',
+    ports_of_call: ports,
+    ports_of_call_ro: ports,
+    image_url: data.image_url as string || '',
+    gallery_urls: gallery,
+    included: ct === 'river' ? INC_RIVER : ct === 'luxury' ? INC_LUXURY : INC_OCEAN,
+    included_ro: ct === 'river' ? INC_RIVER_RO : ct === 'luxury' ? INC_LUXURY_RO : INC_OCEAN_RO,
+    excluded: ct === 'river' ? EXC_RIVER : ct === 'luxury' ? EXC_LUXURY : EXC_OCEAN,
+    excluded_ro: ct === 'river' ? EXC_RIVER_RO : ct === 'luxury' ? EXC_LUXURY_RO : EXC_OCEAN_RO,
+    tags: [],
+    featured: false,
+    active: true,
+    source: 'croaziere.net',
+    booking_url: data.source_url as string || '',
+    cruise_line: data.cruise_line as string || '',
+    ship_name: data.ship_name as string || '',
+    destination: data.destination as string || '',
+    destination_ro: data.destination_ro as string || data.destination as string || '',
+    destination_slug: data.destination_slug as string || '',
+    // Store itinerary data for display
+    _itinerary: itinerary,
+    _cabin_types: (data.cabin_types || []) as { name: string; price_from: number }[],
+  } as Cruise & { _itinerary: typeof itinerary; _cabin_types: { name: string; price_from: number }[] }
+}
+
 function CruiseDetailContent() {
   const t = useT()
   const { locale } = useLocale()
@@ -202,8 +112,14 @@ function CruiseDetailContent() {
   const slug = params.slug as string
 
   const searchParams = useSearchParams()
-  const [activeTab, setActiveTab] = useState<'overview' | 'itinerary' | 'included' | 'cancellation'>('overview')
+  const [activeTab, setActiveTab] = useState<TabKey>('overview')
   const [showBooking, setShowBooking] = useState(false)
+  const [selectedPort, setSelectedPort] = useState<string | null>(null)
+
+  // State for API-loaded cruise
+  const [apiCruise, setApiCruise] = useState<Cruise | null>(null)
+  const [apiLoading, setApiLoading] = useState(false)
+  const [apiError, setApiError] = useState(false)
 
   // Auto-open booking modal if ?book=1 in URL
   useEffect(() => {
@@ -212,18 +128,53 @@ function CruiseDetailContent() {
     }
   }, [searchParams])
 
-  // Find cruise by slug
-  const cruise = demoCruises.find(c => c.slug === slug)
+  // Try FEATURED_CRUISES first (has rich content)
+  const featuredCruise = getCruiseBySlugLocal(slug)
 
-  // Similar cruises (same destination or type, excluding current)
-  const similarCruises = cruise
-    ? demoCruises
-        .filter(c => c.id !== cruise.id && (c.destination_slug === cruise.destination_slug || c.cruise_type === cruise.cruise_type))
-        .slice(0, 3)
-    : []
+  // If not in featured, fetch from API
+  useEffect(() => {
+    if (featuredCruise || !slug) return
+    setApiLoading(true)
+    fetch(`/api/cruises/${encodeURIComponent(slug)}`)
+      .then(r => {
+        if (!r.ok) throw new Error('Not found')
+        return r.json()
+      })
+      .then(data => {
+        setApiCruise(apiToCruise(data))
+        setApiLoading(false)
+      })
+      .catch(() => {
+        setApiError(true)
+        setApiLoading(false)
+      })
+  }, [slug, featuredCruise])
+
+  const cruise = featuredCruise || apiCruise
+
+  // Similar cruises — use featured cruises for suggestions
+  const similarCruises = cruise ? getSimilarCruises(cruise, 3) : []
+
+  // Loading state
+  if (!featuredCruise && apiLoading) {
+    return (
+      <>
+        <Header />
+        <main id="main-content">
+        <section className="min-h-[60vh] flex items-center justify-center bg-navy-50">
+          <Container className="text-center py-20">
+            <div className="w-12 h-12 mx-auto mb-6 rounded-full border-4 border-gold-500 border-t-transparent animate-spin" />
+            <p className="text-navy-500">{locale === 'ro' ? 'Se încarcă...' : 'Loading...'}</p>
+          </Container>
+        </section>
+        </main>
+        <Footer />
+      </>
+    )
+  }
 
   // 404-style fallback
-  if (!cruise) {
+  if (!cruise || apiError) {
     return (
       <>
         <Header />
@@ -231,15 +182,15 @@ function CruiseDetailContent() {
         <section className="min-h-[60vh] flex items-center justify-center bg-navy-50">
           <Container className="text-center py-20">
             <h1 className="text-3xl font-bold text-navy-900 font-[family-name:var(--font-heading)] mb-4">
-              {locale === 'ro' ? 'Croaziera nu a fost gasita' : 'Cruise Not Found'}
+              {locale === 'ro' ? 'Croaziera nu a fost găsită' : 'Cruise Not Found'}
             </h1>
             <p className="text-navy-500 mb-8">
               {locale === 'ro'
-                ? 'Ne pare rau, croaziera pe care o cautati nu exista sau a fost eliminata.'
+                ? 'Ne pare rău, croaziera pe care o căutați nu există sau a fost eliminată.'
                 : 'Sorry, the cruise you are looking for does not exist or has been removed.'}
             </p>
             <Button as="a" href="/cruises" variant="primary" size="lg">
-              {locale === 'ro' ? 'Inapoi la Croaziere' : 'Back to Cruises'}
+              {locale === 'ro' ? 'Înapoi la Croaziere' : 'Back to Cruises'}
             </Button>
           </Container>
         </section>
@@ -252,6 +203,7 @@ function CruiseDetailContent() {
   const title = locale === 'ro' && cruise.title_ro ? cruise.title_ro : cruise.title
   const destination = locale === 'ro' && cruise.destination_ro ? cruise.destination_ro : cruise.destination || ''
   const ports = locale === 'ro' && cruise.ports_of_call_ro?.length ? cruise.ports_of_call_ro : cruise.ports_of_call
+  const portsOriginal = cruise.ports_of_call // Always use original (EN) port names for port data lookup
   const included = locale === 'ro' && cruise.included_ro?.length ? cruise.included_ro : cruise.included
   const excluded = locale === 'ro' && cruise.excluded_ro?.length ? cruise.excluded_ro : cruise.excluded
   const description = locale === 'ro' && cruise.description_ro ? cruise.description_ro : cruise.description
@@ -267,52 +219,68 @@ function CruiseDetailContent() {
   const priceEur = cruise.price_from
   const priceRon = eurToRon(priceEur)
 
-  const tabs = [
-    { key: 'overview' as const, label: t('detail_overview') },
-    { key: 'itinerary' as const, label: t('detail_itinerary') },
-    { key: 'included' as const, label: t('detail_included') },
-    { key: 'cancellation' as const, label: t('detail_cancellation') },
+  // Build tabs — only show Beverages/Terms if data exists for this cruise line
+  const cruiseLineTerms = cruise.cruise_line ? CRUISE_LINE_TERMS[cruise.cruise_line] : undefined
+
+  const tabs: { key: TabKey; label: string }[] = [
+    { key: 'overview', label: t('detail_overview') },
+    { key: 'itinerary', label: t('detail_itinerary') },
+    { key: 'included', label: t('detail_included') },
+    { key: 'beverages', label: t('detail_beverages') },
+    { key: 'cancellation', label: t('detail_cancellation') },
+    { key: 'terms', label: t('detail_terms') },
   ]
 
-  const cancellationPolicy = cruise.cruise_line ? CANCELLATION_POLICIES[cruise.cruise_line] : undefined
+  // Port click handler — opens the PortDrawer
+  const handlePortClick = (portName: string) => {
+    setSelectedPort(portName)
+  }
 
   return (
     <>
       <Header />
       <main id="main-content">
 
-      {/* Hero Image */}
-      <section className="relative h-[60vh] min-h-[400px] bg-navy-900">
-        {cruise.image_url && (
-          <Image
-            src={cruise.image_url.replace('w=800', 'w=1920')}
-            alt={title}
-            fill
-            sizes="100vw"
-            className="object-cover"
-            priority
-            quality={75}
-          />
-        )}
-        <div className="absolute inset-0 bg-gradient-to-t from-navy-950/80 via-navy-950/30 to-transparent" />
+      {/* Hero — use HeroGallery when gallery images exist, otherwise fallback */}
+      {cruise.image_url && cruise.gallery_urls && cruise.gallery_urls.length > 0 ? (
+        <HeroGallery
+          mainImage={cruise.image_url}
+          gallery={cruise.gallery_urls}
+          alt={title}
+        />
+      ) : (
+        <section className="relative h-[60vh] min-h-[400px] bg-navy-900">
+          {cruise.image_url && (
+            <Image
+              src={cruise.image_url.replace('w=800', 'w=1920')}
+              alt={title}
+              fill
+              sizes="100vw"
+              className="object-cover"
+              priority
+              quality={75}
+            />
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-navy-950/80 via-navy-950/30 to-transparent" />
+        </section>
+      )}
 
-        {/* Hero Content */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <Container className="pb-8">
-            <div className="flex flex-wrap items-center gap-2 mb-3">
-              {cruise.featured && <Badge variant="gold">{t('cruise_featured')}</Badge>}
-              {cruise.cruise_type && (
-                <Badge variant="navy">{t(`type_${cruise.cruise_type}` as 'type_ocean')}</Badge>
-              )}
-            </div>
-            <h1 className="text-3xl md:text-5xl font-bold text-white font-[family-name:var(--font-heading)] mb-2">
-              {title}
-            </h1>
-            <p className="text-navy-200 text-sm md:text-base">
-              {cruise.cruise_line} {cruise.ship_name ? `- ${cruise.ship_name}` : ''}
-            </p>
-          </Container>
-        </div>
+      {/* Hero Content Overlay */}
+      <section className="relative -mt-24 z-10">
+        <Container className="pb-2">
+          <div className="flex flex-wrap items-center gap-2 mb-3">
+            {cruise.featured && <Badge variant="gold">{t('cruise_featured')}</Badge>}
+            {cruise.cruise_type && (
+              <Badge variant="navy">{t(`type_${cruise.cruise_type}` as 'type_ocean')}</Badge>
+            )}
+          </div>
+          <h1 className="text-3xl md:text-5xl font-bold text-white font-[family-name:var(--font-heading)] mb-2 drop-shadow-lg">
+            {title}
+          </h1>
+          <p className="text-navy-200 text-sm md:text-base drop-shadow">
+            {cruise.cruise_line} {cruise.ship_name ? `- ${cruise.ship_name}` : ''}
+          </p>
+        </Container>
       </section>
 
       {/* Breadcrumb */}
@@ -371,7 +339,7 @@ function CruiseDetailContent() {
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     <InfoCard
                       icon={<MapPinIcon />}
-                      label={locale === 'ro' ? 'Destinatie' : 'Destination'}
+                      label={locale === 'ro' ? 'Destinație' : 'Destination'}
                       value={destination}
                     />
                     <InfoCard
@@ -400,13 +368,14 @@ function CruiseDetailContent() {
                 </div>
               )}
 
-              {/* Tab Content: Itinerary */}
+              {/* Tab Content: Itinerary — enhanced with PortHighlight */}
               {activeTab === 'itinerary' && (
                 <div>
-                  {/* Route Map */}
+                  {/* Route Map with clickable ports */}
                   <RouteMap
                     departurePort={cruise.departure_port}
                     portsOfCall={cruise.ports_of_call}
+                    onPortClick={handlePortClick}
                     className="mb-8"
                   />
 
@@ -434,19 +403,14 @@ function CruiseDetailContent() {
                         </div>
                       </div>
 
-                      {/* Ports */}
+                      {/* Ports — interactive PortHighlight components */}
                       {ports.map((port, i) => (
-                        <div key={i} className="relative flex items-start gap-5 pb-6">
-                          <div className="relative z-10 flex-shrink-0 w-8 h-8 rounded-full bg-white border-2 border-navy-300 flex items-center justify-center">
-                            <span className="text-xs font-bold text-navy-600">{i + 1}</span>
-                          </div>
-                          <div className="pt-1">
-                            <p className="text-xs text-navy-400 font-medium uppercase tracking-wider mb-0.5">
-                              {locale === 'ro' ? `Ziua ${i + 2}` : `Day ${i + 2}`}
-                            </p>
-                            <p className="font-semibold text-navy-900">{port}</p>
-                          </div>
-                        </div>
+                        <PortHighlight
+                          key={i}
+                          portName={portsOriginal[i] || port}
+                          dayNumber={i + 2}
+                          onClick={handlePortClick}
+                        />
                       ))}
 
                       {/* Return */}
@@ -456,7 +420,7 @@ function CruiseDetailContent() {
                         </div>
                         <div className="pt-1">
                           <p className="text-xs text-gold-600 font-medium uppercase tracking-wider mb-0.5">
-                            {locale === 'ro' ? 'Intoarcere' : 'Return'}
+                            {locale === 'ro' ? 'Întoarcere' : 'Return'}
                           </p>
                           <p className="font-semibold text-navy-900">{cruise.departure_port}</p>
                         </div>
@@ -507,8 +471,37 @@ function CruiseDetailContent() {
                 </div>
               )}
 
+              {/* Tab Content: Beverage Packages */}
+              {activeTab === 'beverages' && (
+                <div className="space-y-6">
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
+                      <GlassIcon className="w-4 h-4 text-purple-600" />
+                    </span>
+                    <div>
+                      <h3 className="text-lg font-bold text-navy-900 font-[family-name:var(--font-heading)]">
+                        {t('beverages_title')}
+                      </h3>
+                      {cruise.cruise_line && (
+                        <p className="text-xs text-navy-400">{cruise.cruise_line}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {cruise.cruise_line ? (
+                    <BeveragePackageTable cruiseLine={cruise.cruise_line} />
+                  ) : (
+                    <p className="text-sm text-navy-500">
+                      {locale === 'ro'
+                        ? 'Informații despre pachetele de băuturi nu sunt disponibile. Contactați-ne pentru detalii.'
+                        : 'Beverage package information is not available. Contact us for details.'}
+                    </p>
+                  )}
+                </div>
+              )}
+
               {/* Tab Content: Cancellation Policy */}
-              {activeTab === 'cancellation' && cancellationPolicy && (
+              {activeTab === 'cancellation' && cruiseLineTerms && (
                 <div className="space-y-6">
                   <div className="flex items-center gap-3 mb-2">
                     <span className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center">
@@ -536,11 +529,11 @@ function CruiseDetailContent() {
                         </tr>
                       </thead>
                       <tbody>
-                        {cancellationPolicy.tiers.map((tier, i) => (
+                        {cruiseLineTerms.cancellation.tiers.map((tier, i) => (
                           <tr
                             key={i}
                             className={`${i % 2 === 0 ? 'bg-white' : 'bg-navy-50/50'} ${
-                              i === cancellationPolicy.tiers.length - 1 ? '' : 'border-b border-navy-100'
+                              i === cruiseLineTerms.cancellation.tiers.length - 1 ? '' : 'border-b border-navy-100'
                             }`}
                           >
                             <td className="py-3 px-4 text-navy-600">
@@ -571,11 +564,11 @@ function CruiseDetailContent() {
                   </div>
 
                   {/* Notes */}
-                  {(cancellationPolicy.notes_en || cancellationPolicy.notes_ro) && (
+                  {(cruiseLineTerms.cancellation.notes_en || cruiseLineTerms.cancellation.notes_ro) && (
                     <div className="flex items-start gap-3 p-4 rounded-lg bg-amber-50 border border-amber-200">
                       <InfoCircleIcon className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
                       <p className="text-sm text-amber-800">
-                        {locale === 'ro' ? cancellationPolicy.notes_ro : cancellationPolicy.notes_en}
+                        {locale === 'ro' ? cruiseLineTerms.cancellation.notes_ro : cruiseLineTerms.cancellation.notes_en}
                       </p>
                     </div>
                   )}
@@ -587,12 +580,41 @@ function CruiseDetailContent() {
                 </div>
               )}
 
-              {activeTab === 'cancellation' && !cancellationPolicy && (
+              {activeTab === 'cancellation' && !cruiseLineTerms && (
                 <p className="text-sm text-navy-500">
                   {locale === 'ro'
-                    ? 'Politica de anulare nu este disponibila pentru aceasta croaziera. Contactati-ne pentru detalii.'
+                    ? 'Politica de anulare nu este disponibilă pentru această croazieră. Contactați-ne pentru detalii.'
                     : 'Cancellation policy is not available for this cruise. Contact us for details.'}
                 </p>
+              )}
+
+              {/* Tab Content: Terms & Conditions */}
+              {activeTab === 'terms' && (
+                <div className="space-y-6">
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                      <DocumentIcon className="w-4 h-4 text-blue-600" />
+                    </span>
+                    <div>
+                      <h3 className="text-lg font-bold text-navy-900 font-[family-name:var(--font-heading)]">
+                        {t('terms_general')}
+                      </h3>
+                      {cruise.cruise_line && (
+                        <p className="text-xs text-navy-400">{cruise.cruise_line}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {cruise.cruise_line ? (
+                    <CruiseLineTerms cruiseLine={cruise.cruise_line} />
+                  ) : (
+                    <p className="text-sm text-navy-500">
+                      {locale === 'ro'
+                        ? 'Termenii și condițiile nu sunt disponibile. Contactați-ne pentru detalii.'
+                        : 'Terms and conditions are not available. Contact us for details.'}
+                    </p>
+                  )}
+                </div>
               )}
 
               {/* Advisor Note */}
@@ -676,7 +698,7 @@ function CruiseDetailContent() {
                 </h3>
                 <p className="text-sm text-navy-300 mb-4">
                   {locale === 'ro'
-                    ? 'Consultantul nostru de croaziere este disponibil sa te ajute cu rezervarea.'
+                    ? 'Consultantul nostru de croaziere este disponibil să te ajute cu rezervarea.'
                     : 'Our cruise consultant is available to help you with your booking.'}
                 </p>
                 <div className="space-y-2 text-sm">
@@ -712,6 +734,12 @@ function CruiseDetailContent() {
           </Container>
         </section>
       )}
+
+      {/* Port Drawer — slides out when a port is clicked */}
+      <PortDrawer
+        portName={selectedPort}
+        onClose={() => setSelectedPort(null)}
+      />
 
       <BookingModal
         isOpen={showBooking}
@@ -849,6 +877,22 @@ function InfoCircleIcon({ className }: { className?: string }) {
   return (
     <svg className={className || 'w-5 h-5'} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+    </svg>
+  )
+}
+
+function GlassIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className || 'w-4 h-4'} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 0 1 4.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0 1 12 15a9.065 9.065 0 0 0-6.23.693L5 14.5m14.8.8 1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0 1 12 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+    </svg>
+  )
+}
+
+function DocumentIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className || 'w-4 h-4'} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
     </svg>
   )
 }

@@ -30,15 +30,15 @@ export default function ContactPage() {
 
   const cruiseInterestOptions = locale === 'ro'
     ? [
-        { value: '', label: 'Selecteaza tipul de croaziera...' },
-        { value: 'ocean', label: 'Croaziera pe Ocean' },
-        { value: 'river', label: 'Croaziera Fluviala' },
-        { value: 'luxury', label: 'Croaziera de Lux' },
-        { value: 'expedition', label: 'Croaziera de Expeditie' },
+        { value: '', label: 'Selectează tipul de croazieră...' },
+        { value: 'ocean', label: 'Croazieră pe Ocean' },
+        { value: 'river', label: 'Croazieră Fluvială' },
+        { value: 'luxury', label: 'Croazieră de Lux' },
+        { value: 'expedition', label: 'Croazieră de Expediție' },
         { value: 'mediterranean', label: 'Mediterana' },
         { value: 'caribbean', label: 'Caraibe' },
         { value: 'northern-europe', label: 'Europa de Nord' },
-        { value: 'other', label: 'Altele / Nu stiu inca' },
+        { value: 'other', label: 'Altele / Nu știu încă' },
       ]
     : [
         { value: '', label: 'Select cruise type...' },
@@ -60,7 +60,7 @@ export default function ContactPage() {
     if (!gdprConsent) {
       setSubmitStatus('error')
       setErrorMessage(locale === 'ro'
-        ? 'Va rugam sa acceptati prelucrarea datelor personale conform GDPR.'
+        ? 'Vă rugăm să acceptați prelucrarea datelor personale conform GDPR.'
         : 'Please accept the GDPR data processing consent.')
       return
     }
@@ -90,7 +90,7 @@ export default function ContactPage() {
     } catch {
       setSubmitStatus('error')
       setErrorMessage(locale === 'ro'
-        ? 'Mesajul nu a putut fi trimis. Va rugam incercati din nou sau contactati-ne direct la xplorecruisetravel@gmail.com.'
+        ? 'Mesajul nu a putut fi trimis. Vă rugăm încercați din nou sau contactați-ne direct la xplorecruisetravel@gmail.com.'
         : 'Message could not be sent. Please try again or contact us directly at xplorecruisetravel@gmail.com.')
     } finally {
       setIsSubmitting(false)
@@ -230,11 +230,11 @@ export default function ContactPage() {
                   />
                   <label htmlFor="gdpr-consent" className="text-xs text-navy-500 leading-relaxed cursor-pointer">
                     {locale === 'ro'
-                      ? 'Consimt la prelucrarea datelor mele personale in scopul procesarii cererii mele, conform reglementarilor GDPR si Politicii noastre de Confidentialitate.'
+                      ? 'Consimt la prelucrarea datelor mele personale în scopul procesării cererii mele, conform reglementărilor GDPR și Politicii noastre de Confidențialitate.'
                       : 'I consent to the processing of my personal data for the purpose of handling my inquiry, in accordance with GDPR regulations and our Privacy Policy.'}
                     {' '}
                     <a href="/privacy" className="text-gold-600 hover:text-gold-700 underline">
-                      {locale === 'ro' ? 'Politica de Confidentialitate' : 'Privacy Policy'}
+                      {locale === 'ro' ? 'Politica de Confidențialitate' : 'Privacy Policy'}
                     </a>
                   </label>
                 </div>
@@ -360,7 +360,7 @@ export default function ContactPage() {
               {/* Google Maps Embed — Romania */}
               <div className="rounded-xl overflow-hidden border border-navy-200">
                 <iframe
-                  title={locale === 'ro' ? 'Locatia noastra pe harta — Romania' : 'Our location on the map — Romania'}
+                  title={locale === 'ro' ? 'Locația noastră pe hartă — România' : 'Our location on the map — Romania'}
                   src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2848345.3774498217!2d23.5!3d45.9!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40b1ff26958033c1%3A0x3c5f5f4e3d4b6c0!2sRomania!5e0!3m2!1sen!2s!4v1709312000000"
                   width="100%"
                   height="300"

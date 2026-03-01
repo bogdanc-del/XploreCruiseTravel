@@ -7,3 +7,8 @@ node_modules/
 test-results/
 artifacts/playwright-report/
 blob-report/
+
+# Scraper output (large files)
+scripts/output/
+public/data/cruises.json
+public/data/cruises-index.json
