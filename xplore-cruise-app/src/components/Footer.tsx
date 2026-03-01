@@ -144,7 +144,7 @@ export default function Footer() {
         <Container>
           <div className="flex flex-col items-center justify-between gap-3 py-5 text-xs text-navy-300 sm:flex-row">
             <p>{t('footer_copyright')}</p>
-            <p className="text-gold-500/70">{t('footer_partner')}</p>
+            <p className="text-gold-500">{t('footer_partner')}</p>
           </div>
         </Container>
       </div>

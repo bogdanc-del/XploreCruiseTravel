@@ -173,27 +173,27 @@ export default function AboutPage() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg mx-auto text-left">
               <div className="p-4 rounded-lg bg-white/5 border border-white/10">
-                <p className="text-navy-400 text-xs uppercase tracking-wider mb-1">
+                <p className="text-navy-300 text-xs uppercase tracking-wider mb-1">
                   {locale === 'ro' ? 'Denumire' : 'Company Name'}
                 </p>
                 <p className="text-white font-semibold text-sm">XPLORE CRUISE TRAVEL SRL</p>
               </div>
               <div className="p-4 rounded-lg bg-white/5 border border-white/10">
-                <p className="text-navy-400 text-xs uppercase tracking-wider mb-1">CUI</p>
+                <p className="text-navy-300 text-xs uppercase tracking-wider mb-1">CUI</p>
                 <p className="text-white font-semibold text-sm">36785800</p>
               </div>
               <div className="p-4 rounded-lg bg-white/5 border border-white/10">
-                <p className="text-navy-400 text-xs uppercase tracking-wider mb-1">
+                <p className="text-navy-300 text-xs uppercase tracking-wider mb-1">
                   {locale === 'ro' ? 'Nr. Reg. Com.' : 'Trade Register'}
                 </p>
                 <p className="text-white font-semibold text-sm">J03/1962/2016</p>
               </div>
               <div className="p-4 rounded-lg bg-white/5 border border-white/10">
-                <p className="text-navy-400 text-xs uppercase tracking-wider mb-1">CAEN</p>
+                <p className="text-navy-300 text-xs uppercase tracking-wider mb-1">CAEN</p>
                 <p className="text-white font-semibold text-sm">7912 — Organizare Croaziere</p>
               </div>
               <div className="p-4 rounded-lg bg-white/5 border border-white/10 sm:col-span-2">
-                <p className="text-navy-400 text-xs uppercase tracking-wider mb-1">
+                <p className="text-navy-300 text-xs uppercase tracking-wider mb-1">
                   {locale === 'ro' ? 'Sediu Social' : 'Registered Office'}
                 </p>
                 <p className="text-white font-semibold text-sm">
