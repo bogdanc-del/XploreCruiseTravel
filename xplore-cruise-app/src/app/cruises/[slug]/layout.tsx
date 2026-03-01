@@ -6,24 +6,38 @@ import { join } from 'path'
 // Dynamic metadata per cruise slug — reads from JSON database
 // ============================================================
 
+// Compact index entry (from cruises-index.json — 4 MB vs 23 MB full JSON)
+interface CompactCruise {
+  s: string   // slug
+  t: string   // title
+  d: string   // destination
+  n: number   // nights
+  p: number   // price_from
+  cl: string  // cruise_line
+  sn: string  // ship_name
+  img: string // image_url
+}
+
 // Lazy-loaded cruise map (cached in module scope for build)
 let cruiseMap: Map<string, { title: string; destination: string; nights: number; price_from: number; cruise_line: string; ship_name: string; image_url: string }> | null = null
 
 function loadCruiseMap() {
   if (cruiseMap) return cruiseMap
   try {
-    const filePath = join(process.cwd(), 'public', 'data', 'cruises.json')
-    const data = JSON.parse(readFileSync(filePath, 'utf8')) as Record<string, unknown>[]
+    // Use compact index (4 MB) instead of full cruises.json (23 MB)
+    // to avoid serverless memory/timeout issues on Vercel
+    const filePath = join(process.cwd(), 'public', 'data', 'cruises-index.json')
+    const data: CompactCruise[] = JSON.parse(readFileSync(filePath, 'utf8'))
     cruiseMap = new Map()
     for (const c of data) {
-      cruiseMap.set(c.slug as string, {
-        title: c.title as string,
-        destination: c.destination as string,
-        nights: c.nights as number,
-        price_from: c.price_from as number,
-        cruise_line: c.cruise_line as string,
-        ship_name: c.ship_name as string,
-        image_url: c.image_url as string,
+      cruiseMap.set(c.s, {
+        title: c.t,
+        destination: c.d,
+        nights: c.n,
+        price_from: c.p,
+        cruise_line: c.cl,
+        ship_name: c.sn,
+        image_url: c.img,
       })
     }
     return cruiseMap
