@@ -19,7 +19,7 @@ export default function GdprPage() {
             GDPR
           </h1>
           <p className="text-navy-300 text-sm">
-            {isRo ? 'Regulamentul General privind Protectia Datelor' : 'General Data Protection Regulation'}
+            {isRo ? 'Regulamentul General privind Protecția Datelor' : 'General Data Protection Regulation'}
           </p>
         </Container>
       </section>
@@ -33,29 +33,29 @@ export default function GdprPage() {
               </h2>
               <p className="text-navy-600 text-sm leading-relaxed">
                 {isRo
-                  ? 'XPLORE CRUISE TRAVEL SRL se angajeaza sa protejeze datele personale ale clientilor sai in conformitate cu Regulamentul (UE) 2016/679 (GDPR). Respectam principiile de transparenta, limitare a scopului, minimizare a datelor, exactitate, limitare a stocarii, integritate si confidentialitate.'
+                  ? 'XPLORE CRUISE TRAVEL SRL se angajează să protejeze datele personale ale clienților săi în conformitate cu Regulamentul (UE) 2016/679 (GDPR). Respectăm principiile de transparență, limitare a scopului, minimizare a datelor, exactitate, limitare a stocării, integritate și confidențialitate.'
                   : 'XPLORE CRUISE TRAVEL SRL is committed to protecting the personal data of its clients in accordance with Regulation (EU) 2016/679 (GDPR). We respect the principles of transparency, purpose limitation, data minimization, accuracy, storage limitation, integrity, and confidentiality.'}
               </p>
             </div>
 
             <div>
               <h2 className="text-xl font-bold text-navy-900 font-[family-name:var(--font-heading)] mb-3">
-                {isRo ? 'Baza Legala a Prelucrarii' : 'Legal Basis for Processing'}
+                {isRo ? 'Baza Legală a Prelucrării' : 'Legal Basis for Processing'}
               </h2>
               <ul className="list-disc list-inside space-y-2 text-navy-600 text-sm leading-relaxed">
                 <li>
                   {isRo
-                    ? 'Consimtamantul explicit al persoanei vizate (Art. 6(1)(a) GDPR)'
+                    ? 'Consimțământul explicit al persoanei vizate (Art. 6(1)(a) GDPR)'
                     : 'Explicit consent of the data subject (Art. 6(1)(a) GDPR)'}
                 </li>
                 <li>
                   {isRo
-                    ? 'Executarea unui contract (Art. 6(1)(b) GDPR) — pentru procesarea rezervarilor'
+                    ? 'Executarea unui contract (Art. 6(1)(b) GDPR) — pentru procesarea rezervărilor'
                     : 'Performance of a contract (Art. 6(1)(b) GDPR) — for booking processing'}
                 </li>
                 <li>
                   {isRo
-                    ? 'Obligatii legale (Art. 6(1)(c) GDPR) — evidenta fiscala si contabila'
+                    ? 'Obligații legale (Art. 6(1)(c) GDPR) — evidență fiscală și contabilă'
                     : 'Legal obligations (Art. 6(1)(c) GDPR) — fiscal and accounting records'}
                 </li>
               </ul>
@@ -63,16 +63,16 @@ export default function GdprPage() {
 
             <div>
               <h2 className="text-xl font-bold text-navy-900 font-[family-name:var(--font-heading)] mb-3">
-                {isRo ? 'Drepturile Dumneavoastra' : 'Your Rights Under GDPR'}
+                {isRo ? 'Drepturile Dumneavoastră' : 'Your Rights Under GDPR'}
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {[
                   { ro: 'Dreptul de acces', en: 'Right of access' },
                   { ro: 'Dreptul la rectificare', en: 'Right to rectification' },
-                  { ro: 'Dreptul la stergere', en: 'Right to erasure' },
-                  { ro: 'Dreptul la restrictionarea prelucrarii', en: 'Right to restrict processing' },
+                  { ro: 'Dreptul la ștergere', en: 'Right to erasure' },
+                  { ro: 'Dreptul la restricționarea prelucrării', en: 'Right to restrict processing' },
                   { ro: 'Dreptul la portabilitatea datelor', en: 'Right to data portability' },
-                  { ro: 'Dreptul la opozitie', en: 'Right to object' },
+                  { ro: 'Dreptul la opoziție', en: 'Right to object' },
                 ].map((right, i) => (
                   <div key={i} className="flex items-center gap-2 p-3 rounded-lg bg-navy-50 border border-navy-100">
                     <svg className="w-4 h-4 text-gold-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -90,20 +90,20 @@ export default function GdprPage() {
               </h2>
               <p className="text-navy-600 text-sm leading-relaxed">
                 {isRo
-                  ? 'Puteti exercita oricare dintre drepturile de mai sus prin trimiterea unei cereri la xplorecruisetravel@gmail.com. Vom raspunde in termen de 30 de zile. Aveti de asemenea dreptul de a depune o plangere la Autoritatea Nationala de Supraveghere a Prelucrarii Datelor cu Caracter Personal (ANSPDCP).'
+                  ? 'Puteți exercita oricare dintre drepturile de mai sus prin trimiterea unei cereri la xplorecruisetravel@gmail.com. Vom răspunde în termen de 30 de zile. Aveți de asemenea dreptul de a depune o plângere la Autoritatea Națională de Supraveghere a Prelucrării Datelor cu Caracter Personal (ANSPDCP).'
                   : 'You can exercise any of the above rights by sending a request to xplorecruisetravel@gmail.com. We will respond within 30 days. You also have the right to file a complaint with the National Supervisory Authority for Personal Data Processing (ANSPDCP).'}
               </p>
             </div>
 
             <div className="p-6 rounded-xl bg-gold-50 border border-gold-200">
               <h3 className="font-bold text-navy-900 text-sm mb-2">
-                {isRo ? 'Contact Responsabil Protectia Datelor' : 'Data Protection Officer Contact'}
+                {isRo ? 'Contact Responsabil Protecția Datelor' : 'Data Protection Officer Contact'}
               </h3>
               <p className="text-navy-600 text-sm">
                 XPLORE CRUISE TRAVEL SRL<br />
                 Email: xplorecruisetravel@gmail.com<br />
                 {isRo ? 'Telefon' : 'Phone'}: +40 749 558 572<br />
-                {isRo ? 'Adresa' : 'Address'}: Str. Col. Ion Alexandrescu 19, Campulung, Arges, 115100
+                {isRo ? 'Adresă' : 'Address'}: Str. Col. Ion Alexandrescu 19, Câmpulung, Argeș, 115100
               </p>
             </div>
           </div>

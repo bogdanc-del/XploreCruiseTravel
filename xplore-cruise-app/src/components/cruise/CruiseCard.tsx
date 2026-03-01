@@ -9,6 +9,7 @@ import type { Locale } from '@/i18n/translations'
 import { t } from '@/i18n/translations'
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
+import { getBestImageUrl } from '@/data/ship-images'
 
 // ============================================================
 // CruiseCard
@@ -41,13 +42,16 @@ export default function CruiseCard({ cruise, locale }: CruiseCardProps) {
   const priceEur = cruise.price_from
   const priceRon = eurToRon(priceEur)
 
+  // Use HD image mapping — upgrades low-quality scraped thumbnails
+  const imageUrl = getBestImageUrl(cruise.image_url, cruise.ship_name, cruise.cruise_line)
+
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-xl bg-white shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover">
       {/* Image */}
       <div className="relative aspect-[4/3] overflow-hidden">
-        {cruise.image_url ? (
+        {imageUrl ? (
           <Image
-            src={cruise.image_url}
+            src={imageUrl}
             alt={title}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"

@@ -30,6 +30,7 @@ import BeveragePackageTable from '@/components/cruise/BeveragePackageTable'
 import CruiseLineTerms from '@/components/cruise/CruiseLineTerms'
 import { CRUISE_LINE_TERMS } from '@/data/cruise-line-terms'
 import { getCruiseBySlugLocal, getSimilarCruises, FEATURED_CRUISES } from '@/data/cruises-database'
+import { getBestImageUrl } from '@/data/ship-images'
 
 // ============================================================
 // Tab types
@@ -83,7 +84,7 @@ function apiToCruise(data: Record<string, unknown>): Cruise {
     departure_date: data.departure_date as string || '',
     ports_of_call: ports,
     ports_of_call_ro: ports,
-    image_url: data.image_url as string || '',
+    image_url: getBestImageUrl(data.image_url as string, data.ship_name as string, data.cruise_line as string) || data.image_url as string || '',
     gallery_urls: gallery,
     included: ct === 'river' ? INC_RIVER : ct === 'luxury' ? INC_LUXURY : INC_OCEAN,
     included_ro: ct === 'river' ? INC_RIVER_RO : ct === 'luxury' ? INC_LUXURY_RO : INC_OCEAN_RO,
