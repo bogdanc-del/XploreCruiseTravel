@@ -53,7 +53,8 @@ test.describe('Booking modal', () => {
     await expect(modal).not.toBeVisible({ timeout: 3000 })
   })
 
-  test('Happy path: fill 3 steps and submit', async ({ page }) => {
+  test('Happy path: fill 3 steps and submit', async ({ page, browserName }) => {
+    test.setTimeout(browserName === 'webkit' ? 60_000 : 30_000)
     // Open modal
     const bookBtn = page.locator('button:has-text("Book"), button:has-text("Rezerva")')
     await bookBtn.first().click()
@@ -86,13 +87,16 @@ test.describe('Booking modal', () => {
       await page.waitForTimeout(600)
     }
 
-    // Step 3: Consent checkboxes — use the visible custom checkbox divs
+    // Step 3: Consent checkboxes — click the visible label wrapper
     await page.waitForTimeout(300)
-    const checkboxInputs = modal.locator('input.sr-only[type="checkbox"]')
-    const checkboxCount = await checkboxInputs.count()
+    // The CheckboxField uses a <label> wrapping a sr-only <input> + visible div.
+    // Clicking the label toggles the React state reliably across all browsers.
+    const checkboxLabels = modal.locator('label:has(input[type="checkbox"])')
+    const checkboxCount = await checkboxLabels.count()
     // Check GDPR and terms (first two)
     for (let i = 0; i < Math.min(2, checkboxCount); i++) {
-      await checkboxInputs.nth(i).check({ force: true })
+      await checkboxLabels.nth(i).click()
+      await page.waitForTimeout(200)
     }
 
     // Mock the API
