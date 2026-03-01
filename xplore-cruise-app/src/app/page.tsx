@@ -224,7 +224,7 @@ export default function HomePage() {
             <StatCounter target={150} suffix="+" label={t('stats_cruises')} />
             <StatCounter target={25} suffix="+" label={t('stats_destinations')} />
             <StatCounter target={500} suffix="+" label={t('stats_clients')} />
-            <StatCounter target={8} suffix="+" label={t('stats_years')} />
+            <StatCounter target={10} suffix="+" label={t('stats_years')} />
           </div>
         </Container>
       </section>

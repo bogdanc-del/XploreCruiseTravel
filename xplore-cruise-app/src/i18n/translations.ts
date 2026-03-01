@@ -66,7 +66,7 @@ export const translations = {
     detail_cancellation: 'Cancellation Policy',
     detail_cancellation_period: 'Period before departure',
     detail_cancellation_penalty: 'Penalty',
-    detail_cancellation_source: 'Source: croaziere.net. Penalties are calculated as % of total package price. Conditions may vary — contact us for details.',
+    detail_cancellation_source: 'Based on standard cruise industry cancellation policies. Penalties are calculated as % of total package price. Conditions may vary — contact us for details.',
 
     // Booking Modal
     booking_title: 'Book Your Cruise',
@@ -113,11 +113,11 @@ export const translations = {
     about_title: 'About XploreCruiseTravel',
     about_subtitle: 'Your trusted partner for premium cruise experiences',
     about_mission_title: 'Our Mission',
-    about_mission: 'We curate the finest cruise experiences from world-renowned cruise lines, making luxury ocean and river travel accessible to everyone. With over 8 years of experience, we bring you exclusive deals and personalized service.',
+    about_mission: 'We curate the finest cruise experiences from world-renowned cruise lines, making luxury ocean and river travel accessible to everyone. Since 2016, we bring you exclusive deals and personalized service.',
     about_why_title: 'Why Choose Us?',
     about_why_1: 'Licensed cruise consultant with access to exclusive deals',
     about_why_2: 'Personalized cruise consulting',
-    about_why_3: 'Best price guarantee in Romania',
+    about_why_3: 'Competitive prices with exclusive cruise deals',
     about_why_4: 'Complete GDPR-compliant booking process',
     about_why_5: '24/7 support during your voyage',
 
@@ -229,7 +229,7 @@ export const translations = {
     detail_cancellation: 'Politica de Anulare',
     detail_cancellation_period: 'Perioada inainte de plecare',
     detail_cancellation_penalty: 'Penalitate',
-    detail_cancellation_source: 'Sursa: croaziere.net. Penalitatile sunt calculate ca % din pretul total al pachetului. Conditiile pot varia — contactati-ne pentru detalii.',
+    detail_cancellation_source: 'Conform politicilor standard de anulare din industria croazierelor. Penalitatile sunt calculate ca % din pretul total al pachetului. Conditiile pot varia — contactati-ne pentru detalii.',
 
     // Booking Modal
     booking_title: 'Rezerva Croaziera',
@@ -276,11 +276,11 @@ export const translations = {
     about_title: 'Despre XploreCruiseTravel',
     about_subtitle: 'Partenerul tau de incredere pentru experiente premium de croaziera',
     about_mission_title: 'Misiunea Noastra',
-    about_mission: 'Selectam cele mai bune experiente de croaziera de la companii de renume mondial, facand calatoriile de lux pe ocean si rau accesibile tuturor. Cu peste 8 ani de experienta, va aducem oferte exclusive si servicii personalizate.',
+    about_mission: 'Selectam cele mai bune experiente de croaziera de la companii de renume mondial, facand calatoriile de lux pe ocean si rau accesibile tuturor. Din 2016, va aducem oferte exclusive si servicii personalizate.',
     about_why_title: 'De Ce Sa Ne Alegi?',
     about_why_1: 'Consilier de croaziere autorizat cu acces la oferte exclusive',
     about_why_2: 'Consultanta personalizata pentru croaziere',
-    about_why_3: 'Garantia celui mai bun pret din Romania',
+    about_why_3: 'Preturi competitive cu oferte exclusive de croaziere',
     about_why_4: 'Proces de rezervare complet conform GDPR',
     about_why_5: 'Suport 24/7 pe durata calatoriei',
 
