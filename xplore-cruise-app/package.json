@@ -1,0 +1,48 @@
+{
+  "name": "xplore-cruise-travel",
+  "version": "1.0.0",
+  "private": true,
+  "description": "XploreCruiseTravel - Cruise booking platform with AI assistant",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "test": "npm run typecheck && npm run lint && npm run i18n-audit",
+    "test:e2e": "playwright test",
+    "test:e2e:chromium": "playwright test --project=chromium",
+    "test:e2e:webkit": "playwright test --project=webkit",
+    "test:a11y": "playwright test e2e/a11y.spec.ts --project=chromium",
+    "i18n-audit": "npx tsx scripts/i18n-audit.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "@supabase/ssr": "^0.6.0",
+    "@supabase/supabase-js": "^2.49.0",
+    "clsx": "^2.1.1",
+    "leaflet": "^1.9.4",
+    "lucide-react": "^0.475.0",
+    "next": "^15.3.0",
+    "next-intl": "^4.1.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-leaflet": "^5.0.0"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.11.1",
+    "@eslint/eslintrc": "^3.3.0",
+    "@playwright/test": "^1.58.2",
+    "@tailwindcss/postcss": "^4.1.0",
+    "@types/leaflet": "^1.9.21",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "eslint": "^9.0.0",
+    "eslint-config-next": "^15.3.0",
+    "postcss": "^8.5.0",
+    "tailwindcss": "^4.1.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.8.0"
+  }
+}

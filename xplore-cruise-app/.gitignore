@@ -1,0 +1,9 @@
+node_modules/
+.next/
+.env.local
+*.tsbuildinfo
+
+# Playwright
+test-results/
+artifacts/playwright-report/
+blob-report/

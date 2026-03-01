@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel — XploreCruiseTravel</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .admin-login { max-width: 400px; margin: 100px auto; padding: var(--space-2xl); }
+    .admin-login h2 { text-align: center; margin-bottom: var(--space-xl); }
+    .admin-login .btn { width: 100%; justify-content: center; margin-top: var(--space-lg); }
+    .admin-content { display: none; }
+    .admin-header { background: var(--primary); color: white; padding: var(--space-lg) 0; margin-bottom: var(--space-xl); }
+    .admin-header__inner { display: flex; justify-content: space-between; align-items: center; }
+    .admin-header h2 { margin: 0; font-family: var(--font-heading); }
+    .admin-tabs { display: flex; gap: var(--space-sm); margin-bottom: var(--space-xl); border-bottom: 2px solid var(--gray-100); padding-bottom: var(--space-sm); }
+    .admin-tab { padding: var(--space-sm) var(--space-lg); border: none; background: none; cursor: pointer; font-size: 0.9rem; font-weight: 500; color: var(--gray-400); border-bottom: 2px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
+    .admin-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .admin-tab:hover { color: var(--primary); }
+    .admin-tab-content { display: none; }
+    .admin-tab-content.active { display: block; }
+    .admin-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--space-lg); }
+    .admin-search { padding: 8px 16px; border: 1px solid var(--gray-200); border-radius: var(--radius-md); width: 300px; font-size: 0.9rem; }
+    .badge { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+    .badge--active { background: rgba(34,197,94,0.1); color: #16a34a; }
+    .badge--draft { background: rgba(234,179,8,0.1); color: #ca8a04; }
+    .badge--ocean { background: rgba(59,130,246,0.1); color: #2563eb; }
+    .badge--river { background: rgba(34,197,94,0.1); color: #16a34a; }
+    .badge--luxury { background: rgba(168,85,247,0.1); color: #9333ea; }
+    .admin-form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg); }
+    .admin-form-grid .full-width { grid-column: 1 / -1; }
+    .admin-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 1000; display: flex; align-items: center; justify-content: center; }
+    .admin-modal-content { background: white; border-radius: var(--radius-xl); max-width: 800px; width: 95%; max-height: 90vh; overflow-y: auto; padding: var(--space-2xl); }
+    .admin-modal-content h3 { margin-bottom: var(--space-xl); }
+    .admin-actions { display: flex; gap: var(--space-sm); }
+    .btn--danger { background: #ef4444; color: white; }
+    .btn--danger:hover { background: #dc2626; }
+    .btn--sm-icon { padding: 6px 10px; font-size: 0.85rem; }
+    .booking-list { max-height: 500px; overflow-y: auto; }
+    .booking-item { padding: var(--space-md); border: 1px solid var(--gray-100); border-radius: var(--radius-md); margin-bottom: var(--space-sm); }
+    .booking-item__header { display: flex; justify-content: space-between; align-items: center; }
+    .booking-item__details { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-sm); margin-top: var(--space-sm); font-size: 0.85rem; color: var(--gray-400); }
+    .stat-card { background: white; border-radius: var(--radius-lg); padding: var(--space-xl); box-shadow: var(--shadow-sm); text-align: center; }
+    .stat-card__number { font-size: 2rem; font-weight: 700; color: var(--accent); }
+    .stat-card__label { font-size: 0.85rem; color: var(--gray-400); margin-top: var(--space-xs); }
+  </style>
+</head>
+<body data-page="admin">
+
+  <!-- Login Screen -->
+  <div id="admin-login" class="admin-login sidebar-card">
+    <h2>Admin Login</h2>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="admin-password" placeholder="Enter admin password">
+    </div>
+    <button class="btn btn--primary" onclick="attemptLogin()">Login</button>
+    <p id="login-error" style="color:#ef4444;font-size:0.85rem;margin-top:var(--space-sm);display:none">Incorrect password</p>
+  </div>
+
+  <!-- Admin Content -->
+  <div id="admin-content" class="admin-content">
+    <div class="admin-header">
+      <div class="container admin-header__inner">
+        <h2>XploreCruiseTravel Admin</h2>
+        <div style="display:flex;align-items:center;gap:var(--space-md)">
+          <span style="font-size:0.85rem;opacity:0.7">Ceausu Daniel Antonina</span>
+          <button class="btn btn--sm" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2)" onclick="adminLogout()">Logout</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- Stats -->
+      <div class="admin-stats" style="display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-lg);margin-bottom:var(--space-2xl)">
+        <div class="stat-card">
+          <div class="stat-card__number" id="stat-total-cruises">0</div>
+          <div class="stat-card__label">Total Cruises</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__number" id="stat-destinations">0</div>
+          <div class="stat-card__label">Destinations</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__number" id="stat-bookings">0</div>
+          <div class="stat-card__label">Bookings</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-card__number" id="stat-messages">0</div>
+          <div class="stat-card__label">Messages</div>
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="admin-tabs">
+        <button class="admin-tab active" onclick="switchTab('cruises')">Cruises</button>
+        <button class="admin-tab" onclick="switchTab('bookings')">Bookings</button>
+        <button class="admin-tab" onclick="switchTab('messages')">Messages</button>
+        <button class="admin-tab" onclick="switchTab('settings')">Settings</button>
+      </div>
+
+      <!-- Cruises Tab -->
+      <div class="admin-tab-content active" id="tab-cruises">
+        <div class="admin-toolbar">
+          <input type="text" class="admin-search" id="cruise-search" placeholder="Search cruises..." oninput="filterCruises()">
+          <button class="btn btn--primary btn--sm" onclick="openCruiseModal()">+ Add Cruise</button>
+        </div>
+        <table class="admin-table" style="width:100%">
+          <thead>
+            <tr>
+              <th>Cruise</th>
+              <th>Line / Ship</th>
+              <th>Destination</th>
+              <th>Nights</th>
+              <th>Price</th>
+              <th>Type</th>
+              <th>Departure</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="cruises-tbody"></tbody>
+        </table>
+      </div>
+
+      <!-- Bookings Tab -->
+      <div class="admin-tab-content" id="tab-bookings">
+        <div class="admin-toolbar">
+          <h4>Recent Bookings</h4>
+          <button class="btn btn--outline btn--sm" onclick="exportBookings()">Export CSV</button>
+        </div>
+        <div class="booking-list" id="bookings-list">
+          <p style="color:var(--gray-400);text-align:center;padding:var(--space-xl)">No bookings yet.</p>
+        </div>
+      </div>
+
+      <!-- Messages Tab -->
+      <div class="admin-tab-content" id="tab-messages">
+        <div class="admin-toolbar">
+          <h4>Contact Messages</h4>
+          <button class="btn btn--outline btn--sm" onclick="exportMessages()">Export CSV</button>
+        </div>
+        <div id="messages-list">
+          <p style="color:var(--gray-400);text-align:center;padding:var(--space-xl)">No messages yet.</p>
+        </div>
+      </div>
+
+      <!-- Settings Tab -->
+      <div class="admin-tab-content" id="tab-settings">
+        <div style="max-width:600px">
+          <h4 style="margin-bottom:var(--space-lg)">Site Settings</h4>
+          <div class="form-group">
+            <label>EUR to RON Exchange Rate</label>
+            <input type="number" id="setting-eur-ron" step="0.01" value="4.97">
+          </div>
+          <div class="form-group">
+            <label>Contact Email</label>
+            <input type="email" id="setting-email" value="xplorecruisetravel@gmail.com">
+          </div>
+          <div class="form-group">
+            <label>Phone Number</label>
+            <input type="tel" id="setting-phone" value="+40749558572">
+          </div>
+          <div class="form-group">
+            <label>EmailJS Service ID</label>
+            <input type="text" id="setting-emailjs-service" value="service_xplore">
+          </div>
+          <div class="form-group">
+            <label>EmailJS Public Key</label>
+            <input type="text" id="setting-emailjs-key" value="YOUR_PUBLIC_KEY">
+          </div>
+          <button class="btn btn--primary btn--sm" onclick="saveSettings()">Save Settings</button>
+          <hr style="margin:var(--space-2xl) 0">
+          <h4 style="margin-bottom:var(--space-lg)">Data Management</h4>
+          <div style="display:flex;gap:var(--space-md);flex-wrap:wrap">
+            <button class="btn btn--outline btn--sm" onclick="exportCruiseData()">Export Cruise Data (JSON)</button>
+            <label class="btn btn--outline btn--sm" style="cursor:pointer">
+              Import Cruise Data (JSON)
+              <input type="file" accept=".json" style="display:none" onchange="importCruiseData(event)">
+            </label>
+            <button class="btn btn--danger btn--sm" onclick="resetData()">Reset to Default Data</button>
+          </div>
+          <hr style="margin:var(--space-2xl) 0">
+          <h4 style="margin-bottom:var(--space-lg)">Change Admin Password</h4>
+          <div class="form-group">
+            <label>New Password</label>
+            <input type="password" id="new-password">
+          </div>
+          <button class="btn btn--primary btn--sm" onclick="changePassword()">Update Password</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cruise Edit Modal -->
+  <div id="cruise-modal" class="admin-modal-overlay">
+    <div class="admin-modal-content">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--space-xl)">
+        <h3 id="cruise-modal-title">Add New Cruise</h3>
+        <button class="btn btn--sm-icon" onclick="closeCruiseModal()" style="background:none;border:none;font-size:1.5rem;cursor:pointer">&times;</button>
+      </div>
+      <form id="cruise-form" onsubmit="saveCruise(event)">
+        <input type="hidden" id="edit-cruise-id">
+        <div class="admin-form-grid">
+          <div class="form-group">
+            <label>Title (EN)</label>
+            <input type="text" id="cf-title" required>
+          </div>
+          <div class="form-group">
+            <label>Title (RO)</label>
+            <input type="text" id="cf-titleRo" required>
+          </div>
+          <div class="form-group">
+            <label>Cruise Line</label>
+            <input type="text" id="cf-cruiseLine" required placeholder="e.g. MSC Cruises">
+          </div>
+          <div class="form-group">
+            <label>Ship</label>
+            <input type="text" id="cf-ship" required placeholder="e.g. MSC Meraviglia">
+          </div>
+          <div class="form-group">
+            <label>Destination (EN)</label>
+            <input type="text" id="cf-destination" required placeholder="e.g. Mediterranean">
+          </div>
+          <div class="form-group">
+            <label>Destination (RO)</label>
+            <input type="text" id="cf-destinationRo" required>
+          </div>
+          <div class="form-group">
+            <label>Region</label>
+            <input type="text" id="cf-region" placeholder="e.g. Western Mediterranean">
+          </div>
+          <div class="form-group">
+            <label>Cruise Type</label>
+            <select id="cf-cruiseType">
+              <option value="ocean">Ocean</option>
+              <option value="river">River</option>
+              <option value="luxury">Luxury</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Nights</label>
+            <input type="number" id="cf-nights" required min="1">
+          </div>
+          <div class="form-group">
+            <label>Price From (EUR)</label>
+            <input type="number" id="cf-priceFrom" required min="0">
+          </div>
+          <div class="form-group">
+            <label>Departure Port</label>
+            <input type="text" id="cf-departurePort" required>
+          </div>
+          <div class="form-group">
+            <label>Departure Date</label>
+            <input type="date" id="cf-departureDate" required>
+          </div>
+          <div class="form-group full-width">
+            <label>Ports (comma separated)</label>
+            <input type="text" id="cf-ports" placeholder="Barcelona, Marseille, Genoa, Rome">
+          </div>
+          <div class="form-group full-width">
+            <label>Image URL</label>
+            <input type="url" id="cf-image" placeholder="https://images.unsplash.com/...">
+          </div>
+          <div class="form-group">
+            <label>Included (EN, comma separated)</label>
+            <textarea id="cf-included" rows="3" placeholder="Full board dining, Entertainment, Kids club"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Included (RO, comma separated)</label>
+            <textarea id="cf-includedRo" rows="3" placeholder="Pensiune completa, Divertisment, Club copii"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Excluded (EN, comma separated)</label>
+            <textarea id="cf-excluded" rows="3" placeholder="Shore excursions, Drinks, Spa, Wi-Fi"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Excluded (RO, comma separated)</label>
+            <textarea id="cf-excludedRo" rows="3" placeholder="Excursii, Bauturi, Spa, Wi-Fi"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Advisor Note (EN)</label>
+            <textarea id="cf-advisorNote" rows="2"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Advisor Note (RO)</label>
+            <textarea id="cf-advisorNoteRo" rows="2"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Tags (comma separated)</label>
+            <input type="text" id="cf-tags" placeholder="family, popular, luxury">
+          </div>
+          <div class="form-group">
+            <label>Cabin Types (JSON)</label>
+            <textarea id="cf-cabins" rows="4" placeholder='[{"type":"Interior","typeRo":"Interioara","priceFrom":599}]'></textarea>
+          </div>
+        </div>
+        <div style="display:flex;gap:var(--space-md);margin-top:var(--space-xl);justify-content:flex-end">
+          <button type="button" class="btn btn--outline" onclick="closeCruiseModal()">Cancel</button>
+          <button type="submit" class="btn btn--primary">Save Cruise</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+  // ============================================
+  // XploreCruiseTravel - Admin Panel
+  // ============================================
+
+  const ADMIN_PASS_KEY = 'xct_admin_pass';
+  const CRUISE_DATA_KEY = 'xct_admin_cruises';
+  const BOOKINGS_KEY = 'xct_bookings';
+  const MESSAGES_KEY = 'xct_contact_messages';
+  const SETTINGS_KEY = 'xct_admin_settings';
+  const DEFAULT_PASS = 'xplore2026';
+
+  let adminCruises = [];
+  let originalCruiseData = null;
+
+  // --- Auth ---
+  function attemptLogin() {
+    const pass = document.getElementById('admin-password').value;
+    const storedPass = localStorage.getItem(ADMIN_PASS_KEY) || DEFAULT_PASS;
+    if (pass === storedPass) {
+      sessionStorage.setItem('xct_admin_auth', 'true');
+      showAdmin();
+    } else {
+      document.getElementById('login-error').style.display = 'block';
+    }
+  }
+
+  function adminLogout() {
+    sessionStorage.removeItem('xct_admin_auth');
+    document.getElementById('admin-content').style.display = 'none';
+    document.getElementById('admin-login').style.display = 'block';
+    document.getElementById('admin-password').value = '';
+  }
+
+  function showAdmin() {
+    document.getElementById('admin-login').style.display = 'none';
+    document.getElementById('admin-content').style.display = 'block';
+    loadAdminData();
+  }
+
+  function changePassword() {
+    const newPass = document.getElementById('new-password').value;
+    if (newPass.length < 4) { alert('Password must be at least 4 characters'); return; }
+    localStorage.setItem(ADMIN_PASS_KEY, newPass);
+    document.getElementById('new-password').value = '';
+    alert('Password updated successfully!');
+  }
+
+  // --- Data Loading ---
+  async function loadAdminData() {
+    // Load cruise data from localStorage override or fetch default
+    const stored = localStorage.getItem(CRUISE_DATA_KEY);
+    if (stored) {
+      try {
+        const parsed = JSON.parse(stored);
+        adminCruises = parsed.cruises || parsed;
+        originalCruiseData = parsed;
+      } catch (e) { adminCruises = []; }
+    } else {
+      try {
+        const resp = await fetch('../data/cruises.json');
+        originalCruiseData = await resp.json();
+        adminCruises = originalCruiseData.cruises || [];
+      } catch (e) {
+        adminCruises = [];
+      }
+    }
+    renderCruisesTable();
+    loadBookings();
+    loadMessages();
+    updateStats();
+    loadSettings();
+  }
+
+  // --- Cruises Table ---
+  function renderCruisesTable(filter = '') {
+    const tbody = document.getElementById('cruises-tbody');
+    const filtered = filter
+      ? adminCruises.filter(c =>
+          c.title.toLowerCase().includes(filter) ||
+          c.cruiseLine.toLowerCase().includes(filter) ||
+          c.destination.toLowerCase().includes(filter))
+      : adminCruises;
+
+    tbody.innerHTML = filtered.map(c => `
+      <tr>
+        <td><strong>${c.title}</strong><br><small style="color:var(--gray-400)">${c.titleRo || ''}</small></td>
+        <td>${c.cruiseLine}<br><small style="color:var(--gray-400)">${c.ship}</small></td>
+        <td>${c.destination}</td>
+        <td>${c.nights}</td>
+        <td style="font-weight:600">&euro;${c.priceFrom}</td>
+        <td><span class="badge badge--${c.cruiseType || 'ocean'}">${c.cruiseType || 'ocean'}</span></td>
+        <td>${c.departureDate || 'TBD'}</td>
+        <td>
+          <div class="admin-actions">
+            <button class="btn btn--outline btn--sm-icon" onclick="editCruise('${c.id}')" title="Edit">&#9998;</button>
+            <button class="btn btn--danger btn--sm-icon" onclick="deleteCruise('${c.id}')" title="Delete">&#128465;</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function filterCruises() {
+    const q = document.getElementById('cruise-search').value.toLowerCase();
+    renderCruisesTable(q);
+  }
+
+  // --- Cruise Modal ---
+  function openCruiseModal(cruiseId) {
+    document.getElementById('cruise-modal').classList.add('active');
+    document.getElementById('cruise-modal-title').textContent = cruiseId ? 'Edit Cruise' : 'Add New Cruise';
+    document.getElementById('edit-cruise-id').value = cruiseId || '';
+
+    if (cruiseId) {
+      const c = adminCruises.find(x => x.id === cruiseId);
+      if (!c) return;
+      document.getElementById('cf-title').value = c.title || '';
+      document.getElementById('cf-titleRo').value = c.titleRo || '';
+      document.getElementById('cf-cruiseLine').value = c.cruiseLine || '';
+      document.getElementById('cf-ship').value = c.ship || '';
+      document.getElementById('cf-destination').value = c.destination || '';
+      document.getElementById('cf-destinationRo').value = c.destinationRo || '';
+      document.getElementById('cf-region').value = c.region || '';
+      document.getElementById('cf-cruiseType').value = c.cruiseType || 'ocean';
+      document.getElementById('cf-nights').value = c.nights || '';
+      document.getElementById('cf-priceFrom').value = c.priceFrom || '';
+      document.getElementById('cf-departurePort').value = c.departurePort || '';
+      document.getElementById('cf-departureDate').value = c.departureDate || '';
+      document.getElementById('cf-ports').value = (c.ports || []).join(', ');
+      document.getElementById('cf-image').value = c.image || '';
+      document.getElementById('cf-included').value = (c.included || []).join(', ');
+      document.getElementById('cf-includedRo').value = (c.includedRo || []).join(', ');
+      document.getElementById('cf-excluded').value = (c.excluded || []).join(', ');
+      document.getElementById('cf-excludedRo').value = (c.excludedRo || []).join(', ');
+      document.getElementById('cf-advisorNote').value = c.advisorNote || '';
+      document.getElementById('cf-advisorNoteRo').value = c.advisorNoteRo || '';
+      document.getElementById('cf-tags').value = (c.tags || []).join(', ');
+      document.getElementById('cf-cabins').value = JSON.stringify(c.cabins || [], null, 2);
+    } else {
+      document.getElementById('cruise-form').reset();
+      document.getElementById('cf-cabins').value = JSON.stringify([
+        {"type": "Interior", "typeRo": "Cabina Interioara", "priceFrom": 0, "currency": "EUR"},
+        {"type": "Ocean View", "typeRo": "Vedere la Mare", "priceFrom": 0, "currency": "EUR"},
+        {"type": "Balcony", "typeRo": "Balcon", "priceFrom": 0, "currency": "EUR"},
+        {"type": "Suite", "typeRo": "Suita", "priceFrom": 0, "currency": "EUR"}
+      ], null, 2);
+    }
+  }
+
+  function closeCruiseModal() {
+    document.getElementById('cruise-modal').classList.remove('active');
+  }
+
+  function editCruise(id) { openCruiseModal(id); }
+
+  function deleteCruise(id) {
+    if (!confirm('Are you sure you want to delete this cruise?')) return;
+    adminCruises = adminCruises.filter(c => c.id !== id);
+    saveCruiseData();
+    renderCruisesTable();
+    updateStats();
+  }
+
+  function saveCruise(e) {
+    e.preventDefault();
+    const editId = document.getElementById('edit-cruise-id').value;
+    const splitComma = s => s ? s.split(',').map(x => x.trim()).filter(Boolean) : [];
+
+    let cabins = [];
+    try { cabins = JSON.parse(document.getElementById('cf-cabins').value || '[]'); } catch (e) { cabins = []; }
+
+    const cruise = {
+      id: editId || 'cruise-' + Date.now(),
+      title: document.getElementById('cf-title').value,
+      titleRo: document.getElementById('cf-titleRo').value,
+      cruiseLine: document.getElementById('cf-cruiseLine').value,
+      ship: document.getElementById('cf-ship').value,
+      destination: document.getElementById('cf-destination').value,
+      destinationRo: document.getElementById('cf-destinationRo').value,
+      region: document.getElementById('cf-region').value,
+      cruiseType: document.getElementById('cf-cruiseType').value,
+      nights: parseInt(document.getElementById('cf-nights').value),
+      priceFrom: parseInt(document.getElementById('cf-priceFrom').value),
+      currency: 'EUR',
+      departurePort: document.getElementById('cf-departurePort').value,
+      departureDate: document.getElementById('cf-departureDate').value,
+      ports: splitComma(document.getElementById('cf-ports').value),
+      image: document.getElementById('cf-image').value,
+      included: splitComma(document.getElementById('cf-included').value),
+      includedRo: splitComma(document.getElementById('cf-includedRo').value),
+      excluded: splitComma(document.getElementById('cf-excluded').value),
+      excludedRo: splitComma(document.getElementById('cf-excludedRo').value),
+      advisorNote: document.getElementById('cf-advisorNote').value,
+      advisorNoteRo: document.getElementById('cf-advisorNoteRo').value,
+      tags: splitComma(document.getElementById('cf-tags').value),
+      cabins: cabins,
+      itinerary: []
+    };
+
+    if (editId) {
+      const idx = adminCruises.findIndex(c => c.id === editId);
+      if (idx !== -1) {
+        cruise.itinerary = adminCruises[idx].itinerary || [];
+        adminCruises[idx] = cruise;
+      }
+    } else {
+      adminCruises.push(cruise);
+    }
+
+    saveCruiseData();
+    renderCruisesTable();
+    updateStats();
+    closeCruiseModal();
+  }
+
+  function saveCruiseData() {
+    const data = {
+      lastUpdated: new Date().toISOString(),
+      source: 'Admin Panel',
+      cruises: adminCruises,
+      destinations: originalCruiseData?.destinations || [],
+      cruiseLines: originalCruiseData?.cruiseLines || []
+    };
+    localStorage.setItem(CRUISE_DATA_KEY, JSON.stringify(data));
+  }
+
+  // --- Bookings ---
+  function loadBookings() {
+    const bookings = JSON.parse(localStorage.getItem(BOOKINGS_KEY) || '[]');
+    const container = document.getElementById('bookings-list');
+
+    if (bookings.length === 0) {
+      container.innerHTML = '<p style="color:var(--gray-400);text-align:center;padding:var(--space-xl)">No bookings yet.</p>';
+      return;
+    }
+
+    container.innerHTML = bookings.reverse().map(b => `
+      <div class="booking-item">
+        <div class="booking-item__header">
+          <strong>${b.firstname} ${b.lastname}</strong>
+          <span style="font-size:0.8rem;color:var(--gray-400)">${new Date(b.date).toLocaleDateString()}</span>
+        </div>
+        <div class="booking-item__details">
+          <span>Email: ${b.email}</span>
+          <span>Phone: ${b.phone || 'N/A'}</span>
+          <span>Cruise: ${b.cruise || 'N/A'}</span>
+          <span>Cabin: ${b.cabin || 'N/A'}</span>
+          <span>Passengers: ${b.passengers || 'N/A'}</span>
+          <span>GDPR: ${b.gdprConsent ? 'Yes' : 'No'}</span>
+        </div>
+        ${b.requests ? '<p style="font-size:0.85rem;color:var(--gray-500);margin-top:var(--space-sm)">Notes: ' + b.requests + '</p>' : ''}
+      </div>
+    `).join('');
+  }
+
+  // --- Messages ---
+  function loadMessages() {
+    const messages = JSON.parse(localStorage.getItem(MESSAGES_KEY) || '[]');
+    const container = document.getElementById('messages-list');
+
+    if (messages.length === 0) {
+      container.innerHTML = '<p style="color:var(--gray-400);text-align:center;padding:var(--space-xl)">No messages yet.</p>';
+      return;
+    }
+
+    container.innerHTML = messages.reverse().map(m => `
+      <div class="booking-item">
+        <div class="booking-item__header">
+          <strong>${m.name}</strong>
+          <span style="font-size:0.8rem;color:var(--gray-400)">${new Date(m.date).toLocaleDateString()}</span>
+        </div>
+        <p style="font-size:0.85rem;color:var(--gray-400);margin-top:4px">${m.email} | ${m.phone || 'N/A'}</p>
+        <p style="margin-top:var(--space-sm);color:var(--gray-500)">${m.message}</p>
+      </div>
+    `).join('');
+  }
+
+  // --- Stats ---
+  function updateStats() {
+    document.getElementById('stat-total-cruises').textContent = adminCruises.length;
+    const dests = new Set(adminCruises.map(c => c.destination));
+    document.getElementById('stat-destinations').textContent = dests.size;
+    const bookings = JSON.parse(localStorage.getItem(BOOKINGS_KEY) || '[]');
+    document.getElementById('stat-bookings').textContent = bookings.length;
+    const messages = JSON.parse(localStorage.getItem(MESSAGES_KEY) || '[]');
+    document.getElementById('stat-messages').textContent = messages.length;
+  }
+
+  // --- Tabs ---
+  function switchTab(tabName) {
+    document.querySelectorAll('.admin-tab').forEach(t => {
+      t.classList.remove('active');
+      if (t.getAttribute('onclick') && t.getAttribute('onclick').includes("'" + tabName + "'")) {
+        t.classList.add('active');
+      }
+    });
+    document.querySelectorAll('.admin-tab-content').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + tabName).classList.add('active');
+  }
+
+  // --- Settings ---
+  function loadSettings() {
+    const settings = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
+    if (settings.eurToRon) document.getElementById('setting-eur-ron').value = settings.eurToRon;
+    if (settings.email) document.getElementById('setting-email').value = settings.email;
+    if (settings.phone) document.getElementById('setting-phone').value = settings.phone;
+    if (settings.emailjsService) document.getElementById('setting-emailjs-service').value = settings.emailjsService;
+    if (settings.emailjsKey) document.getElementById('setting-emailjs-key').value = settings.emailjsKey;
+  }
+
+  function saveSettings() {
+    const settings = {
+      eurToRon: parseFloat(document.getElementById('setting-eur-ron').value),
+      email: document.getElementById('setting-email').value,
+      phone: document.getElementById('setting-phone').value,
+      emailjsService: document.getElementById('setting-emailjs-service').value,
+      emailjsKey: document.getElementById('setting-emailjs-key').value
+    };
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    alert('Settings saved!');
+  }
+
+  // --- Export/Import ---
+  function exportCruiseData() {
+    const data = {
+      lastUpdated: new Date().toISOString(),
+      source: 'Admin Export',
+      cruises: adminCruises,
+      destinations: originalCruiseData?.destinations || [],
+      cruiseLines: originalCruiseData?.cruiseLines || []
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'cruises-export-' + new Date().toISOString().slice(0, 10) + '.json';
+    a.click();
+  }
+
+  function importCruiseData(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      try {
+        const data = JSON.parse(e.target.result);
+        if (data.cruises && Array.isArray(data.cruises)) {
+          adminCruises = data.cruises;
+          originalCruiseData = data;
+          saveCruiseData();
+          renderCruisesTable();
+          updateStats();
+          alert('Imported ' + data.cruises.length + ' cruises successfully!');
+        } else {
+          alert('Invalid file format. Expected {cruises: [...]}');
+        }
+      } catch (err) {
+        alert('Error parsing file: ' + err.message);
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  function resetData() {
+    if (!confirm('This will reset all cruise data to the original defaults. Continue?')) return;
+    localStorage.removeItem(CRUISE_DATA_KEY);
+    loadAdminData();
+  }
+
+  function exportBookings() {
+    const bookings = JSON.parse(localStorage.getItem(BOOKINGS_KEY) || '[]');
+    if (bookings.length === 0) { alert('No bookings to export'); return; }
+    const headers = ['Date', 'First Name', 'Last Name', 'Email', 'Phone', 'Cruise', 'Cabin', 'Passengers', 'Requests', 'GDPR', 'Terms', 'Marketing'];
+    const rows = bookings.map(b => [b.date, b.firstname, b.lastname, b.email, b.phone, b.cruise, b.cabin, b.passengers, b.requests, b.gdprConsent, b.termsConsent, b.marketingConsent]);
+    const csv = [headers, ...rows].map(r => r.map(v => '"' + String(v || '').replace(/"/g, '""') + '"').join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'bookings-' + new Date().toISOString().slice(0, 10) + '.csv';
+    a.click();
+  }
+
+  function exportMessages() {
+    const messages = JSON.parse(localStorage.getItem(MESSAGES_KEY) || '[]');
+    if (messages.length === 0) { alert('No messages to export'); return; }
+    const headers = ['Date', 'Name', 'Email', 'Phone', 'Cruise Interest', 'Message'];
+    const rows = messages.map(m => [m.date, m.name, m.email, m.phone, m.cruise, m.message]);
+    const csv = [headers, ...rows].map(r => r.map(v => '"' + String(v || '').replace(/"/g, '""') + '"').join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'messages-' + new Date().toISOString().slice(0, 10) + '.csv';
+    a.click();
+  }
+
+  // --- Init ---
+  document.addEventListener('DOMContentLoaded', () => {
+    if (sessionStorage.getItem('xct_admin_auth') === 'true') {
+      showAdmin();
+    }
+    document.getElementById('admin-password').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') attemptLogin();
+    });
+  });
+  </script>
+</body>
+</html>
