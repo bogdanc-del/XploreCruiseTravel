@@ -10,6 +10,11 @@ const securityHeaders = [
 ]
 
 const nextConfig: NextConfig = {
+  // Include cruise index JSON in the serverless function bundle
+  // so generateMetadata() in layout.tsx can read it via readFileSync
+  outputFileTracingIncludes: {
+    '/cruises/[slug]': ['./public/data/cruises-index.json'],
+  },
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '*.supabase.co' },
