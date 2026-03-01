@@ -279,9 +279,10 @@ interface RouteMapProps {
   departurePort: string
   portsOfCall: string[]
   className?: string
+  onPortClick?: (portName: string) => void
 }
 
-export default function RouteMap({ departurePort, portsOfCall, className = '' }: RouteMapProps) {
+export default function RouteMap({ departurePort, portsOfCall, className = '', onPortClick }: RouteMapProps) {
   const mapRef = useRef<HTMLDivElement>(null)
   const mapInstanceRef = useRef<L.Map | null>(null)
   const t = useT()
@@ -371,6 +372,17 @@ export default function RouteMap({ departurePort, portsOfCall, className = '' }:
         className: 'cruise-tooltip',
       })
 
+      // Click handler for port markers
+      if (onPortClick && !isDeparture) {
+        marker.on('click', () => {
+          // Find the original port name from portsOfCall
+          const originalName = portsOfCall[i - 1] || port.name
+          onPortClick(originalName)
+        })
+        // Pointer cursor for clickable ports
+        marker.getElement()?.style.setProperty('cursor', 'pointer')
+      }
+
       // Show tooltip on hover (permanent labels for small screens would be too cluttered)
       if (isDeparture) {
         marker.bindTooltip(`🚢 ${port.name}`, {
@@ -421,7 +433,8 @@ export default function RouteMap({ departurePort, portsOfCall, className = '' }:
         mapInstanceRef.current = null
       }
     }
-  }, [ports])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ports, onPortClick])
 
   if (ports.length < 2) return null
 

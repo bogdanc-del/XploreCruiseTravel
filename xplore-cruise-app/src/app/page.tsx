@@ -12,70 +12,10 @@ import CruiseCard from '@/components/cruise/CruiseCard'
 import ChatWidget from '@/components/chat/ChatWidget'
 import { eurToRon } from '@/lib/supabase'
 import type { Cruise } from '@/lib/supabase'
+import { FEATURED_CRUISES } from '@/data/cruises-database'
 
-// Demo cruise data (will be replaced by Supabase once connected)
-const demoCruises: Cruise[] = [
-  {
-    id: '1', slug: 'western-mediterranean-discovery', title: 'Western Mediterranean Discovery', title_ro: 'Descoperirea Mediteranei de Vest',
-    cruise_type: 'ocean', nights: 7, price_from: 599, currency: 'EUR', departure_port: 'Barcelona, Spain', departure_port_ro: 'Barcelona, Spania',
-    departure_date: '2026-06-15', ports_of_call: ['Marseille', 'Genoa', 'Rome', 'Palermo', 'Valletta'], ports_of_call_ro: ['Marsilia', 'Genova', 'Roma', 'Palermo', 'Valletta'],
-    image_url: 'https://images.unsplash.com/photo-1548574505-5e239809ee19?w=800', gallery_urls: [],
-    included: ['Full-board meals', 'Entertainment', 'Pool & spa'], included_ro: ['Masa completa', 'Divertisment', 'Piscina & spa'],
-    excluded: ['Shore excursions', 'Premium drinks'], excluded_ro: ['Excursii terestre', 'Bauturi premium'],
-    tags: ['popular', 'family'], featured: true, active: true, source: 'manual',
-    cruise_line: 'MSC Cruises', ship_name: 'MSC Meraviglia', destination: 'Mediterranean', destination_ro: 'Mediterana', destination_slug: 'mediterranean',
-  },
-  {
-    id: '2', slug: 'greek-islands-turkey-voyage', title: 'Greek Islands & Turkey Voyage', title_ro: 'Insulele Grecesti si Turcia',
-    cruise_type: 'ocean', nights: 7, price_from: 649, currency: 'EUR', departure_port: 'Athens (Piraeus), Greece', departure_port_ro: 'Atena (Pireu), Grecia',
-    departure_date: '2026-06-10', ports_of_call: ['Mykonos', 'Kusadasi', 'Patmos', 'Rhodes', 'Santorini'], ports_of_call_ro: ['Mykonos', 'Kusadasi', 'Patmos', 'Rodos', 'Santorini'],
-    image_url: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800', gallery_urls: [],
-    included: ['All meals', 'Entertainment', 'Kids club'], included_ro: ['Toate mesele', 'Divertisment', 'Club copii'],
-    excluded: ['Drinks package', 'Excursions'], excluded_ro: ['Pachet bauturi', 'Excursii'],
-    tags: ['popular', 'romantic'], featured: true, active: true, source: 'manual',
-    cruise_line: 'Costa Cruises', ship_name: 'Costa Toscana', destination: 'Mediterranean', destination_ro: 'Mediterana', destination_slug: 'mediterranean',
-  },
-  {
-    id: '3', slug: 'norwegian-fjords-explorer', title: 'Norwegian Fjords Explorer', title_ro: 'Explorator Fiorduri Norvegiene',
-    cruise_type: 'ocean', nights: 10, price_from: 1199, currency: 'EUR', departure_port: 'Southampton, UK', departure_port_ro: 'Southampton, Regatul Unit',
-    departure_date: '2026-07-05', ports_of_call: ['Bergen', 'Geiranger', 'Alesund', 'Stavanger', 'Flam'], ports_of_call_ro: ['Bergen', 'Geiranger', 'Alesund', 'Stavanger', 'Flam'],
-    image_url: 'https://images.unsplash.com/photo-1507272931001-fc06c17e4f43?w=800', gallery_urls: [],
-    included: ['All meals', 'Entertainment', 'Fitness center'], included_ro: ['Toate mesele', 'Divertisment', 'Sala fitness'],
-    excluded: ['Shore excursions', 'Specialty dining'], excluded_ro: ['Excursii terestre', 'Restaurante speciale'],
-    tags: ['adventure', 'nature'], featured: true, active: true, source: 'manual',
-    cruise_line: 'Norwegian Cruise Line', ship_name: 'Norwegian Getaway', destination: 'Northern Europe', destination_ro: 'Europa de Nord', destination_slug: 'northern-europe',
-  },
-  {
-    id: '4', slug: 'romantic-danube-river-cruise', title: 'Romantic Danube River Cruise', title_ro: 'Croaziera Romantica pe Dunare',
-    cruise_type: 'river', nights: 8, price_from: 2299, currency: 'EUR', departure_port: 'Budapest, Hungary', departure_port_ro: 'Budapesta, Ungaria',
-    departure_date: '2026-06-20', ports_of_call: ['Bratislava', 'Vienna', 'Durnstein', 'Melk', 'Passau'], ports_of_call_ro: ['Bratislava', 'Viena', 'Durnstein', 'Melk', 'Passau'],
-    image_url: 'https://images.unsplash.com/photo-1514539079130-25950c84af65?w=800', gallery_urls: [],
-    included: ['All meals', 'Shore excursions', 'Wine tasting'], included_ro: ['Toate mesele', 'Excursii terestre', 'Degustare vin'],
-    excluded: ['Premium wines', 'Spa treatments'], excluded_ro: ['Vinuri premium', 'Tratamente spa'],
-    tags: ['romantic', 'cultural'], featured: true, active: true, source: 'manual',
-    cruise_line: 'Viking River Cruises', ship_name: 'Viking Longship Hild', destination: 'River Cruises', destination_ro: 'Croaziere Fluviale', destination_slug: 'river-cruises',
-  },
-  {
-    id: '5', slug: 'caribbean-perfect-day', title: 'Caribbean & Perfect Day', title_ro: 'Caraibe si Perfect Day',
-    cruise_type: 'ocean', nights: 7, price_from: 749, currency: 'EUR', departure_port: 'Miami, FL, USA', departure_port_ro: 'Miami, FL, SUA',
-    departure_date: '2026-11-10', ports_of_call: ['CocoCay', 'Cozumel', 'Roatan', 'Costa Maya'], ports_of_call_ro: ['CocoCay', 'Cozumel', 'Roatan', 'Costa Maya'],
-    image_url: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800', gallery_urls: [],
-    included: ['All meals', 'Entertainment', 'Pool deck'], included_ro: ['Toate mesele', 'Divertisment', 'Punte piscina'],
-    excluded: ['Drink packages', 'WiFi'], excluded_ro: ['Pachet bauturi', 'WiFi'],
-    tags: ['family', 'tropical'], featured: true, active: true, source: 'manual',
-    cruise_line: 'Royal Caribbean', ship_name: 'Harmony of the Seas', destination: 'Caribbean', destination_ro: 'Caraibe', destination_slug: 'caribbean',
-  },
-  {
-    id: '6', slug: 'adriatic-luxury-collection', title: 'Adriatic Luxury Collection', title_ro: 'Colectia de Lux Adriatica',
-    cruise_type: 'luxury', nights: 10, price_from: 4999, currency: 'EUR', departure_port: 'Venice, Italy', departure_port_ro: 'Venetia, Italia',
-    departure_date: '2026-09-12', ports_of_call: ['Dubrovnik', 'Kotor', 'Corfu', 'Katakolon', 'Mykonos'], ports_of_call_ro: ['Dubrovnik', 'Kotor', 'Corfu', 'Katakolon', 'Mykonos'],
-    image_url: 'https://images.unsplash.com/photo-1599640842225-85d111c60e6b?w=800', gallery_urls: [],
-    included: ['Butler service', 'All drinks', 'Shore excursions', 'WiFi'], included_ro: ['Serviciu butler', 'Toate bauturile', 'Excursii terestre', 'WiFi'],
-    excluded: ['Premium spa packages'], excluded_ro: ['Pachete spa premium'],
-    tags: ['luxury', 'adults-only'], featured: true, active: true, source: 'manual',
-    cruise_line: 'Silversea', ship_name: 'Silver Moon', destination: 'Mediterranean', destination_ro: 'Mediterana', destination_slug: 'mediterranean',
-  },
-]
+// Show 6 best cruises on the homepage (variety of types)
+const homepageCruises = FEATURED_CRUISES.slice(0, 6)
 
 // Stats counter component
 function StatCounter({ target, suffix = '', label }: { target: number; suffix?: string; label: string }) {
@@ -244,7 +184,7 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {demoCruises.map((cruise, i) => (
+            {homepageCruises.map((cruise, i) => (
               <div key={cruise.id} className="animate-fade-in-up" style={{ animationDelay: `${i * 100}ms` }}>
                 <CruiseCard cruise={cruise} locale={locale} />
               </div>
@@ -262,15 +202,17 @@ export default function HomePage() {
       {/* Destinations Section — only show categories that have cruises */}
       {(() => {
         const allDestinations = [
-          { slug: 'mediterranean', name: 'Mediterranean', nameRo: 'Mediterana', img: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=400' },
-          { slug: 'caribbean', name: 'Caribbean', nameRo: 'Caraibe', img: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400' },
-          { slug: 'northern-europe', name: 'Northern Europe', nameRo: 'Europa de Nord', img: 'https://images.unsplash.com/photo-1507272931001-fc06c17e4f43?w=400' },
-          { slug: 'river-cruises', name: 'River Cruises', nameRo: 'Croaziere Fluviale', img: 'https://images.unsplash.com/photo-1514539079130-25950c84af65?w=400' },
+          { slug: 'western-mediterranean', name: 'Western Mediterranean', nameRo: 'Mediterana de Vest', img: 'https://images.unsplash.com/photo-1548574505-5e239809ee19?w=400' },
+          { slug: 'caribbean', name: 'Caribbean', nameRo: 'Caraibe', img: 'https://images.unsplash.com/photo-1580541631950-7282082b04a2?w=400' },
+          { slug: 'eastern-mediterranean', name: 'Eastern Mediterranean', nameRo: 'Mediterana de Est', img: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=400' },
+          { slug: 'norwegian-fjords', name: 'Norwegian Fjords', nameRo: 'Fiordurile Norvegiei', img: 'https://images.unsplash.com/photo-1507272931001-fc06c17e4f43?w=400' },
+          { slug: 'danube', name: 'Danube', nameRo: 'Dunărea', img: 'https://images.unsplash.com/photo-1509023464722-18d996393ca8?w=400' },
+          { slug: 'baltic', name: 'Baltic', nameRo: 'Marea Baltică', img: 'https://images.unsplash.com/photo-1515005318787-cc68052b38f3?w=400' },
         ]
         const destinations = allDestinations
           .map(d => ({
             ...d,
-            count: demoCruises.filter(c => c.destination_slug === d.slug).length,
+            count: FEATURED_CRUISES.filter(c => c.destination_slug === d.slug).length,
           }))
           .filter(d => d.count > 0)
 

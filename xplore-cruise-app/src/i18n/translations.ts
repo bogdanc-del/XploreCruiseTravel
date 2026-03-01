@@ -155,6 +155,52 @@ export const translations = {
     map_route: 'Route',
     map_departure_label: 'Departure',
 
+    // Beverages Tab
+    detail_beverages: 'Beverages',
+    beverages_title: 'Beverage Packages',
+    beverages_drinks_included: 'Drinks Included',
+    beverages_per_day: '/day',
+    beverages_whats_included: "What's included",
+    beverages_price_note: 'Prices may vary by itinerary and booking date. Contact us for updated pricing.',
+
+    // Terms Tab
+    detail_terms: 'Terms & Conditions',
+    terms_general: 'General Terms',
+    terms_may_vary: 'Terms may vary. Contact us for updated information and conditions specific to your booking.',
+
+    // Port Drawer
+    port_explore: 'Explore',
+    port_highlights: 'Top Highlights',
+    port_video: 'Video',
+    port_excursions: 'Recommended Excursions',
+    port_book_on: 'Book on',
+    port_coming_soon: 'Information about this port will be available soon.',
+    port_arrival: 'Arrival',
+    port_departure_time: 'Departure',
+
+    // Itinerary
+    itinerary_day: 'Day',
+    itinerary_departure: 'Departure',
+    itinerary_return: 'Return',
+
+    // Gallery
+    gallery_view: 'View full image gallery',
+    gallery_close: 'Close lightbox',
+    gallery_prev: 'Previous image',
+    gallery_next: 'Next image',
+    gallery_more: 'more photos',
+
+    // Excursions
+    excursion_from: 'from',
+    excursion_duration: 'Duration',
+
+    // Cruise Line Info
+    cruise_line_label: 'Cruise Line',
+    ship_label: 'Ship',
+    destination_label: 'Destination',
+    duration_label: 'Duration',
+    departure_port_label: 'Departure Port',
+
     // Common
     loading: 'Loading...',
     error: 'Something went wrong',
@@ -317,6 +363,52 @@ export const translations = {
     map_port: 'Escala',
     map_route: 'Traseu',
     map_departure_label: 'Plecare',
+
+    // Beverages Tab
+    detail_beverages: 'Bauturi',
+    beverages_title: 'Pachete de Bauturi',
+    beverages_drinks_included: 'Bauturi Incluse',
+    beverages_per_day: '/zi',
+    beverages_whats_included: 'Ce include',
+    beverages_price_note: 'Preturile pot varia in functie de itinerariu si data rezervarii. Contactati-ne pentru preturi actualizate.',
+
+    // Terms Tab
+    detail_terms: 'Termeni si Conditii',
+    terms_general: 'Termeni Generali',
+    terms_may_vary: 'Termenii pot varia. Contactati-ne pentru informatii actualizate si conditii specifice rezervarii dumneavoastra.',
+
+    // Port Drawer
+    port_explore: 'Exploreaza',
+    port_highlights: 'Atractii Principale',
+    port_video: 'Video',
+    port_excursions: 'Excursii Recomandate',
+    port_book_on: 'Rezerva pe',
+    port_coming_soon: 'Informatii despre acest port vor fi disponibile in curand.',
+    port_arrival: 'Sosire',
+    port_departure_time: 'Plecare',
+
+    // Itinerary
+    itinerary_day: 'Ziua',
+    itinerary_departure: 'Plecare',
+    itinerary_return: 'Intoarcere',
+
+    // Gallery
+    gallery_view: 'Vezi galeria completa de imagini',
+    gallery_close: 'Inchide galeria',
+    gallery_prev: 'Imaginea anterioara',
+    gallery_next: 'Urmatoarea imagine',
+    gallery_more: 'mai multe fotografii',
+
+    // Excursions
+    excursion_from: 'de la',
+    excursion_duration: 'Durata',
+
+    // Cruise Line Info
+    cruise_line_label: 'Companie',
+    ship_label: 'Nava',
+    destination_label: 'Destinatie',
+    duration_label: 'Durata',
+    departure_port_label: 'Port Plecare',
 
     // Common
     loading: 'Se incarca...',
