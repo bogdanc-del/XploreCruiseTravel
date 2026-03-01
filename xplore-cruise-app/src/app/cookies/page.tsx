@@ -33,7 +33,7 @@ export default function CookiesPage() {
               </h2>
               <p className="text-navy-600 text-sm leading-relaxed">
                 {isRo
-                  ? 'Cookie-urile sunt fisiere text mici stocate pe dispozitivul dumneavoastra de catre browser-ul web. Acestea sunt utilizate pe scara larga pentru a permite functionarea corespunzatoare a site-urilor web, pentru a oferi rapoarte si a personaliza experienta.'
+                  ? 'Cookie-urile sunt fișiere text mici stocate pe dispozitivul dumneavoastră de către browser-ul web. Acestea sunt utilizate pe scară largă pentru a permite funcționarea corespunzătoare a site-urilor web, pentru a oferi rapoarte și a personaliza experiența.'
                   : 'Cookies are small text files stored on your device by your web browser. They are widely used to enable websites to function properly, provide reporting, and personalize the experience.'}
               </p>
             </div>
@@ -48,18 +48,18 @@ export default function CookiesPage() {
                     <tr>
                       <th className="text-left px-4 py-2 text-navy-700 font-semibold">Cookie</th>
                       <th className="text-left px-4 py-2 text-navy-700 font-semibold">{isRo ? 'Scop' : 'Purpose'}</th>
-                      <th className="text-left px-4 py-2 text-navy-700 font-semibold">{isRo ? 'Durata' : 'Duration'}</th>
+                      <th className="text-left px-4 py-2 text-navy-700 font-semibold">{isRo ? 'Durată' : 'Duration'}</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-navy-100">
                     <tr>
                       <td className="px-4 py-2 text-navy-600 font-mono text-xs">xct_locale</td>
-                      <td className="px-4 py-2 text-navy-600">{isRo ? 'Preferinta de limba' : 'Language preference'}</td>
+                      <td className="px-4 py-2 text-navy-600">{isRo ? 'Preferința de limbă' : 'Language preference'}</td>
                       <td className="px-4 py-2 text-navy-600">1 {isRo ? 'an' : 'year'}</td>
                     </tr>
                     <tr>
                       <td className="px-4 py-2 text-navy-600 font-mono text-xs">xct_cookie_consent</td>
-                      <td className="px-4 py-2 text-navy-600">{isRo ? 'Consimtamant cookie' : 'Cookie consent'}</td>
+                      <td className="px-4 py-2 text-navy-600">{isRo ? 'Consimțământ cookie' : 'Cookie consent'}</td>
                       <td className="px-4 py-2 text-navy-600">1 {isRo ? 'an' : 'year'}</td>
                     </tr>
                   </tbody>
@@ -73,7 +73,7 @@ export default function CookiesPage() {
               </h2>
               <p className="text-navy-600 text-sm leading-relaxed">
                 {isRo
-                  ? 'Puteti controla si sterge cookie-urile prin setarile browser-ului. Dezactivarea cookie-urilor poate afecta functionarea corespunzatoare a anumitor parti ale site-ului.'
+                  ? 'Puteți controla și șterge cookie-urile prin setările browser-ului. Dezactivarea cookie-urilor poate afecta funcționarea corespunzătoare a anumitor părți ale site-ului.'
                   : 'You can control and delete cookies through your browser settings. Disabling cookies may affect the proper functioning of certain parts of the website.'}
               </p>
             </div>
@@ -84,7 +84,7 @@ export default function CookiesPage() {
               </h2>
               <p className="text-navy-600 text-sm leading-relaxed">
                 {isRo
-                  ? 'Pentru intrebari referitoare la politica de cookie-uri, va rugam contactati-ne la xplorecruisetravel@gmail.com.'
+                  ? 'Pentru întrebări referitoare la politica de cookie-uri, vă rugăm contactați-ne la xplorecruisetravel@gmail.com.'
                   : 'For questions regarding our cookie policy, please contact us at xplorecruisetravel@gmail.com.'}
               </p>
             </div>
