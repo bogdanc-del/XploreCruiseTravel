@@ -1,7 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-import Link from 'next/link'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import Image from 'next/image'
 import { useT, useLocale } from '@/i18n/context'
 import Header from '@/components/Header'
@@ -10,19 +9,86 @@ import Container from '@/components/ui/Container'
 import CruiseCard from '@/components/cruise/CruiseCard'
 import ChatWidget from '@/components/chat/ChatWidget'
 import type { Cruise } from '@/lib/supabase'
-import { FEATURED_CRUISES, getFilterOptions } from '@/data/cruises-database'
 
 // ============================================================
-// Derive filter options from the real cruise database
+// Types for the API response
 // ============================================================
 
-const filterOptions = getFilterOptions()
-const destinations = filterOptions.destinations
-const cruiseTypes = filterOptions.cruiseTypes
+interface ApiCruise {
+  id: string
+  slug: string
+  title: string
+  cruise_type: string
+  nights: number
+  price_from: number
+  currency: string
+  departure_port: string
+  departure_date: string | null
+  ports_of_call: string[]
+  image_url: string
+  cruise_line: string
+  ship_name: string
+  destination: string
+  destination_ro: string
+  destination_slug: string
+}
+
+interface FilterMeta {
+  destinations: { slug: string; name: string; name_ro: string }[]
+  cruiseLines: string[]
+  cruiseTypes: string[]
+  priceRange: { min: number; max: number }
+  nightsRange: { min: number; max: number }
+}
+
+interface PaginationInfo {
+  page: number
+  limit: number
+  total: number
+  totalPages: number
+  hasNext: boolean
+  hasPrev: boolean
+}
+
+// Adapt API cruise to Cruise type for CruiseCard
+function apiToCruise(c: ApiCruise): Cruise {
+  return {
+    id: c.id,
+    slug: c.slug,
+    title: c.title,
+    title_ro: c.title, // Title is already in Romanian from croaziere.net
+    cruise_type: c.cruise_type as Cruise['cruise_type'],
+    nights: c.nights,
+    price_from: c.price_from,
+    currency: c.currency || 'EUR',
+    departure_port: c.departure_port,
+    departure_port_ro: c.departure_port,
+    departure_date: c.departure_date || '',
+    ports_of_call: c.ports_of_call || [],
+    ports_of_call_ro: c.ports_of_call || [],
+    image_url: c.image_url,
+    gallery_urls: [],
+    included: [],
+    included_ro: [],
+    excluded: [],
+    excluded_ro: [],
+    tags: [],
+    featured: false,
+    active: true,
+    source: 'croaziere.net',
+    cruise_line: c.cruise_line,
+    ship_name: c.ship_name,
+    destination: c.destination,
+    destination_ro: c.destination_ro || c.destination,
+    destination_slug: c.destination_slug,
+  } as Cruise
+}
 
 // ============================================================
-// Cruises Listing Page
+// Cruises Listing Page — fetches from API with pagination
 // ============================================================
+
+const ITEMS_PER_PAGE = 24
 
 export default function CruisesPage() {
   const t = useT()
@@ -30,19 +96,99 @@ export default function CruisesPage() {
 
   // Filter state
   const [search, setSearch] = useState('')
+  const [searchDebounced, setSearchDebounced] = useState('')
   const [selectedDestination, setSelectedDestination] = useState('')
   const [selectedType, setSelectedType] = useState('')
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 10000])
-  const [nightsRange, setNightsRange] = useState<[number, number]>([0, 30])
-  const [sortBy, setSortBy] = useState('featured')
+  const [selectedLine, setSelectedLine] = useState('')
+  const [minPrice, setMinPrice] = useState('')
+  const [maxPrice, setMaxPrice] = useState('')
+  const [minNights, setMinNights] = useState('')
+  const [maxNights, setMaxNights] = useState('')
+  const [sortBy, setSortBy] = useState('price_asc')
   const [showFilters, setShowFilters] = useState(false)
 
-  // Destination display names — derived from real data
-  const destinationNamesMap = useMemo(() => {
-    const m: Record<string, { en: string; ro: string }> = {}
-    for (const d of destinations) m[d.slug] = { en: d.name, ro: d.name_ro }
-    return m
+  // API data
+  const [cruises, setCruises] = useState<Cruise[]>([])
+  const [pagination, setPagination] = useState<PaginationInfo | null>(null)
+  const [meta, setMeta] = useState<FilterMeta | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [page, setPage] = useState(1)
+
+  const abortRef = useRef<AbortController | null>(null)
+
+  // Debounce search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSearchDebounced(search)
+      setPage(1) // Reset to page 1 on search
+    }, 400)
+    return () => clearTimeout(timer)
+  }, [search])
+
+  // Reset to page 1 when filters change
+  useEffect(() => { setPage(1) }, [selectedDestination, selectedType, selectedLine, minPrice, maxPrice, minNights, maxNights, sortBy])
+
+  // Load filter metadata once
+  useEffect(() => {
+    fetch('/api/cruises?meta=1')
+      .then(r => r.json())
+      .then(data => setMeta(data))
+      .catch(() => {})
   }, [])
+
+  // Fetch cruises from API
+  const fetchCruises = useCallback(async () => {
+    // Cancel previous request
+    if (abortRef.current) abortRef.current.abort()
+    const controller = new AbortController()
+    abortRef.current = controller
+
+    setLoading(true)
+
+    const params = new URLSearchParams()
+    params.set('page', String(page))
+    params.set('limit', String(ITEMS_PER_PAGE))
+    if (searchDebounced) params.set('search', searchDebounced)
+    if (selectedDestination) params.set('destination', selectedDestination)
+    if (selectedType) params.set('type', selectedType)
+    if (selectedLine) params.set('line', selectedLine)
+    if (minPrice) params.set('minPrice', minPrice)
+    if (maxPrice) params.set('maxPrice', maxPrice)
+    if (minNights) params.set('minNights', minNights)
+    if (maxNights) params.set('maxNights', maxNights)
+    if (sortBy) params.set('sort', sortBy)
+
+    try {
+      const res = await fetch(`/api/cruises?${params}`, { signal: controller.signal })
+      const data = await res.json()
+      setCruises((data.cruises || []).map(apiToCruise))
+      setPagination(data.pagination)
+    } catch (err: unknown) {
+      if (err instanceof Error && err.name !== 'AbortError') {
+        console.error('Failed to fetch cruises:', err)
+      }
+    } finally {
+      setLoading(false)
+    }
+  }, [page, searchDebounced, selectedDestination, selectedType, selectedLine, minPrice, maxPrice, minNights, maxNights, sortBy])
+
+  useEffect(() => { fetchCruises() }, [fetchCruises])
+
+  const clearFilters = () => {
+    setSearch('')
+    setSearchDebounced('')
+    setSelectedDestination('')
+    setSelectedType('')
+    setSelectedLine('')
+    setMinPrice('')
+    setMaxPrice('')
+    setMinNights('')
+    setMaxNights('')
+    setSortBy('price_asc')
+    setPage(1)
+  }
+
+  const hasActiveFilters = search || selectedDestination || selectedType || selectedLine || minPrice || maxPrice || minNights || maxNights
 
   // Cruise type display names
   const typeNames: Record<string, { en: string; ro: string }> = {
@@ -51,72 +197,6 @@ export default function CruisesPage() {
     'luxury': { en: 'Luxury', ro: 'Lux' },
     'expedition': { en: 'Expedition', ro: 'Expediție' },
   }
-
-  // Filtered & sorted cruises
-  const filteredCruises = useMemo(() => {
-    let result = FEATURED_CRUISES.filter(cruise => {
-      // Search filter
-      if (search) {
-        const q = search.toLowerCase()
-        const title = locale === 'ro' && cruise.title_ro ? cruise.title_ro : cruise.title
-        const matchesSearch =
-          title.toLowerCase().includes(q) ||
-          (cruise.cruise_line || '').toLowerCase().includes(q) ||
-          (cruise.destination || '').toLowerCase().includes(q) ||
-          (cruise.destination_ro || '').toLowerCase().includes(q) ||
-          (cruise.ship_name || '').toLowerCase().includes(q) ||
-          cruise.departure_port.toLowerCase().includes(q) ||
-          (cruise.departure_port_ro || '').toLowerCase().includes(q)
-        if (!matchesSearch) return false
-      }
-
-      // Destination filter
-      if (selectedDestination && cruise.destination_slug !== selectedDestination) return false
-
-      // Type filter
-      if (selectedType && cruise.cruise_type !== selectedType) return false
-
-      // Price filter
-      if (cruise.price_from < priceRange[0] || cruise.price_from > priceRange[1]) return false
-
-      // Nights filter
-      if (cruise.nights < nightsRange[0] || cruise.nights > nightsRange[1]) return false
-
-      return true
-    })
-
-    // Sort
-    switch (sortBy) {
-      case 'price_asc':
-        result.sort((a, b) => a.price_from - b.price_from)
-        break
-      case 'price_desc':
-        result.sort((a, b) => b.price_from - a.price_from)
-        break
-      case 'date':
-        result.sort((a, b) => new Date(a.departure_date).getTime() - new Date(b.departure_date).getTime())
-        break
-      case 'nights':
-        result.sort((a, b) => a.nights - b.nights)
-        break
-      default:
-        // featured first
-        result.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0))
-    }
-
-    return result
-  }, [search, selectedDestination, selectedType, priceRange, nightsRange, sortBy, locale])
-
-  const clearFilters = () => {
-    setSearch('')
-    setSelectedDestination('')
-    setSelectedType('')
-    setPriceRange([0, 10000])
-    setNightsRange([0, 30])
-    setSortBy('featured')
-  }
-
-  const hasActiveFilters = search || selectedDestination || selectedType || priceRange[0] > 0 || priceRange[1] < 10000 || nightsRange[0] > 0 || nightsRange[1] < 30
 
   return (
     <>
@@ -133,8 +213,8 @@ export default function CruisesPage() {
           </h1>
           <p className="text-navy-200 max-w-xl mx-auto">
             {locale === 'ro'
-              ? 'Descoperiti intreaga noastra selectie de croaziere premium din intreaga lume.'
-              : 'Discover our full selection of premium cruises from around the world.'}
+              ? 'Peste 8.400 de croaziere din întreaga lume. Filtrați după destinație, preț sau linie de croazieră.'
+              : 'Over 8,400 cruises worldwide. Filter by destination, price, or cruise line.'}
           </p>
         </Container>
       </section>
@@ -164,11 +244,10 @@ export default function CruisesPage() {
                 aria-label={t('filter_sort')}
                 className="px-4 py-2.5 rounded-lg border border-navy-200 bg-navy-50 text-sm text-navy-700 focus:outline-none focus:ring-2 focus:ring-gold-400/50 focus:border-gold-400 cursor-pointer"
               >
-                <option value="featured">{t('filter_sort')}</option>
                 <option value="price_asc">{t('filter_sort_price_asc')}</option>
                 <option value="price_desc">{t('filter_sort_price_desc')}</option>
                 <option value="date">{t('filter_sort_date')}</option>
-                <option value="nights">{t('filter_sort_nights')}</option>
+                <option value="nights_asc">{t('filter_sort_nights')}</option>
               </select>
 
               {/* Filter toggle (mobile) */}
@@ -185,7 +264,7 @@ export default function CruisesPage() {
             </div>
 
             {/* Filter bar (always visible on desktop, toggleable on mobile) */}
-            <div className={`mt-4 grid grid-cols-1 md:grid-cols-4 gap-3 ${showFilters ? 'block' : 'hidden md:grid'}`}>
+            <div className={`mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 ${showFilters ? 'block' : 'hidden md:grid'}`}>
               {/* Destination */}
               <select
                 value={selectedDestination}
@@ -194,10 +273,23 @@ export default function CruisesPage() {
                 className="px-4 py-2.5 rounded-lg border border-navy-200 bg-white text-sm text-navy-700 focus:outline-none focus:ring-2 focus:ring-gold-400/50 focus:border-gold-400 cursor-pointer"
               >
                 <option value="">{t('filter_destination')}: {t('filter_all')}</option>
-                {destinations.map(dest => (
+                {meta?.destinations.map(dest => (
                   <option key={dest.slug} value={dest.slug}>
                     {locale === 'ro' ? dest.name_ro : dest.name}
                   </option>
+                ))}
+              </select>
+
+              {/* Cruise Line */}
+              <select
+                value={selectedLine}
+                onChange={e => setSelectedLine(e.target.value)}
+                aria-label={locale === 'ro' ? 'Linia de croazieră' : 'Cruise Line'}
+                className="px-4 py-2.5 rounded-lg border border-navy-200 bg-white text-sm text-navy-700 focus:outline-none focus:ring-2 focus:ring-gold-400/50 focus:border-gold-400 cursor-pointer"
+              >
+                <option value="">{locale === 'ro' ? 'Linia' : 'Cruise Line'}: {t('filter_all')}</option>
+                {meta?.cruiseLines.map(line => (
+                  <option key={line} value={line}>{line}</option>
                 ))}
               </select>
 
@@ -209,7 +301,7 @@ export default function CruisesPage() {
                 className="px-4 py-2.5 rounded-lg border border-navy-200 bg-white text-sm text-navy-700 focus:outline-none focus:ring-2 focus:ring-gold-400/50 focus:border-gold-400 cursor-pointer"
               >
                 <option value="">{t('filter_type')}: {t('filter_all')}</option>
-                {cruiseTypes.map(type => (
+                {meta?.cruiseTypes.map(type => (
                   <option key={type} value={type}>
                     {typeNames[type]?.[locale] ?? type}
                   </option>
@@ -221,17 +313,17 @@ export default function CruisesPage() {
                 <label className="text-xs text-navy-500 whitespace-nowrap">{t('filter_price')}:</label>
                 <input
                   type="number"
-                  value={priceRange[0] || ''}
-                  onChange={e => setPriceRange([Number(e.target.value) || 0, priceRange[1]])}
-                  placeholder="Min"
+                  value={minPrice}
+                  onChange={e => setMinPrice(e.target.value)}
+                  placeholder="Min €"
                   className="w-full px-3 py-2.5 rounded-lg border border-navy-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-gold-400/50 focus:border-gold-400"
                 />
                 <span className="text-navy-400">-</span>
                 <input
                   type="number"
-                  value={priceRange[1] === 10000 ? '' : priceRange[1]}
-                  onChange={e => setPriceRange([priceRange[0], Number(e.target.value) || 10000])}
-                  placeholder="Max"
+                  value={maxPrice}
+                  onChange={e => setMaxPrice(e.target.value)}
+                  placeholder="Max €"
                   className="w-full px-3 py-2.5 rounded-lg border border-navy-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-gold-400/50 focus:border-gold-400"
                 />
               </div>
@@ -241,36 +333,45 @@ export default function CruisesPage() {
                 <label className="text-xs text-navy-500 whitespace-nowrap">{t('filter_nights')}:</label>
                 <input
                   type="number"
-                  value={nightsRange[0] || ''}
-                  onChange={e => setNightsRange([Number(e.target.value) || 0, nightsRange[1]])}
+                  value={minNights}
+                  onChange={e => setMinNights(e.target.value)}
                   placeholder="Min"
                   className="w-full px-3 py-2.5 rounded-lg border border-navy-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-gold-400/50 focus:border-gold-400"
                 />
                 <span className="text-navy-400">-</span>
                 <input
                   type="number"
-                  value={nightsRange[1] === 30 ? '' : nightsRange[1]}
-                  onChange={e => setNightsRange([nightsRange[0], Number(e.target.value) || 30])}
+                  value={maxNights}
+                  onChange={e => setMaxNights(e.target.value)}
                   placeholder="Max"
                   className="w-full px-3 py-2.5 rounded-lg border border-navy-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-gold-400/50 focus:border-gold-400"
                 />
               </div>
             </div>
 
-            {/* Active filters + clear */}
-            {hasActiveFilters && (
-              <div className="mt-3 flex items-center gap-2 flex-wrap">
-                <span className="text-xs text-navy-500">
-                  {filteredCruises.length} {locale === 'ro' ? 'rezultate' : 'results'}
-                </span>
+            {/* Active filters + clear + result count */}
+            <div className="mt-3 flex items-center gap-2 flex-wrap">
+              <span className="text-xs text-navy-500">
+                {pagination ? (
+                  <>
+                    {pagination.total.toLocaleString()} {locale === 'ro' ? 'croaziere' : 'cruises'}
+                    {pagination.totalPages > 1 && (
+                      <> — {locale === 'ro' ? 'pagina' : 'page'} {pagination.page}/{pagination.totalPages}</>
+                    )}
+                  </>
+                ) : (
+                  loading ? (locale === 'ro' ? 'Se încarcă...' : 'Loading...') : ''
+                )}
+              </span>
+              {hasActiveFilters && (
                 <button
                   onClick={clearFilters}
                   className="text-xs text-gold-600 hover:text-gold-700 font-medium transition-colors"
                 >
-                  {locale === 'ro' ? 'Sterge filtrele' : 'Clear filters'}
+                  {locale === 'ro' ? 'Șterge filtrele' : 'Clear filters'}
                 </button>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </Container>
       </section>
@@ -281,15 +382,81 @@ export default function CruisesPage() {
           <h2 className="sr-only">
             {locale === 'ro' ? 'Lista Croaziere' : 'Cruise Listings'}
           </h2>
-          {filteredCruises.length > 0 ? (
+
+          {/* Loading state */}
+          {loading && cruises.length === 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredCruises.map((cruise, i) => (
-                <div key={cruise.id} className="animate-fade-in-up" style={{ animationDelay: `${i * 80}ms` }}>
-                  <CruiseCard cruise={cruise} locale={locale} />
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="bg-white rounded-2xl overflow-hidden shadow-sm animate-pulse">
+                  <div className="h-48 bg-navy-100" />
+                  <div className="p-5 space-y-3">
+                    <div className="h-4 bg-navy-100 rounded w-3/4" />
+                    <div className="h-3 bg-navy-100 rounded w-1/2" />
+                    <div className="h-3 bg-navy-100 rounded w-2/3" />
+                    <div className="flex justify-between items-center pt-2">
+                      <div className="h-6 bg-navy-100 rounded w-20" />
+                      <div className="h-8 bg-navy-100 rounded w-24" />
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
-          ) : (
+          )}
+
+          {/* Results */}
+          {cruises.length > 0 ? (
+            <>
+              <div className={`grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 ${loading ? 'opacity-60' : ''}`}>
+                {cruises.map((cruise, i) => (
+                  <div key={cruise.id} className="animate-fade-in-up" style={{ animationDelay: `${i * 40}ms` }}>
+                    <CruiseCard cruise={cruise} locale={locale} />
+                  </div>
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {pagination && pagination.totalPages > 1 && (
+                <div className="mt-12 flex justify-center items-center gap-2">
+                  <button
+                    onClick={() => { setPage(p => Math.max(1, p - 1)); window.scrollTo({ top: 400, behavior: 'smooth' }) }}
+                    disabled={!pagination.hasPrev}
+                    className="px-4 py-2 rounded-lg border border-navy-200 bg-white text-sm text-navy-700 hover:bg-navy-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  >
+                    ← {locale === 'ro' ? 'Anterior' : 'Previous'}
+                  </button>
+
+                  {/* Page numbers */}
+                  <div className="flex items-center gap-1">
+                    {getPageNumbers(pagination.page, pagination.totalPages).map((p, i) => (
+                      p === '...' ? (
+                        <span key={`dots-${i}`} className="px-2 text-navy-400">…</span>
+                      ) : (
+                        <button
+                          key={p}
+                          onClick={() => { setPage(Number(p)); window.scrollTo({ top: 400, behavior: 'smooth' }) }}
+                          className={`w-9 h-9 rounded-lg text-sm font-medium transition-colors ${
+                            Number(p) === pagination.page
+                              ? 'bg-gradient-to-r from-gold-500 to-gold-600 text-white shadow-md'
+                              : 'border border-navy-200 bg-white text-navy-700 hover:bg-navy-50'
+                          }`}
+                        >
+                          {p}
+                        </button>
+                      )
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={() => { setPage(p => Math.min(pagination.totalPages, p + 1)); window.scrollTo({ top: 400, behavior: 'smooth' }) }}
+                    disabled={!pagination.hasNext}
+                    className="px-4 py-2 rounded-lg border border-navy-200 bg-white text-sm text-navy-700 hover:bg-navy-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                  >
+                    {locale === 'ro' ? 'Următor' : 'Next'} →
+                  </button>
+                </div>
+              )}
+            </>
+          ) : !loading ? (
             <div className="text-center py-20">
               <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-navy-100 flex items-center justify-center">
                 <SearchIcon className="w-8 h-8 text-navy-400" />
@@ -299,17 +466,17 @@ export default function CruisesPage() {
               </h3>
               <p className="text-navy-500 mb-6 max-w-md mx-auto">
                 {locale === 'ro'
-                  ? 'Incercati sa modificati filtrele sau sa cautati altceva.'
+                  ? 'Încercați să modificați filtrele sau să căutați altceva.'
                   : 'Try adjusting your filters or searching for something else.'}
               </p>
               <button
                 onClick={clearFilters}
                 className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-gradient-to-r from-gold-500 to-gold-600 text-white text-sm font-semibold hover:from-gold-600 hover:to-gold-700 transition-all shadow-md"
               >
-                {locale === 'ro' ? 'Sterge filtrele' : 'Clear all filters'}
+                {locale === 'ro' ? 'Șterge filtrele' : 'Clear all filters'}
               </button>
             </div>
-          )}
+          ) : null}
         </Container>
       </section>
 
@@ -318,6 +485,29 @@ export default function CruisesPage() {
       <Footer />
     </>
   )
+}
+
+// ============================================================
+// Pagination helper — smart page numbers with ellipsis
+// ============================================================
+
+function getPageNumbers(current: number, total: number): (number | string)[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1)
+
+  const pages: (number | string)[] = []
+  pages.push(1)
+
+  if (current > 3) pages.push('...')
+
+  const start = Math.max(2, current - 1)
+  const end = Math.min(total - 1, current + 1)
+
+  for (let i = start; i <= end; i++) pages.push(i)
+
+  if (current < total - 2) pages.push('...')
+
+  pages.push(total)
+  return pages
 }
 
 // ============================================================

@@ -320,16 +320,20 @@ export function getFeaturedCruisesLocal(): Cruise[] {
   return FEATURED_CRUISES
 }
 
-/** Return cruises similar to the given one, scored by destination / line / type / price proximity */
+/** Return cruises similar to the given one, scored by destination / line / type / price proximity.
+ *  Searches the FEATURED_CRUISES for best matches (they have rich content for cards). */
 export function getSimilarCruises(cruise: Cruise, limit = 4): Cruise[] {
-  return FEATURED_CRUISES
-    .filter((c) => c.id !== cruise.id)
+  const candidates = FEATURED_CRUISES.filter((c) => c.id !== cruise.id)
+  if (candidates.length === 0) return []
+
+  return candidates
     .map((c) => {
       let score = 0
       if (c.destination_slug === cruise.destination_slug) score += 3
+      if (c.cruise_type === cruise.cruise_type) score += 2
       if (c.cruise_line === cruise.cruise_line) score += 2
-      if (c.cruise_type === cruise.cruise_type) score += 1
-      if (Math.abs(c.price_from - cruise.price_from) < 200) score += 1
+      if (Math.abs(c.price_from - cruise.price_from) < 300) score += 1
+      if (Math.abs(c.nights - cruise.nights) <= 2) score += 1
       return { cruise: c, score }
     })
     .sort((a, b) => b.score - a.score)

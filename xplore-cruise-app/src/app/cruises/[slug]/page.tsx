@@ -49,6 +49,62 @@ export default function CruiseDetailPage() {
   )
 }
 
+// Helper: adapt API cruise data to Cruise type
+function apiToCruise(data: Record<string, unknown>): Cruise {
+  const INC_OCEAN = ['Full-board meals in main restaurant & buffet', 'Entertainment & shows', 'Pool & fitness center access', 'Kids club (where available)', 'Port taxes & fees']
+  const INC_OCEAN_RO = ['Pensiune completă în restaurantul principal și bufet', 'Spectacole și divertisment la bord', 'Acces piscină și centru fitness', 'Club copii (unde este disponibil)', 'Taxe portuare incluse']
+  const INC_RIVER = ['All meals on board', 'Wine & beer with lunch and dinner', 'Guided shore excursions', 'Wi-Fi on board', 'Port charges']
+  const INC_RIVER_RO = ['Toate mesele la bord', 'Vin și bere la prânz și cină', 'Excursii ghidate la țărm', 'Wi-Fi la bord', 'Taxe portuare']
+  const INC_LUXURY = ['All-inclusive beverages', 'Specialty dining at no extra charge', 'Shore excursions in every port', 'Wi-Fi & gratuities included', 'Butler service (suite guests)']
+  const INC_LUXURY_RO = ['Băuturi all-inclusive', 'Restaurante de specialitate fără cost suplimentar', 'Excursii în fiecare port', 'Wi-Fi și bacșișuri incluse', 'Serviciu de butler (suite)']
+  const EXC_OCEAN = ['Flights to/from embarkation port', 'Shore excursions', 'Specialty dining', 'Beverage packages', 'Spa treatments', 'Travel insurance']
+  const EXC_OCEAN_RO = ['Zbor către/de la portul de îmbarcare', 'Excursii la țărm', 'Restaurante de specialitate', 'Pachete de băuturi', 'Tratamente spa', 'Asigurare de călătorie']
+  const EXC_RIVER = ['Flights', 'Premium beverages', 'Gratuities', 'Travel insurance']
+  const EXC_RIVER_RO = ['Zboruri', 'Băuturi premium', 'Bacșișuri', 'Asigurare de călătorie']
+  const EXC_LUXURY = ['Flights', 'Premium spa treatments', 'Travel insurance']
+  const EXC_LUXURY_RO = ['Zboruri', 'Tratamente spa premium', 'Asigurare de călătorie']
+
+  const ct = data.cruise_type as string
+  const ports = (data.ports_of_call || []) as string[]
+  const gallery = (data.gallery_urls || []) as string[]
+  const itinerary = (data.itinerary || []) as { day: number; port: string; arrival: string | null; departure: string | null }[]
+
+  return {
+    id: data.id as string,
+    slug: data.slug as string,
+    title: data.title as string,
+    title_ro: data.title as string,
+    cruise_type: ct as Cruise['cruise_type'],
+    nights: data.nights as number,
+    price_from: data.price_from as number,
+    currency: (data.currency as string) || 'EUR',
+    departure_port: data.departure_port as string || '',
+    departure_port_ro: data.departure_port as string || '',
+    departure_date: data.departure_date as string || '',
+    ports_of_call: ports,
+    ports_of_call_ro: ports,
+    image_url: data.image_url as string || '',
+    gallery_urls: gallery,
+    included: ct === 'river' ? INC_RIVER : ct === 'luxury' ? INC_LUXURY : INC_OCEAN,
+    included_ro: ct === 'river' ? INC_RIVER_RO : ct === 'luxury' ? INC_LUXURY_RO : INC_OCEAN_RO,
+    excluded: ct === 'river' ? EXC_RIVER : ct === 'luxury' ? EXC_LUXURY : EXC_OCEAN,
+    excluded_ro: ct === 'river' ? EXC_RIVER_RO : ct === 'luxury' ? EXC_LUXURY_RO : EXC_OCEAN_RO,
+    tags: [],
+    featured: false,
+    active: true,
+    source: 'croaziere.net',
+    booking_url: data.source_url as string || '',
+    cruise_line: data.cruise_line as string || '',
+    ship_name: data.ship_name as string || '',
+    destination: data.destination as string || '',
+    destination_ro: data.destination_ro as string || data.destination as string || '',
+    destination_slug: data.destination_slug as string || '',
+    // Store itinerary data for display
+    _itinerary: itinerary,
+    _cabin_types: (data.cabin_types || []) as { name: string; price_from: number }[],
+  } as Cruise & { _itinerary: typeof itinerary; _cabin_types: { name: string; price_from: number }[] }
+}
+
 function CruiseDetailContent() {
   const t = useT()
   const { locale } = useLocale()
@@ -60,6 +116,11 @@ function CruiseDetailContent() {
   const [showBooking, setShowBooking] = useState(false)
   const [selectedPort, setSelectedPort] = useState<string | null>(null)
 
+  // State for API-loaded cruise
+  const [apiCruise, setApiCruise] = useState<Cruise | null>(null)
+  const [apiLoading, setApiLoading] = useState(false)
+  const [apiError, setApiError] = useState(false)
+
   // Auto-open booking modal if ?book=1 in URL
   useEffect(() => {
     if (searchParams.get('book') === '1') {
@@ -67,14 +128,53 @@ function CruiseDetailContent() {
     }
   }, [searchParams])
 
-  // Find cruise by slug from FEATURED_CRUISES database
-  const cruise = getCruiseBySlugLocal(slug)
+  // Try FEATURED_CRUISES first (has rich content)
+  const featuredCruise = getCruiseBySlugLocal(slug)
 
-  // Similar cruises scored by destination, cruise line, type, price proximity
+  // If not in featured, fetch from API
+  useEffect(() => {
+    if (featuredCruise || !slug) return
+    setApiLoading(true)
+    fetch(`/api/cruises/${encodeURIComponent(slug)}`)
+      .then(r => {
+        if (!r.ok) throw new Error('Not found')
+        return r.json()
+      })
+      .then(data => {
+        setApiCruise(apiToCruise(data))
+        setApiLoading(false)
+      })
+      .catch(() => {
+        setApiError(true)
+        setApiLoading(false)
+      })
+  }, [slug, featuredCruise])
+
+  const cruise = featuredCruise || apiCruise
+
+  // Similar cruises — use featured cruises for suggestions
   const similarCruises = cruise ? getSimilarCruises(cruise, 3) : []
 
+  // Loading state
+  if (!featuredCruise && apiLoading) {
+    return (
+      <>
+        <Header />
+        <main id="main-content">
+        <section className="min-h-[60vh] flex items-center justify-center bg-navy-50">
+          <Container className="text-center py-20">
+            <div className="w-12 h-12 mx-auto mb-6 rounded-full border-4 border-gold-500 border-t-transparent animate-spin" />
+            <p className="text-navy-500">{locale === 'ro' ? 'Se încarcă...' : 'Loading...'}</p>
+          </Container>
+        </section>
+        </main>
+        <Footer />
+      </>
+    )
+  }
+
   // 404-style fallback
-  if (!cruise) {
+  if (!cruise || apiError) {
     return (
       <>
         <Header />
@@ -82,15 +182,15 @@ function CruiseDetailContent() {
         <section className="min-h-[60vh] flex items-center justify-center bg-navy-50">
           <Container className="text-center py-20">
             <h1 className="text-3xl font-bold text-navy-900 font-[family-name:var(--font-heading)] mb-4">
-              {locale === 'ro' ? 'Croaziera nu a fost gasita' : 'Cruise Not Found'}
+              {locale === 'ro' ? 'Croaziera nu a fost găsită' : 'Cruise Not Found'}
             </h1>
             <p className="text-navy-500 mb-8">
               {locale === 'ro'
-                ? 'Ne pare rau, croaziera pe care o cautati nu exista sau a fost eliminata.'
+                ? 'Ne pare rău, croaziera pe care o căutați nu există sau a fost eliminată.'
                 : 'Sorry, the cruise you are looking for does not exist or has been removed.'}
             </p>
             <Button as="a" href="/cruises" variant="primary" size="lg">
-              {locale === 'ro' ? 'Inapoi la Croaziere' : 'Back to Cruises'}
+              {locale === 'ro' ? 'Înapoi la Croaziere' : 'Back to Cruises'}
             </Button>
           </Container>
         </section>
