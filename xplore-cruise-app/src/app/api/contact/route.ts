@@ -8,7 +8,11 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
 
-    const { name, email, phone, cruiseInterest, message, gdprConsent, locale } = body
+    const {
+      name, email, phone, cruiseInterest, message, gdprConsent, locale,
+      // Extended lead context fields
+      cruiseSlug, cruiseTitle, cruisePrice, guidedContext, source,
+    } = body
 
     // ----- Validation -----
     if (!name?.trim() || !email?.trim() || !message?.trim()) {
@@ -64,9 +68,19 @@ export async function POST(request: NextRequest) {
     console.log(`[CONTACT] New message from ${name} (${email}):`, {
       phone,
       cruiseInterest,
+      cruiseSlug: cruiseSlug || null,
+      cruiseTitle: cruiseTitle || null,
+      cruisePrice: cruisePrice || null,
+      source: source || 'contact_page',
+      hasGuidedContext: !!guidedContext,
       message: message.substring(0, 100),
       locale,
     })
+
+    // Log guided context separately for consultant visibility
+    if (guidedContext) {
+      console.log(`[CONTACT] Guided context for ${email}:`, guidedContext)
+    }
 
     return NextResponse.json({
       success: true,

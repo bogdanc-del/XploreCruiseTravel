@@ -172,11 +172,11 @@ export default function CruiseCard({ cruise, locale }: CruiseCardProps) {
             </Button>
             <Button
               as="a"
-              href={`/cruises/${cruise.slug}?book=1`}
+              href={`/cruises/${cruise.slug}?offer=1`}
               variant="primary"
               size="sm"
             >
-              {t('cruise_book_now', locale)}
+              {t('cta_request_offer', locale)}
             </Button>
           </div>
         </div>

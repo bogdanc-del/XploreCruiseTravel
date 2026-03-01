@@ -9,6 +9,8 @@ import Footer from '@/components/Footer'
 import Container from '@/components/ui/Container'
 import Button from '@/components/ui/Button'
 import CruiseCard from '@/components/cruise/CruiseCard'
+import GuidedEntryCard from '@/components/guided/GuidedEntryCard'
+import { useGuidedFlow } from '@/context/GuidedFlowContext'
 import ChatWidget from '@/components/chat/ChatWidget'
 import { eurToRon } from '@/lib/supabase'
 import type { Cruise } from '@/lib/supabase'
@@ -93,6 +95,7 @@ function HeroParticles() {
 export default function HomePage() {
   const t = useT()
   const { locale } = useLocale()
+  const { openFlow } = useGuidedFlow()
 
   return (
     <>
@@ -146,6 +149,11 @@ export default function HomePage() {
             <Button as="a" href="/contact" size="lg" variant="secondary" className="!border-white/30 !text-white hover:!bg-white/10">
               {t('hero_cta2')}
             </Button>
+          </div>
+
+          {/* Guided Recommendation Entry */}
+          <div className="animate-fade-in-up delay-500 mt-10 max-w-lg mx-auto">
+            <GuidedEntryCard variant="hero" onStart={() => openFlow('homepage')} locale={locale} />
           </div>
         </Container>
 

@@ -7,6 +7,8 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import Container from '@/components/ui/Container'
 import CruiseCard from '@/components/cruise/CruiseCard'
+import GuidedEntryCard from '@/components/guided/GuidedEntryCard'
+import { useGuidedFlow } from '@/context/GuidedFlowContext'
 import ChatWidget from '@/components/chat/ChatWidget'
 import type { Cruise } from '@/lib/supabase'
 
@@ -93,6 +95,7 @@ const ITEMS_PER_PAGE = 24
 export default function CruisesPage() {
   const t = useT()
   const { locale } = useLocale()
+  const { openFlow } = useGuidedFlow()
 
   // Night range presets
   const NIGHT_RANGES = [
@@ -225,6 +228,13 @@ export default function CruisesPage() {
               ? 'Peste 8.400 de croaziere din întreaga lume. Filtrați după destinație, preț sau linie de croazieră.'
               : 'Over 8,400 cruises worldwide. Filter by destination, price, or cruise line.'}
           </p>
+        </Container>
+      </section>
+
+      {/* Guided Recommendation Banner */}
+      <section className="bg-navy-50 py-4">
+        <Container>
+          <GuidedEntryCard variant="banner" onStart={() => openFlow('listing')} locale={locale} />
         </Container>
       </section>
 
