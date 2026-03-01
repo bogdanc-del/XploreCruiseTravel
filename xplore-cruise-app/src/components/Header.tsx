@@ -139,6 +139,7 @@ export default function Header() {
 
   return (
     <header
+      role="banner"
       className={`fixed top-0 right-0 left-0 z-50 transition-all duration-300 ${
         scrolled
           ? 'glass shadow-md'
@@ -146,7 +147,7 @@ export default function Header() {
       }`}
     >
       <Container>
-        <nav className="flex h-16 items-center justify-between md:h-20">
+        <nav aria-label="Main navigation" className="flex h-16 items-center justify-between md:h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 text-xl font-bold md:text-2xl">
             <ActiveLogo

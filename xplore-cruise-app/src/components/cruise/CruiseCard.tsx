@@ -25,6 +25,10 @@ export default function CruiseCard({ cruise, locale }: CruiseCardProps) {
     locale === 'ro' && cruise.destination_ro
       ? cruise.destination_ro
       : cruise.destination || ''
+  const departurePort =
+    locale === 'ro' && cruise.departure_port_ro
+      ? cruise.departure_port_ro
+      : cruise.departure_port || ''
   const nightsLabel =
     cruise.nights === 1 ? t('cruise_night', locale) : t('cruise_nights', locale)
   const departureDate = cruise.departure_date
@@ -115,6 +119,12 @@ export default function CruiseCard({ cruise, locale }: CruiseCardProps) {
               {destination}
             </span>
           )}
+          {departurePort && (
+            <span className="flex items-center gap-1">
+              <AnchorIcon />
+              {departurePort}
+            </span>
+          )}
           <span className="flex items-center gap-1">
             <MoonIcon />
             {cruise.nights} {nightsLabel}
@@ -180,6 +190,14 @@ function MapPinIcon() {
     <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
       <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+    </svg>
+  )
+}
+
+function AnchorIcon() {
+  return (
+    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 2a3 3 0 100 6 3 3 0 000-6zm0 6v14m-7-4c0 3.866 3.134 4 7 4s7-.134 7-4" />
     </svg>
   )
 }

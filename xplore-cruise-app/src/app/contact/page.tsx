@@ -356,17 +356,19 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              {/* Google Maps Placeholder */}
-              <div className="rounded-xl overflow-hidden border border-navy-200 bg-navy-100">
-                <div className="aspect-[4/3] flex items-center justify-center bg-gradient-to-br from-navy-100 to-navy-200">
-                  <div className="text-center">
-                    <MapPinIcon className="w-12 h-12 text-navy-400 mx-auto mb-3" />
-                    <p className="text-navy-500 text-sm font-medium">Bucharest, Romania</p>
-                    <p className="text-navy-400 text-xs mt-1">
-                      {locale === 'ro' ? 'Harta va fi adaugata in curand' : 'Map coming soon'}
-                    </p>
-                  </div>
-                </div>
+              {/* Google Maps Embed — Bucharest, Romania */}
+              <div className="rounded-xl overflow-hidden border border-navy-200">
+                <iframe
+                  title={locale === 'ro' ? 'Locatia noastra pe harta — Bucuresti, Romania' : 'Our location on the map — Bucharest, Romania'}
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d182530.0398685482!2d25.932059!3d44.437711!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40b1f93abf3cad4f%3A0xac0632e37c9ca628!2sBucharest%2C%20Romania!5e0!3m2!1sen!2s!4v1709312000000"
+                  width="100%"
+                  height="300"
+                  style={{ border: 0 }}
+                  allowFullScreen={false}
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  className="aspect-[4/3] w-full"
+                />
               </div>
             </div>
 

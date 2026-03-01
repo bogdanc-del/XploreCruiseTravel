@@ -44,6 +44,7 @@ export interface Cruise {
   price_from: number
   currency: string
   departure_port: string
+  departure_port_ro?: string
   departure_port_country?: string
   departure_date: string
   return_date?: string

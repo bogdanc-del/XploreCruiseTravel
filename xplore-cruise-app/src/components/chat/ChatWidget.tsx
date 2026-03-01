@@ -103,7 +103,7 @@ export default function ChatWidget() {
       {/* Chat Toggle Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-gold-400 to-gold-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center justify-center group"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-br from-gold-400 to-gold-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center justify-center group"
         aria-label={isOpen ? 'Close chat' : 'Open chat'}
       >
         {isOpen ? (
@@ -122,7 +122,7 @@ export default function ChatWidget() {
 
       {/* Chat Panel */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 z-50 w-[380px] max-w-[calc(100vw-3rem)] h-[520px] max-h-[calc(100vh-8rem)] rounded-2xl shadow-modal overflow-hidden flex flex-col animate-fade-in-up bg-white border border-navy-100">
+        <div className="fixed bottom-20 right-4 sm:bottom-24 sm:right-6 z-50 w-[380px] max-w-[calc(100vw-2rem)] h-[520px] max-h-[calc(100vh-7rem)] rounded-2xl shadow-modal overflow-hidden flex flex-col animate-fade-in-up bg-white border border-navy-100">
           {/* Header */}
           <div className="bg-gradient-to-r from-navy-900 to-navy-800 text-white px-5 py-4 flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-gold-500/20 flex items-center justify-center">
