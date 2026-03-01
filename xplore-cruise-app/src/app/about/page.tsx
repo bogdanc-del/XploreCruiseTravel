@@ -106,11 +106,11 @@ export default function AboutPage() {
       <section className="py-20 bg-white">
         <Container>
           <h2 className="text-2xl md:text-4xl font-bold text-navy-900 font-[family-name:var(--font-heading)] text-center mb-4">
-            {locale === 'ro' ? 'Echipa Noastra' : 'Our Team'}
+            {locale === 'ro' ? 'Echipa Noastră' : 'Our Team'}
           </h2>
           <p className="text-navy-500 text-center max-w-xl mx-auto mb-14">
             {locale === 'ro'
-              ? 'Dedicati sa va oferim cele mai bune experiente de croaziera.'
+              ? 'Dedicați să vă oferim cele mai bune experiențe de croazieră.'
               : 'Dedicated to bringing you the finest cruise experiences.'}
           </p>
 
@@ -132,7 +132,7 @@ export default function AboutPage() {
               </p>
               <p className="text-navy-500 text-sm mt-3 max-w-xs mx-auto">
                 {locale === 'ro'
-                  ? 'Cu pasiune pentru calatorii si ani de experienta in industria croazierelor, va ghideaza catre vacanta perfecta pe ape.'
+                  ? 'Cu pasiune pentru călătorii și ani de experiență în industria croazierelor, vă ghidează către vacanța perfectă pe ape.'
                   : 'With a passion for travel and years of experience in the cruise industry, guiding you to your perfect voyage.'}
               </p>
 
@@ -163,11 +163,11 @@ export default function AboutPage() {
         <Container>
           <div className="text-center max-w-2xl mx-auto">
             <h2 className="text-2xl md:text-3xl font-bold text-white font-[family-name:var(--font-heading)] mb-4">
-              {locale === 'ro' ? 'Date Firma' : 'Company Details'}
+              {locale === 'ro' ? 'Date Firmă' : 'Company Details'}
             </h2>
             <p className="text-navy-300 leading-relaxed mb-8">
               {locale === 'ro'
-                ? 'XPLORE CRUISE TRAVEL SRL este un operator autorizat de croaziere, inregistrat in Romania din 2016, specializat in organizarea si vanzarea de croaziere premium.'
+                ? 'XPLORE CRUISE TRAVEL SRL este un operator autorizat de croaziere, înregistrat în România din 2016, specializat în organizarea și vânzarea de croaziere premium.'
                 : 'XPLORE CRUISE TRAVEL SRL is a licensed cruise consultant registered in Romania since 2016, specializing in organizing and selling premium cruise experiences.'}
             </p>
 
@@ -197,7 +197,7 @@ export default function AboutPage() {
                   {locale === 'ro' ? 'Sediu Social' : 'Registered Office'}
                 </p>
                 <p className="text-white font-semibold text-sm">
-                  Str. Col. Ion Alexandrescu 19, Campulung, Arges, 115100
+                  Str. Col. Ion Alexandrescu 19, Câmpulung, Argeș, 115100
                 </p>
               </div>
             </div>
@@ -217,11 +217,11 @@ export default function AboutPage() {
         </div>
         <Container className="relative z-10 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white font-[family-name:var(--font-heading)] mb-6">
-            {locale === 'ro' ? 'Pregatit Sa Navighezi?' : 'Ready to Set Sail?'}
+            {locale === 'ro' ? 'Pregătit Să Navighezi?' : 'Ready to Set Sail?'}
           </h2>
           <p className="text-navy-200 max-w-xl mx-auto mb-8">
             {locale === 'ro'
-              ? 'Contacteaza-ne astazi si lasa-ne sa planificam vacanta ta perfecta pe ape.'
+              ? 'Contactează-ne astăzi și lasă-ne să planificăm vacanța ta perfectă pe ape.'
               : 'Get in touch today and let us plan your perfect vacation on the water.'}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

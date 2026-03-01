@@ -178,7 +178,7 @@ export default function HomePage() {
             </h2>
             <p className="text-navy-500 max-w-xl mx-auto">
               {locale === 'ro'
-                ? 'Descoperiti selectia noastra de croaziere premium, alese cu grija pentru experiente de neuitat.'
+                ? 'Descoperiți selecția noastră de croaziere premium, alese cu grijă pentru experiențe de neuitat.'
                 : 'Discover our handpicked selection of premium cruises, curated for unforgettable experiences.'}
             </p>
           </div>
@@ -223,7 +223,7 @@ export default function HomePage() {
             <Container>
               <div className="text-center mb-14">
                 <h2 className="text-3xl md:text-4xl font-bold text-navy-900 font-[family-name:var(--font-heading)] mb-4">
-                  {locale === 'ro' ? 'Destinatii Populare' : 'Popular Destinations'}
+                  {locale === 'ro' ? 'Destinații Populare' : 'Popular Destinations'}
                 </h2>
               </div>
               <div className={`grid gap-6 ${destinations.length <= 2 ? 'grid-cols-1 md:grid-cols-2 max-w-2xl mx-auto' : destinations.length === 3 ? 'grid-cols-2 md:grid-cols-3 max-w-4xl mx-auto' : 'grid-cols-2 md:grid-cols-4'}`}>
@@ -274,11 +274,11 @@ export default function HomePage() {
         </div>
         <Container className="relative z-10 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white font-[family-name:var(--font-heading)] mb-6">
-            {locale === 'ro' ? 'Pregatit pentru Aventura?' : 'Ready for Your Adventure?'}
+            {locale === 'ro' ? 'Pregătit pentru Aventură?' : 'Ready for Your Adventure?'}
           </h2>
           <p className="text-navy-200 max-w-xl mx-auto mb-8">
             {locale === 'ro'
-              ? 'Contacteaza-ne astazi si primesti o oferta personalizata pentru croaziera visurilor tale.'
+              ? 'Contactează-ne astăzi și primești o ofertă personalizată pentru croaziera visurilor tale.'
               : 'Contact us today and receive a personalized offer for your dream cruise.'}
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

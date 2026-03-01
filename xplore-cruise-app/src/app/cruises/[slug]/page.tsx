@@ -339,7 +339,7 @@ function CruiseDetailContent() {
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     <InfoCard
                       icon={<MapPinIcon />}
-                      label={locale === 'ro' ? 'Destinatie' : 'Destination'}
+                      label={locale === 'ro' ? 'Destinație' : 'Destination'}
                       value={destination}
                     />
                     <InfoCard
@@ -420,7 +420,7 @@ function CruiseDetailContent() {
                         </div>
                         <div className="pt-1">
                           <p className="text-xs text-gold-600 font-medium uppercase tracking-wider mb-0.5">
-                            {locale === 'ro' ? 'Intoarcere' : 'Return'}
+                            {locale === 'ro' ? 'Întoarcere' : 'Return'}
                           </p>
                           <p className="font-semibold text-navy-900">{cruise.departure_port}</p>
                         </div>
@@ -493,7 +493,7 @@ function CruiseDetailContent() {
                   ) : (
                     <p className="text-sm text-navy-500">
                       {locale === 'ro'
-                        ? 'Informatii despre pachetele de bauturi nu sunt disponibile. Contactati-ne pentru detalii.'
+                        ? 'Informații despre pachetele de băuturi nu sunt disponibile. Contactați-ne pentru detalii.'
                         : 'Beverage package information is not available. Contact us for details.'}
                     </p>
                   )}
@@ -583,7 +583,7 @@ function CruiseDetailContent() {
               {activeTab === 'cancellation' && !cruiseLineTerms && (
                 <p className="text-sm text-navy-500">
                   {locale === 'ro'
-                    ? 'Politica de anulare nu este disponibila pentru aceasta croaziera. Contactati-ne pentru detalii.'
+                    ? 'Politica de anulare nu este disponibilă pentru această croazieră. Contactați-ne pentru detalii.'
                     : 'Cancellation policy is not available for this cruise. Contact us for details.'}
                 </p>
               )}
@@ -610,7 +610,7 @@ function CruiseDetailContent() {
                   ) : (
                     <p className="text-sm text-navy-500">
                       {locale === 'ro'
-                        ? 'Termenii si conditiile nu sunt disponibile. Contactati-ne pentru detalii.'
+                        ? 'Termenii și condițiile nu sunt disponibile. Contactați-ne pentru detalii.'
                         : 'Terms and conditions are not available. Contact us for details.'}
                     </p>
                   )}
@@ -698,7 +698,7 @@ function CruiseDetailContent() {
                 </h3>
                 <p className="text-sm text-navy-300 mb-4">
                   {locale === 'ro'
-                    ? 'Consultantul nostru de croaziere este disponibil sa te ajute cu rezervarea.'
+                    ? 'Consultantul nostru de croaziere este disponibil să te ajute cu rezervarea.'
                     : 'Our cruise consultant is available to help you with your booking.'}
                 </p>
                 <div className="space-y-2 text-sm">
