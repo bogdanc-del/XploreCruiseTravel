@@ -43,6 +43,7 @@ export default function AboutPage() {
   return (
     <>
       <Header />
+      <main id="main-content">
 
       {/* Hero Banner */}
       <section className="relative pt-20 pb-16 bg-gradient-to-br from-navy-950 via-navy-900 to-navy-800 overflow-hidden">
@@ -235,6 +236,7 @@ export default function AboutPage() {
       </section>
 
       <ChatWidget />
+      </main>
       <Footer />
     </>
   )

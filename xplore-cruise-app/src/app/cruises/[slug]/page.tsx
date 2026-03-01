@@ -227,6 +227,7 @@ function CruiseDetailContent() {
     return (
       <>
         <Header />
+        <main id="main-content">
         <section className="min-h-[60vh] flex items-center justify-center bg-navy-50">
           <Container className="text-center py-20">
             <h1 className="text-3xl font-bold text-navy-900 font-[family-name:var(--font-heading)] mb-4">
@@ -242,6 +243,7 @@ function CruiseDetailContent() {
             </Button>
           </Container>
         </section>
+        </main>
         <Footer />
       </>
     )
@@ -277,6 +279,7 @@ function CruiseDetailContent() {
   return (
     <>
       <Header />
+      <main id="main-content">
 
       {/* Hero Image */}
       <section className="relative h-[60vh] min-h-[400px] bg-navy-900">
@@ -718,6 +721,7 @@ function CruiseDetailContent() {
         cruisePrice={cruise.price_from}
       />
       <ChatWidget />
+      </main>
       <Footer />
     </>
   )

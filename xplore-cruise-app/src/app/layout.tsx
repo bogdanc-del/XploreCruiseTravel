@@ -94,9 +94,7 @@ export default function RootLayout({
       <body className="min-h-screen bg-white font-body text-navy-900 antialiased">
         <LocaleProvider>
           <SkipToContent />
-          <main id="main-content">
-            {children}
-          </main>
+          {children}
         </LocaleProvider>
       </body>
     </html>
