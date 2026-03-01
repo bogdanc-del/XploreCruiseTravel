@@ -11,7 +11,7 @@ import Container from '@/components/ui/Container'
 import Button from '@/components/ui/Button'
 import Badge from '@/components/ui/Badge'
 import CruiseCard from '@/components/cruise/CruiseCard'
-import BookingModal from '@/components/booking/BookingModal'
+import LeadCaptureForm from '@/components/lead/LeadCaptureForm'
 import ChatWidget from '@/components/chat/ChatWidget'
 import dynamic from 'next/dynamic'
 
@@ -114,7 +114,7 @@ function CruiseDetailContent() {
 
   const searchParams = useSearchParams()
   const [activeTab, setActiveTab] = useState<TabKey>('overview')
-  const [showBooking, setShowBooking] = useState(false)
+  const [showLeadForm, setShowLeadForm] = useState(false)
   const [selectedPort, setSelectedPort] = useState<string | null>(null)
 
   // State for API-loaded cruise
@@ -122,10 +122,10 @@ function CruiseDetailContent() {
   const [apiLoading, setApiLoading] = useState(false)
   const [apiError, setApiError] = useState(false)
 
-  // Auto-open booking modal if ?book=1 in URL
+  // Auto-open lead form if ?offer=1 in URL
   useEffect(() => {
-    if (searchParams.get('book') === '1') {
-      setShowBooking(true)
+    if (searchParams.get('offer') === '1') {
+      setShowLeadForm(true)
     }
   }, [searchParams])
 
@@ -659,11 +659,11 @@ function CruiseDetailContent() {
                 )}
                 {locale !== 'ro' && <div className="mb-4" />}
 
-                <Button onClick={() => setShowBooking(true)} variant="primary" size="lg" className="w-full mb-3">
-                  {t('cruise_book_now')}
+                <Button onClick={() => setShowLeadForm(true)} variant="primary" size="lg" className="w-full mb-3">
+                  {t('cta_request_offer')}
                 </Button>
-                <Button as="a" href="/contact" variant="secondary" size="md" className="w-full">
-                  {t('hero_cta2')}
+                <Button onClick={() => setShowLeadForm(true)} variant="secondary" size="md" className="w-full">
+                  {t('cta_check_availability')}
                 </Button>
 
                 {/* Departure info */}
@@ -742,12 +742,13 @@ function CruiseDetailContent() {
         onClose={() => setSelectedPort(null)}
       />
 
-      <BookingModal
-        isOpen={showBooking}
-        onClose={() => setShowBooking(false)}
+      <LeadCaptureForm
+        isOpen={showLeadForm}
+        onClose={() => setShowLeadForm(false)}
         cruiseTitle={title}
         cruiseSlug={cruise.slug}
         cruisePrice={cruise.price_from}
+        source="detail"
       />
       <ChatWidget />
       </main>

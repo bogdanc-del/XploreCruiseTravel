@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { Playfair_Display, Inter } from 'next/font/google'
 import '@/styles/globals.css'
 import { LocaleProvider } from '@/i18n/context'
+import { GuidedFlowProvider } from '@/context/GuidedFlowContext'
+import GuidedFlowOverlay from '@/components/guided/GuidedFlowOverlay'
 import SkipToContent from '@/components/ui/SkipToContent'
 
 // ============================================================
@@ -93,8 +95,11 @@ export default function RootLayout({
     <html lang="ro" className={`${playfairDisplay.variable} ${inter.variable}`}>
       <body className="min-h-screen bg-white font-body text-navy-900 antialiased">
         <LocaleProvider>
-          <SkipToContent />
-          {children}
+          <GuidedFlowProvider>
+            <SkipToContent />
+            {children}
+            <GuidedFlowOverlay />
+          </GuidedFlowProvider>
         </LocaleProvider>
       </body>
     </html>
