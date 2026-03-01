@@ -44,14 +44,20 @@ export default function Footer() {
               {t('footer_partner')}
             </p>
 
-            {/* Social Media Placeholders */}
+            {/* Social Media */}
             <div className="mt-5 flex gap-3">
-              {['facebook', 'instagram', 'twitter'].map((platform) => (
+              {[
+                { platform: 'facebook', url: 'https://www.facebook.com/xplorecruisetravel', labelRo: 'Pagina noastra de Facebook', labelEn: 'Our Facebook page' },
+                { platform: 'instagram', url: 'https://www.instagram.com/xplorecruisetravel', labelRo: 'Pagina noastra de Instagram', labelEn: 'Our Instagram page' },
+                { platform: 'twitter', url: 'https://x.com/xplorecruise', labelRo: 'Pagina noastra de X', labelEn: 'Our X page' },
+              ].map(({ platform, url, labelRo, labelEn }) => (
                 <a
                   key={platform}
-                  href={`#${platform}`}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="flex h-9 w-9 items-center justify-center rounded-full border border-navy-700 text-navy-400 transition-colors hover:border-gold-500 hover:text-gold-400"
-                  aria-label={platform}
+                  aria-label={t('lang_switch') === 'EN' ? labelRo : labelEn}
                 >
                   <SocialIcon platform={platform} />
                 </a>
@@ -105,7 +111,7 @@ export default function Footer() {
             <ul className="space-y-3 text-sm text-navy-300">
               <li>
                 <span className="mb-1 block text-xs font-medium uppercase text-navy-400">
-                  Contact Person
+                  {t('lang_switch') === 'EN' ? 'Persoana de Contact' : 'Contact Person'}
                 </span>
                 Ceausu Daniel Antonina
               </li>

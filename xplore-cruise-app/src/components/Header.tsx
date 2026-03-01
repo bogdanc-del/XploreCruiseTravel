@@ -181,7 +181,7 @@ export default function Header() {
             <button
               onClick={toggleLocale}
               className={`rounded-md border px-3 py-1.5 text-xs font-semibold transition-colors duration-300 hover:border-gold-400 hover:text-gold-400 ${textColorMuted} ${borderColor}`}
-              aria-label={`Switch language to ${locale === 'en' ? 'Romanian' : 'English'}`}
+              aria-label={locale === 'en' ? 'Schimba limba in romana' : 'Switch language to English'}
             >
               {t('lang_switch')}
             </button>
@@ -192,7 +192,7 @@ export default function Header() {
             <button
               onClick={toggleLocale}
               className={`rounded-md border px-2.5 py-1 text-xs font-semibold transition-colors duration-300 hover:border-gold-400 hover:text-gold-400 ${textColorMuted} ${borderColor}`}
-              aria-label={`Switch language to ${locale === 'en' ? 'Romanian' : 'English'}`}
+              aria-label={locale === 'en' ? 'Schimba limba in romana' : 'Switch language to English'}
             >
               {t('lang_switch')}
             </button>
@@ -200,10 +200,10 @@ export default function Header() {
             <button
               onClick={() => setMobileOpen((prev) => !prev)}
               className={`relative flex h-9 w-9 items-center justify-center rounded-md transition-colors duration-300 ${textColor} ${hoverBg}`}
-              aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+              aria-label={mobileOpen ? (locale === 'ro' ? 'Inchide meniul' : 'Close menu') : (locale === 'ro' ? 'Deschide meniul' : 'Open menu')}
               aria-expanded={mobileOpen}
             >
-              <span className="sr-only">{mobileOpen ? 'Close menu' : 'Open menu'}</span>
+              <span className="sr-only">{mobileOpen ? (locale === 'ro' ? 'Inchide meniul' : 'Close menu') : (locale === 'ro' ? 'Deschide meniul' : 'Open menu')}</span>
               {/* Hamburger / X icon */}
               <span className="flex flex-col items-center justify-center gap-1.5">
                 <span
@@ -229,7 +229,7 @@ export default function Header() {
 
       {/* Mobile Menu */}
       {mobileOpen && (
-        <div className="glass border-t border-navy-100 md:hidden">
+        <div className="border-t border-navy-100 bg-white/95 backdrop-blur-xl shadow-lg md:hidden">
           <Container>
             <div className="flex flex-col gap-1 py-4">
               {navLinks.map((link) => (

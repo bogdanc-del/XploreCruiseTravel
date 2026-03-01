@@ -25,7 +25,7 @@
   --color-gold-300: #edc972;
   --color-gold-400: #e7b743;
   --color-gold-500: #c9982a;
-  --color-gold-600: #a67b22;
+  --color-gold-600: #826316;      /* Darkened from #a67b22 for WCAG AA contrast ≥4.5:1 on white */
   --color-gold-700: #835e1a;
   --color-gold-800: #604112;
   --color-gold-900: #3d240a;

@@ -324,41 +324,51 @@ export default function BookingModal({
                   <div className="grid grid-cols-2 gap-4">
                     <FieldInput
                       label={t('booking_firstname')}
+                      name="firstName"
                       value={formData.firstName}
                       onChange={(v) => updateField('firstName', v)}
                       required
+                      autoComplete="given-name"
                     />
                     <FieldInput
                       label={t('booking_lastname')}
+                      name="lastName"
                       value={formData.lastName}
                       onChange={(v) => updateField('lastName', v)}
                       required
+                      autoComplete="family-name"
                     />
                   </div>
 
                   <FieldInput
                     label={t('booking_dob')}
+                    name="dob"
                     type="date"
                     value={formData.dob}
                     onChange={(v) => updateField('dob', v)}
                     required
+                    autoComplete="bday"
                   />
 
                   <FieldInput
                     label={t('booking_email')}
+                    name="email"
                     type="email"
                     value={formData.email}
                     onChange={(v) => updateField('email', v)}
                     required
+                    autoComplete="email"
                   />
 
                   <FieldInput
                     label={t('booking_phone')}
+                    name="phone"
                     type="tel"
                     value={formData.phone}
                     onChange={(v) => updateField('phone', v)}
                     required
                     placeholder="+40 7XX XXX XXX"
+                    autoComplete="tel"
                   />
                 </div>
               )}
@@ -389,6 +399,7 @@ export default function BookingModal({
                       {t('booking_cabin_pref')}
                     </label>
                     <select
+                      name="cabinPreference"
                       value={formData.cabinPreference}
                       onChange={(e) => updateField('cabinPreference', e.target.value)}
                       className="w-full px-4 py-2.5 rounded-lg border border-navy-200 bg-white text-navy-900 text-sm focus:outline-none focus:ring-2 focus:ring-gold-400 focus:border-gold-400 transition-colors"
@@ -406,6 +417,7 @@ export default function BookingModal({
                       {t('booking_passengers')}
                     </label>
                     <select
+                      name="passengers"
                       value={formData.passengers}
                       onChange={(e) =>
                         updateField('passengers', parseInt(e.target.value))
@@ -427,6 +439,7 @@ export default function BookingModal({
                       {t('booking_special_requests')}
                     </label>
                     <textarea
+                      name="specialRequests"
                       value={formData.specialRequests}
                       onChange={(e) =>
                         updateField('specialRequests', e.target.value)
@@ -485,18 +498,21 @@ export default function BookingModal({
                       checked={formData.gdprConsent}
                       onChange={(v) => updateField('gdprConsent', v)}
                       label={t('booking_gdpr_consent')}
+                      name="gdprConsent"
                       required
                     />
                     <CheckboxField
                       checked={formData.termsAccepted}
                       onChange={(v) => updateField('termsAccepted', v)}
                       label={t('booking_terms_agree')}
+                      name="termsAccepted"
                       required
                     />
                     <CheckboxField
                       checked={formData.marketingConsent}
                       onChange={(v) => updateField('marketingConsent', v)}
                       label={t('booking_marketing_consent')}
+                      name="marketingConsent"
                     />
                   </div>
                 </div>
@@ -551,18 +567,22 @@ export default function BookingModal({
 
 function FieldInput({
   label,
+  name,
   value,
   onChange,
   type = 'text',
   required,
   placeholder,
+  autoComplete,
 }: {
   label: string
+  name: string
   value: string
   onChange: (v: string) => void
   type?: string
   required?: boolean
   placeholder?: string
+  autoComplete?: string
 }) {
   return (
     <div>
@@ -571,10 +591,12 @@ function FieldInput({
       </label>
       <input
         type={type}
+        name={name}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         required={required}
         placeholder={placeholder}
+        autoComplete={autoComplete}
         className="w-full px-4 py-2.5 rounded-lg border border-navy-200 bg-white text-navy-900 text-sm placeholder:text-navy-300 focus:outline-none focus:ring-2 focus:ring-gold-400 focus:border-gold-400 transition-colors"
       />
     </div>
@@ -594,11 +616,13 @@ function CheckboxField({
   checked,
   onChange,
   label,
+  name,
   required,
 }: {
   checked: boolean
   onChange: (v: boolean) => void
   label: string
+  name?: string
   required?: boolean
 }) {
   return (
@@ -606,6 +630,7 @@ function CheckboxField({
       <div className="relative flex-shrink-0 mt-0.5">
         <input
           type="checkbox"
+          name={name}
           checked={checked}
           onChange={(e) => onChange(e.target.checked)}
           className="sr-only"
