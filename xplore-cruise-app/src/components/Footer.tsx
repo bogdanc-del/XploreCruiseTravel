@@ -56,7 +56,7 @@ export default function Footer() {
                   href={url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-navy-700 text-navy-400 transition-colors hover:border-gold-500 hover:text-gold-400"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-navy-700 text-navy-300 transition-colors hover:border-gold-500 hover:text-gold-400"
                   aria-label={t('lang_switch') === 'EN' ? labelRo : labelEn}
                 >
                   <SocialIcon platform={platform} />
@@ -110,7 +110,7 @@ export default function Footer() {
             </h3>
             <ul className="space-y-3 text-sm text-navy-300">
               <li>
-                <span className="mb-1 block text-xs font-medium uppercase text-navy-400">
+                <span className="mb-1 block text-xs font-medium uppercase text-navy-300">
                   {t('lang_switch') === 'EN' ? 'Persoana de Contact' : 'Contact Person'}
                 </span>
                 Ceausu Daniel Antonina
@@ -131,7 +131,7 @@ export default function Footer() {
                   +40 749 558 572
                 </a>
               </li>
-              <li className="text-navy-400">
+              <li className="text-navy-300">
                 Bucharest, Romania
               </li>
             </ul>
@@ -142,7 +142,7 @@ export default function Footer() {
       {/* Bottom Bar */}
       <div className="border-t border-navy-800">
         <Container>
-          <div className="flex flex-col items-center justify-between gap-3 py-5 text-xs text-navy-400 sm:flex-row">
+          <div className="flex flex-col items-center justify-between gap-3 py-5 text-xs text-navy-300 sm:flex-row">
             <p>{t('footer_copyright')}</p>
             <p className="text-gold-500/70">{t('footer_partner')}</p>
           </div>
