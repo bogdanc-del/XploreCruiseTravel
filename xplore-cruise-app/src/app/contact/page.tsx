@@ -134,10 +134,12 @@ export default function ContactPage() {
                   </label>
                   <input
                     id="contact-name"
+                    name="name"
                     type="text"
                     value={name}
                     onChange={e => setName(e.target.value)}
                     required
+                    autoComplete="name"
                     className="w-full px-4 py-2.5 rounded-lg border border-navy-200 bg-navy-50 text-sm focus:outline-none focus:ring-2 focus:ring-gold-400/50 focus:border-gold-400 transition-all"
                     placeholder={locale === 'ro' ? 'Numele complet' : 'Full name'}
                   />
@@ -150,10 +152,12 @@ export default function ContactPage() {
                   </label>
                   <input
                     id="contact-email"
+                    name="email"
                     type="email"
                     value={email}
                     onChange={e => setEmail(e.target.value)}
                     required
+                    autoComplete="email"
                     className="w-full px-4 py-2.5 rounded-lg border border-navy-200 bg-navy-50 text-sm focus:outline-none focus:ring-2 focus:ring-gold-400/50 focus:border-gold-400 transition-all"
                     placeholder={locale === 'ro' ? 'adresa@email.com' : 'your@email.com'}
                   />
@@ -166,9 +170,11 @@ export default function ContactPage() {
                   </label>
                   <input
                     id="contact-phone"
+                    name="phone"
                     type="tel"
                     value={phone}
                     onChange={e => setPhone(e.target.value)}
+                    autoComplete="tel"
                     className="w-full px-4 py-2.5 rounded-lg border border-navy-200 bg-navy-50 text-sm focus:outline-none focus:ring-2 focus:ring-gold-400/50 focus:border-gold-400 transition-all"
                     placeholder="+40 7XX XXX XXX"
                   />
@@ -181,6 +187,7 @@ export default function ContactPage() {
                   </label>
                   <select
                     id="contact-interest"
+                    name="cruiseInterest"
                     value={cruiseInterest}
                     onChange={e => setCruiseInterest(e.target.value)}
                     className="w-full px-4 py-2.5 rounded-lg border border-navy-200 bg-navy-50 text-sm text-navy-700 focus:outline-none focus:ring-2 focus:ring-gold-400/50 focus:border-gold-400 cursor-pointer transition-all"
@@ -198,6 +205,7 @@ export default function ContactPage() {
                   </label>
                   <textarea
                     id="contact-message"
+                    name="message"
                     value={message}
                     onChange={e => setMessage(e.target.value)}
                     required
@@ -213,6 +221,7 @@ export default function ContactPage() {
                 <div className="flex items-start gap-3">
                   <input
                     id="gdpr-consent"
+                    name="gdprConsent"
                     type="checkbox"
                     checked={gdprConsent}
                     onChange={e => setGdprConsent(e.target.checked)}

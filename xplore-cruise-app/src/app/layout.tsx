@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { Playfair_Display, Inter } from 'next/font/google'
 import '@/styles/globals.css'
 import { LocaleProvider } from '@/i18n/context'
+import SkipToContent from '@/components/ui/SkipToContent'
 
 // ============================================================
 // Google Fonts
@@ -27,28 +28,55 @@ const inter = Inter({
 // ============================================================
 
 export const metadata: Metadata = {
-  title: 'XploreCruiseTravel - Premium Cruise Experiences',
+  metadataBase: new URL('https://xplorecruisetravel.com'),
+  title: {
+    default: 'XploreCruiseTravel — Croaziere Premium | Consultant Autorizat Romania',
+    template: '%s | XploreCruiseTravel',
+  },
   description:
-    'Discover and book premium cruise experiences worldwide. Ocean, river, luxury and expedition cruises curated by XploreCruiseTravel, licensed cruise consultant in Romania since 2016. Best prices guaranteed.',
+    'Descopera si rezerva croaziere premium in toata lumea. Croaziere pe ocean, rau, de lux si expeditie selectate de XploreCruiseTravel, consultant autorizat de croaziere in Romania din 2016. Cel mai bun pret garantat.',
   keywords: [
-    'cruise',
+    'croaziere',
+    'croaziere premium',
+    'croaziere lux',
+    'croaziere fluviale',
+    'croaziere ocean',
+    'croaziere expeditie',
+    'XploreCruiseTravel',
+    'consultant croaziere Romania',
     'cruise booking',
     'luxury cruise',
-    'river cruise',
-    'ocean cruise',
-    'expedition cruise',
-    'croaziere',
-    'XploreCruiseTravel',
-    'cruise consultant Romania',
   ],
   authors: [{ name: 'XploreCruiseTravel' }],
   openGraph: {
-    title: 'XploreCruiseTravel - Premium Cruise Experiences',
+    title: 'XploreCruiseTravel — Croaziere Premium',
     description:
-      'Discover and book premium cruise experiences worldwide. Licensed cruise consultant in Romania since 2016.',
+      'Descopera si rezerva croaziere premium in toata lumea. Consultant autorizat de croaziere in Romania din 2016.',
     type: 'website',
     locale: 'ro_RO',
     alternateLocale: 'en_US',
+    siteName: 'XploreCruiseTravel',
+    images: [
+      {
+        url: '/images/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: 'XploreCruiseTravel — Croaziere Premium',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'XploreCruiseTravel — Croaziere Premium',
+    description: 'Descopera si rezerva croaziere premium in toata lumea.',
+    images: ['/images/og-image.jpg'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  alternates: {
+    canonical: '/',
   },
 }
 
@@ -65,7 +93,10 @@ export default function RootLayout({
     <html lang="ro" className={`${playfairDisplay.variable} ${inter.variable}`}>
       <body className="min-h-screen bg-white font-body text-navy-900 antialiased">
         <LocaleProvider>
-          {children}
+          <SkipToContent />
+          <main id="main-content">
+            {children}
+          </main>
         </LocaleProvider>
       </body>
     </html>
