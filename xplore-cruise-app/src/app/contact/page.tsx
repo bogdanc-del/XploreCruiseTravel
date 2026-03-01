@@ -334,7 +334,7 @@ export default function ContactPage() {
                         {t('contact_office')}
                       </p>
                       <p className="text-sm text-navy-200">
-                        Bucharest, Romania
+                        Romania
                       </p>
                     </div>
                   </div>
@@ -357,11 +357,11 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              {/* Google Maps Embed — Bucharest, Romania */}
+              {/* Google Maps Embed — Romania */}
               <div className="rounded-xl overflow-hidden border border-navy-200">
                 <iframe
-                  title={locale === 'ro' ? 'Locatia noastra pe harta — Bucuresti, Romania' : 'Our location on the map — Bucharest, Romania'}
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d182530.0398685482!2d25.932059!3d44.437711!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40b1f93abf3cad4f%3A0xac0632e37c9ca628!2sBucharest%2C%20Romania!5e0!3m2!1sen!2s!4v1709312000000"
+                  title={locale === 'ro' ? 'Locatia noastra pe harta — Romania' : 'Our location on the map — Romania'}
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2848345.3774498217!2d23.5!3d45.9!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40b1ff26958033c1%3A0x3c5f5f4e3d4b6c0!2sRomania!5e0!3m2!1sen!2s!4v1709312000000"
                   width="100%"
                   height="300"
                   style={{ border: 0 }}

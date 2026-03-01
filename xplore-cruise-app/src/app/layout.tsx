@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     template: '%s | XploreCruiseTravel',
   },
   description:
-    'Descopera si rezerva croaziere premium in toata lumea. Croaziere pe ocean, rau, de lux si expeditie selectate de XploreCruiseTravel, consultant autorizat de croaziere in Romania din 2016. Cel mai bun pret garantat.',
+    'Descopera si rezerva croaziere premium in toata lumea. Croaziere pe ocean, rau, de lux si expeditie selectate de XploreCruiseTravel, consultant autorizat de croaziere in Romania din 2016. Preturi competitive si oferte exclusive.',
   keywords: [
     'croaziere',
     'croaziere premium',

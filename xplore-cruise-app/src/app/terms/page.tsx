@@ -33,8 +33,8 @@ export default function TermsPage() {
               </h2>
               <p className="text-navy-600 text-sm leading-relaxed">
                 {isRo
-                  ? 'Acesti termeni si conditii reglementeaza utilizarea site-ului xplorecruisetravel.ro si serviciile oferite de XPLORE CRUISE TRAVEL SRL, CUI 36785800, J03/1962/2016, CAEN 7912, cu sediul in Str. Col. Ion Alexandrescu 19, Campulung, Arges, 115100.'
-                  : 'These terms and conditions govern the use of xplorecruisetravel.ro and services provided by XPLORE CRUISE TRAVEL SRL, CUI 36785800, J03/1962/2016, CAEN 7912, registered at Str. Col. Ion Alexandrescu 19, Campulung, Arges, 115100, Romania.'}
+                  ? 'Acesti termeni si conditii reglementeaza utilizarea site-ului xplorecruisetravel.com si serviciile oferite de XPLORE CRUISE TRAVEL SRL, CUI 36785800, J03/1962/2016, CAEN 7912, cu sediul in Str. Col. Ion Alexandrescu 19, Campulung, Arges, 115100.'
+                  : 'These terms and conditions govern the use of xplorecruisetravel.com and services provided by XPLORE CRUISE TRAVEL SRL, CUI 36785800, J03/1962/2016, CAEN 7912, registered at Str. Col. Ion Alexandrescu 19, Campulung, Arges, 115100, Romania.'}
               </p>
             </div>
 

@@ -3,7 +3,7 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Despre Noi — Consultant Autorizat de Croaziere din 2016',
   description:
-    'Descopera povestea XploreCruiseTravel: consultant autorizat de croaziere in Romania din 2016. Oferim consultanta personalizata, cel mai bun pret garantat si suport 24/7.',
+    'Descopera povestea XploreCruiseTravel: consultant autorizat de croaziere in Romania din 2016. Oferim consultanta personalizata, preturi competitive si suport 24/7.',
   alternates: { canonical: '/about' },
   openGraph: {
     title: 'Despre XploreCruiseTravel',

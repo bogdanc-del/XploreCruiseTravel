@@ -2,7 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { useT } from '@/i18n/context'
+import { useT, useLocale } from '@/i18n/context'
 import Container from '@/components/ui/Container'
 
 // ============================================================
@@ -11,6 +11,7 @@ import Container from '@/components/ui/Container'
 
 export default function Footer() {
   const t = useT()
+  const { locale } = useLocale()
 
   const quickLinks = [
     { href: '/', label: t('nav_home') },
@@ -57,7 +58,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex h-9 w-9 items-center justify-center rounded-full border border-navy-700 text-navy-300 transition-colors hover:border-gold-500 hover:text-gold-400"
-                  aria-label={t('lang_switch') === 'EN' ? labelRo : labelEn}
+                  aria-label={locale === 'ro' ? labelRo : labelEn}
                 >
                   <SocialIcon platform={platform} />
                 </a>
@@ -111,7 +112,7 @@ export default function Footer() {
             <ul className="space-y-3 text-sm text-navy-300">
               <li>
                 <span className="mb-1 block text-xs font-medium uppercase text-navy-300">
-                  {t('lang_switch') === 'EN' ? 'Persoana de Contact' : 'Contact Person'}
+                  {locale === 'ro' ? 'Persoana de Contact' : 'Contact Person'}
                 </span>
                 Ceausu Daniel Antonina
               </li>
@@ -132,7 +133,7 @@ export default function Footer() {
                 </a>
               </li>
               <li className="text-navy-300">
-                Bucharest, Romania
+                Romania
               </li>
             </ul>
           </div>
