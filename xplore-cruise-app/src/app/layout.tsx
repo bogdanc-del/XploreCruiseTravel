@@ -29,7 +29,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: 'XploreCruiseTravel - Premium Cruise Experiences',
   description:
-    'Discover and book premium cruise experiences worldwide. Ocean, river, luxury and expedition cruises curated by XploreCruiseTravel, authorized partner of Croaziere.Net. Best prices guaranteed in Romania.',
+    'Discover and book premium cruise experiences worldwide. Ocean, river, luxury and expedition cruises curated by XploreCruiseTravel, licensed tour operator in Romania. Best prices guaranteed.',
   keywords: [
     'cruise',
     'cruise booking',
@@ -39,13 +39,13 @@ export const metadata: Metadata = {
     'expedition cruise',
     'croaziere',
     'XploreCruiseTravel',
-    'Croaziere.Net',
+    'tour operator Romania',
   ],
   authors: [{ name: 'XploreCruiseTravel' }],
   openGraph: {
     title: 'XploreCruiseTravel - Premium Cruise Experiences',
     description:
-      'Discover and book premium cruise experiences worldwide. Authorized partner of Croaziere.Net.',
+      'Discover and book premium cruise experiences worldwide. Licensed tour operator in Romania since 2016.',
     type: 'website',
     locale: 'en_US',
     alternateLocale: 'ro_RO',

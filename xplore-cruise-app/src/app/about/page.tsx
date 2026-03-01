@@ -63,7 +63,7 @@ export default function AboutPage() {
           <div className="max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gold-500/10 border border-gold-500/20 text-gold-600 text-sm mb-6">
               <span className="w-2 h-2 rounded-full bg-gold-400" />
-              {locale === 'ro' ? 'Partener Autorizat Croaziere.Net' : 'Authorized Croaziere.Net Partner'}
+              {locale === 'ro' ? 'CAEN 7912 — Tour Operator Autorizat' : 'CAEN 7912 — Licensed Tour Operator'}
             </div>
             <h2 className="text-2xl md:text-4xl font-bold text-navy-900 font-[family-name:var(--font-heading)] mb-6">
               {t('about_mission_title')}
@@ -154,21 +154,53 @@ export default function AboutPage() {
         </Container>
       </section>
 
-      {/* Partner Section */}
+      {/* Company Details Section */}
       <section className="py-16 bg-navy-900">
         <Container>
           <div className="text-center max-w-2xl mx-auto">
             <h2 className="text-2xl md:text-3xl font-bold text-white font-[family-name:var(--font-heading)] mb-4">
-              {locale === 'ro' ? 'Parteneriat Croaziere.Net' : 'Croaziere.Net Partnership'}
+              {locale === 'ro' ? 'Date Firma' : 'Company Details'}
             </h2>
-            <p className="text-navy-300 leading-relaxed">
+            <p className="text-navy-300 leading-relaxed mb-8">
               {locale === 'ro'
-                ? 'Ca partener oficial autorizat al Croaziere.Net, avem acces la cele mai bune oferte de croaziere din Romania. Aceasta inseamna preturi competitive, disponibilitate prioritara si suport dedicat pentru fiecare client.'
-                : 'As an official authorized partner of Croaziere.Net, we have access to the best cruise deals in Romania. This means competitive pricing, priority availability, and dedicated support for every client.'}
+                ? 'XPLORE CRUISE TRAVEL SRL este un tour operator autorizat, inregistrat in Romania din 2016, specializat in organizarea si vanzarea de croaziere premium.'
+                : 'XPLORE CRUISE TRAVEL SRL is a licensed tour operator registered in Romania since 2016, specializing in organizing and selling premium cruise experiences.'}
             </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg mx-auto text-left">
+              <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                <p className="text-navy-400 text-xs uppercase tracking-wider mb-1">
+                  {locale === 'ro' ? 'Denumire' : 'Company Name'}
+                </p>
+                <p className="text-white font-semibold text-sm">XPLORE CRUISE TRAVEL SRL</p>
+              </div>
+              <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                <p className="text-navy-400 text-xs uppercase tracking-wider mb-1">CUI</p>
+                <p className="text-white font-semibold text-sm">36785800</p>
+              </div>
+              <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                <p className="text-navy-400 text-xs uppercase tracking-wider mb-1">
+                  {locale === 'ro' ? 'Nr. Reg. Com.' : 'Trade Register'}
+                </p>
+                <p className="text-white font-semibold text-sm">J03/1962/2016</p>
+              </div>
+              <div className="p-4 rounded-lg bg-white/5 border border-white/10">
+                <p className="text-navy-400 text-xs uppercase tracking-wider mb-1">CAEN</p>
+                <p className="text-white font-semibold text-sm">7912 — Tour Operator</p>
+              </div>
+              <div className="p-4 rounded-lg bg-white/5 border border-white/10 sm:col-span-2">
+                <p className="text-navy-400 text-xs uppercase tracking-wider mb-1">
+                  {locale === 'ro' ? 'Sediu Social' : 'Registered Office'}
+                </p>
+                <p className="text-white font-semibold text-sm">
+                  Str. Col. Ion Alexandrescu 19, Campulung, Arges, 115100
+                </p>
+              </div>
+            </div>
+
             <div className="mt-8 inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gold-500/10 border border-gold-500/30 text-gold-400 text-sm font-semibold">
               <span className="w-2 h-2 rounded-full bg-gold-400" />
-              {locale === 'ro' ? 'Partener Verificat & Autorizat' : 'Verified & Authorized Partner'}
+              {locale === 'ro' ? 'Tour Operator Autorizat din 2016' : 'Licensed Tour Operator Since 2016'}
             </div>
           </div>
         </Container>

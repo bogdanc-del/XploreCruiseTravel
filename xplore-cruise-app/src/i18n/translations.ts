@@ -109,9 +109,9 @@ export const translations = {
     about_title: 'About XploreCruiseTravel',
     about_subtitle: 'Your trusted partner for premium cruise experiences',
     about_mission_title: 'Our Mission',
-    about_mission: 'We curate the finest cruise experiences from world-renowned cruise lines, making luxury ocean and river travel accessible to everyone. As an authorized partner of Croaziere.Net, we bring you exclusive deals and personalized service.',
+    about_mission: 'We curate the finest cruise experiences from world-renowned cruise lines, making luxury ocean and river travel accessible to everyone. With over 8 years of experience, we bring you exclusive deals and personalized service.',
     about_why_title: 'Why Choose Us?',
-    about_why_1: 'Authorized partner with access to exclusive deals',
+    about_why_1: 'Licensed tour operator with access to exclusive deals',
     about_why_2: 'Personalized cruise consulting',
     about_why_3: 'Best price guarantee in Romania',
     about_why_4: 'Complete GDPR-compliant booking process',
@@ -128,7 +128,7 @@ export const translations = {
     footer_gdpr: 'GDPR',
     footer_contact: 'Contact',
     footer_copyright: '© 2026 XploreCruiseTravel. All rights reserved.',
-    footer_partner: 'Authorized partner of Croaziere.Net',
+    footer_partner: 'Licensed Tour Operator — CUI 36785800',
 
     // Chat
     chat_title: 'Cruise Advisor',
@@ -261,9 +261,9 @@ export const translations = {
     about_title: 'Despre XploreCruiseTravel',
     about_subtitle: 'Partenerul tau de incredere pentru experiente premium de croaziera',
     about_mission_title: 'Misiunea Noastra',
-    about_mission: 'Selectam cele mai bune experiente de croaziera de la companii de renume mondial, facand calatoriile de lux pe ocean si rau accesibile tuturor. Ca partener autorizat Croaziere.Net, va aducem oferte exclusive si servicii personalizate.',
+    about_mission: 'Selectam cele mai bune experiente de croaziera de la companii de renume mondial, facand calatoriile de lux pe ocean si rau accesibile tuturor. Cu peste 8 ani de experienta, va aducem oferte exclusive si servicii personalizate.',
     about_why_title: 'De Ce Sa Ne Alegi?',
-    about_why_1: 'Partener autorizat cu acces la oferte exclusive',
+    about_why_1: 'Tour operator autorizat cu acces la oferte exclusive',
     about_why_2: 'Consultanta personalizata pentru croaziere',
     about_why_3: 'Garantia celui mai bun pret din Romania',
     about_why_4: 'Proces de rezervare complet conform GDPR',
@@ -280,7 +280,7 @@ export const translations = {
     footer_gdpr: 'GDPR',
     footer_contact: 'Contact',
     footer_copyright: '© 2026 XploreCruiseTravel. Toate drepturile rezervate.',
-    footer_partner: 'Partener autorizat Croaziere.Net',
+    footer_partner: 'Tour Operator Autorizat — CUI 36785800',
 
     // Chat
     chat_title: 'Consilier Croaziere',

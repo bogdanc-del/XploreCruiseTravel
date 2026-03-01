@@ -155,7 +155,7 @@ export default function HomePage() {
           <div className="animate-fade-in-up">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gold-500/10 border border-gold-500/20 text-gold-400 text-sm mb-8">
               <span className="w-2 h-2 rounded-full bg-gold-400 animate-pulse" />
-              {locale === 'ro' ? 'Partener Autorizat Croaziere.Net' : 'Authorized Croaziere.Net Partner'}
+              {locale === 'ro' ? 'Tour Operator Autorizat din 2016' : 'Licensed Tour Operator since 2016'}
             </div>
           </div>
 
