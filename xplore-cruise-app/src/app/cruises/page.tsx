@@ -94,6 +94,15 @@ export default function CruisesPage() {
   const t = useT()
   const { locale } = useLocale()
 
+  // Night range presets
+  const NIGHT_RANGES = [
+    { label: { en: '1-3 nights', ro: '1-3 nopți' }, min: '1', max: '3' },
+    { label: { en: '4-7 nights', ro: '4-7 nopți' }, min: '4', max: '7' },
+    { label: { en: '8-14 nights', ro: '8-14 nopți' }, min: '8', max: '14' },
+    { label: { en: '15-21 nights', ro: '15-21 nopți' }, min: '15', max: '21' },
+    { label: { en: '22+ nights', ro: '22+ nopți' }, min: '22', max: '' },
+  ]
+
   // Filter state
   const [search, setSearch] = useState('')
   const [searchDebounced, setSearchDebounced] = useState('')
@@ -250,10 +259,10 @@ export default function CruisesPage() {
                 <option value="nights_asc">{t('filter_sort_nights')}</option>
               </select>
 
-              {/* Filter toggle (mobile) */}
+              {/* Filter toggle */}
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-navy-200 bg-navy-50 text-sm text-navy-700 hover:bg-navy-100 transition-colors"
+                className="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg border border-navy-200 bg-navy-50 text-sm text-navy-700 hover:bg-navy-100 transition-colors"
               >
                 <FilterIcon className="w-4 h-4" />
                 {locale === 'ro' ? 'Filtre' : 'Filters'}
@@ -264,7 +273,7 @@ export default function CruisesPage() {
             </div>
 
             {/* Filter bar (always visible on desktop, toggleable on mobile) */}
-            <div className={`mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 ${showFilters ? 'block' : 'hidden md:grid'}`}>
+            <div className={`mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 ${showFilters ? '' : 'hidden'}`}>
               {/* Destination */}
               <select
                 value={selectedDestination}
@@ -328,24 +337,35 @@ export default function CruisesPage() {
                 />
               </div>
 
-              {/* Nights Range */}
-              <div className="flex items-center gap-2">
+              {/* Nights Range — quick-select buttons */}
+              <div className="flex flex-col gap-1.5 lg:col-span-2">
                 <label className="text-xs text-navy-500 whitespace-nowrap">{t('filter_nights')}:</label>
-                <input
-                  type="number"
-                  value={minNights}
-                  onChange={e => setMinNights(e.target.value)}
-                  placeholder="Min"
-                  className="w-full px-3 py-2.5 rounded-lg border border-navy-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-gold-400/50 focus:border-gold-400"
-                />
-                <span className="text-navy-400">-</span>
-                <input
-                  type="number"
-                  value={maxNights}
-                  onChange={e => setMaxNights(e.target.value)}
-                  placeholder="Max"
-                  className="w-full px-3 py-2.5 rounded-lg border border-navy-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-gold-400/50 focus:border-gold-400"
-                />
+                <div className="flex flex-wrap gap-1.5">
+                  {NIGHT_RANGES.map(range => {
+                    const isActive = minNights === range.min && maxNights === range.max
+                    return (
+                      <button
+                        key={range.min + '-' + range.max}
+                        onClick={() => {
+                          if (isActive) {
+                            setMinNights('')
+                            setMaxNights('')
+                          } else {
+                            setMinNights(range.min)
+                            setMaxNights(range.max)
+                          }
+                        }}
+                        className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
+                          isActive
+                            ? 'bg-gradient-to-r from-gold-500 to-gold-600 text-white border-gold-500 shadow-sm'
+                            : 'bg-white text-navy-600 border-navy-200 hover:border-gold-400 hover:text-gold-700'
+                        }`}
+                      >
+                        {locale === 'ro' ? range.label.ro : range.label.en}
+                      </button>
+                    )
+                  })}
+                </div>
               </div>
             </div>
 

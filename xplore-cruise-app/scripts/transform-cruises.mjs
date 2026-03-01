@@ -29,7 +29,12 @@ function createSlug(title, sourceId) {
 // Helper: normalize destination name (remove parenthetical port info)
 function normalizeDestination(dest) {
   if (!dest) return ''
-  return dest.replace(/\s*\([^)]+\)/g, '').trim()
+  let clean = dest
+    .replace(/\s*\([^)]*\)/g, '')  // Remove balanced (...) groups
+    .replace(/,\s*[^,]+\)\s*$/g, '') // Remove trailing broken parens like ", Egipt)"
+    .replace(/\)\s*$/g, '')           // Remove any remaining trailing )
+    .trim()
+  return clean
 }
 
 // Helper: create destination slug
@@ -266,7 +271,7 @@ for (const line of lines) {
       ship_name: raw.ship_name || '',
       destination,
       destination_ro,
-      destination_slug: destSlug(raw.destination),
+      destination_slug: destSlug(destination),
       source_url: raw.source_url,
     }
 
