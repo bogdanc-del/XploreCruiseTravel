@@ -41,5 +41,13 @@ export async function GET(
     )
   }
 
-  return NextResponse.json(cruise)
+  // Add back constant fields for client compatibility
+  return NextResponse.json(
+    { ...cruise, currency: 'EUR', active: true },
+    {
+      headers: {
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+      },
+    }
+  )
 }

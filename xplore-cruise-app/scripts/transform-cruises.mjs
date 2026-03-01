@@ -254,7 +254,6 @@ for (const line of lines) {
       cruise_type: cruiseType,
       nights,
       price_from: raw.price_from || 0,
-      currency: 'EUR',
       departure_port: departurePort,
       departure_date: firstDeparture,
       departure_dates: departureDates,
@@ -268,9 +267,7 @@ for (const line of lines) {
       destination,
       destination_ro,
       destination_slug: destSlug(raw.destination),
-      source: 'croaziere.net',
       source_url: raw.source_url,
-      active: true,
     }
 
     cruises.push(cruise)
@@ -292,24 +289,22 @@ writeFileSync(OUTPUT, JSON.stringify(cruises))
 const sizeKB = Math.round(readFileSync(OUTPUT).length / 1024)
 console.log(`Wrote ${OUTPUT} (${sizeKB} KB)`)
 
-// Create a lightweight index for the listing page (no itineraries, no gallery)
+// Create a lightweight index for the listing page (no itineraries, no gallery, no ports)
 const index = cruises.map(c => ({
   id: c.id,
-  slug: c.slug,
-  title: c.title,
-  cruise_type: c.cruise_type,
-  nights: c.nights,
-  price_from: c.price_from,
-  currency: c.currency,
-  departure_port: c.departure_port,
-  departure_date: c.departure_date,
-  ports_of_call: c.ports_of_call,
-  image_url: c.image_url,
-  cruise_line: c.cruise_line,
-  ship_name: c.ship_name,
-  destination: c.destination,
-  destination_ro: c.destination_ro,
-  destination_slug: c.destination_slug,
+  s: c.slug,                    // slug
+  t: c.title,                   // title
+  ct: c.cruise_type,            // cruise_type
+  n: c.nights,                  // nights
+  p: c.price_from,              // price_from
+  dp: c.departure_port,         // departure_port
+  dd: c.departure_date,         // departure_date
+  img: c.image_url,             // image_url
+  cl: c.cruise_line,            // cruise_line
+  sn: c.ship_name,              // ship_name
+  d: c.destination,             // destination
+  dr: c.destination_ro,         // destination_ro
+  ds: c.destination_slug,       // destination_slug
 }))
 
 writeFileSync(INDEX_OUTPUT, JSON.stringify(index))
