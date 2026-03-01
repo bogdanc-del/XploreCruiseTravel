@@ -1,0 +1,263 @@
+import { createClient } from '@supabase/supabase-js'
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+
+// Client-side Supabase client (browser)
+export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+
+// ============================================================
+// Types
+// ============================================================
+
+export interface CruiseLine {
+  id: string
+  name: string
+  category: 'luxury' | 'premium' | 'contemporary' | 'river' | 'expedition' | 'boutique'
+  logo_url?: string
+  ship_count: number
+  website?: string
+}
+
+export interface Destination {
+  id: string
+  slug: string
+  name: string
+  name_ro: string
+  image_url?: string
+  description?: string
+  description_ro?: string
+  active: boolean
+}
+
+export interface Cruise {
+  id: string
+  external_id?: string
+  title: string
+  title_ro: string
+  slug: string
+  cruise_line_id?: string
+  ship_id?: string
+  destination_id?: string
+  cruise_type: 'ocean' | 'river' | 'luxury' | 'expedition'
+  nights: number
+  price_from: number
+  currency: string
+  departure_port: string
+  departure_port_country?: string
+  departure_date: string
+  return_date?: string
+  ports_of_call: string[]
+  ports_of_call_ro: string[]
+  image_url?: string
+  gallery_urls: string[]
+  included: string[]
+  included_ro: string[]
+  excluded: string[]
+  excluded_ro: string[]
+  description?: string
+  description_ro?: string
+  advisor_note?: string
+  advisor_note_ro?: string
+  tags: string[]
+  featured: boolean
+  active: boolean
+  booking_url?: string
+  source: string
+  // Joined fields from v_cruise_listing
+  cruise_line?: string
+  cruise_line_category?: string
+  ship_name?: string
+  destination?: string
+  destination_ro?: string
+  destination_slug?: string
+}
+
+export interface CabinType {
+  id: string
+  cruise_id: string
+  type: string
+  type_ro: string
+  price_from: number
+  currency: string
+  available: boolean
+  sort_order: number
+}
+
+export interface Booking {
+  id: string
+  booking_ref: string
+  cruise_id?: string
+  cruise_title: string
+  first_name: string
+  last_name: string
+  email: string
+  phone?: string
+  date_of_birth?: string
+  cabin_preference?: string
+  passengers: number
+  special_requests?: string
+  gdpr_consent: boolean
+  terms_accepted: boolean
+  marketing_consent: boolean
+  status: 'pending' | 'confirmed' | 'cancelled' | 'completed'
+  total_price?: number
+  currency: string
+  notes?: string
+  created_at: string
+}
+
+export interface ContactMessage {
+  id: string
+  name: string
+  email: string
+  phone?: string
+  cruise_interest?: string
+  message: string
+  read: boolean
+  replied: boolean
+  created_at: string
+}
+
+export interface SiteSettings {
+  eur_to_ron: number
+  contact_email: string
+  contact_phone: string
+  company_name: string
+}
+
+// ============================================================
+// API Functions
+// ============================================================
+
+// --- Cruises ---
+export async function getCruises(filters?: {
+  destination?: string
+  cruiseType?: string
+  minPrice?: number
+  maxPrice?: number
+  minNights?: number
+  maxNights?: number
+  featured?: boolean
+  search?: string
+  limit?: number
+  offset?: number
+}) {
+  let query = supabase
+    .from('v_cruise_listing')
+    .select('*')
+
+  if (filters?.destination) query = query.eq('destination_slug', filters.destination)
+  if (filters?.cruiseType) query = query.eq('cruise_type', filters.cruiseType)
+  if (filters?.minPrice) query = query.gte('price_from', filters.minPrice)
+  if (filters?.maxPrice) query = query.lte('price_from', filters.maxPrice)
+  if (filters?.minNights) query = query.gte('nights', filters.minNights)
+  if (filters?.maxNights) query = query.lte('nights', filters.maxNights)
+  if (filters?.featured) query = query.eq('featured', true)
+  if (filters?.search) query = query.or(`title.ilike.%${filters.search}%,cruise_line.ilike.%${filters.search}%,destination.ilike.%${filters.search}%`)
+  if (filters?.limit) query = query.limit(filters.limit)
+  if (filters?.offset) query = query.range(filters.offset, (filters.offset + (filters.limit || 12)) - 1)
+
+  const { data, error, count } = await query
+  if (error) throw error
+  return { cruises: data as Cruise[], count }
+}
+
+export async function getCruiseBySlug(slug: string) {
+  const { data, error } = await supabase
+    .from('cruises')
+    .select(`
+      *,
+      cruise_lines(name, category, logo_url),
+      ships(name, year_built, passenger_capacity),
+      destinations(name, name_ro, slug),
+      cabin_types(id, type, type_ro, price_from, currency, available, sort_order)
+    `)
+    .eq('slug', slug)
+    .eq('active', true)
+    .single()
+
+  if (error) throw error
+  return data as Cruise & {
+    cruise_lines: CruiseLine
+    ships: { name: string; year_built: number; passenger_capacity: number }
+    destinations: Destination
+    cabin_types: CabinType[]
+  }
+}
+
+export async function getFeaturedCruises(limit = 6) {
+  return getCruises({ featured: true, limit })
+}
+
+// --- Destinations ---
+export async function getDestinations() {
+  const { data, error } = await supabase
+    .from('destinations')
+    .select('*')
+    .eq('active', true)
+    .order('sort_order')
+
+  if (error) throw error
+  return data as Destination[]
+}
+
+// --- Bookings ---
+export async function createBooking(booking: Omit<Booking, 'id' | 'booking_ref' | 'status' | 'created_at'>) {
+  const { data, error } = await supabase
+    .from('bookings')
+    .insert(booking)
+    .select()
+    .single()
+
+  if (error) throw error
+  return data as Booking
+}
+
+// --- Contact ---
+export async function sendContactMessage(message: Omit<ContactMessage, 'id' | 'read' | 'replied' | 'created_at'>) {
+  const { data, error } = await supabase
+    .from('contact_messages')
+    .insert(message)
+    .select()
+    .single()
+
+  if (error) throw error
+  return data as ContactMessage
+}
+
+// --- Settings ---
+export async function getSiteSettings(): Promise<SiteSettings> {
+  const { data, error } = await supabase
+    .from('site_settings')
+    .select('key, value')
+
+  if (error) throw error
+
+  const settings: Record<string, string> = {}
+  data?.forEach((row: { key: string; value: string }) => {
+    settings[row.key] = row.value
+  })
+
+  return {
+    eur_to_ron: parseFloat(settings.eur_to_ron || '4.97'),
+    contact_email: settings.contact_email || 'xplorecruisetravel@gmail.com',
+    contact_phone: settings.contact_phone || '+40749558572',
+    company_name: settings.company_name || 'XploreCruiseTravel',
+  }
+}
+
+// --- Page Views ---
+export async function trackPageView(page: string, cruiseId?: string) {
+  await supabase.from('page_views').insert({
+    page,
+    cruise_id: cruiseId,
+    referrer: typeof document !== 'undefined' ? document.referrer : null,
+    user_agent: typeof navigator !== 'undefined' ? navigator.userAgent : null,
+  })
+}
+
+// --- EUR to RON conversion ---
+export function eurToRon(eur: number, rate = 4.97): number {
+  return Math.round(eur * rate)
+}
