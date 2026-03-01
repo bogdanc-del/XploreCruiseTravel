@@ -43,14 +43,14 @@ export async function generateMetadata({
 
   if (!cruise) {
     return {
-      title: 'Croaziera Negasita | XploreCruiseTravel',
-      description: 'Aceasta croaziera nu a fost gasita. Exploreaza alte oferte de croaziere premium la XploreCruiseTravel.',
+      title: 'Croazieră Negăsită | XploreCruiseTravel',
+      description: 'Această croazieră nu a fost găsită. Explorează alte oferte de croaziere premium la XploreCruiseTravel.',
       alternates: { canonical: `/cruises/${slug}` },
     }
   }
 
   const title = `${cruise.title} | XploreCruiseTravel`
-  const description = `${cruise.cruise_line} - ${cruise.ship_name}. ${cruise.destination}, ${cruise.nights} nopti. De la €${cruise.price_from}/persoana. Rezerva acum la XploreCruiseTravel.`
+  const description = `${cruise.cruise_line} - ${cruise.ship_name}. ${cruise.destination}, ${cruise.nights} nopți. De la €${cruise.price_from}/persoană. Rezervă acum la XploreCruiseTravel.`
 
   return {
     title,
