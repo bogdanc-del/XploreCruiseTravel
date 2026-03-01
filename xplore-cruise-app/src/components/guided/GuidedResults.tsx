@@ -115,8 +115,8 @@ export default function GuidedResults() {
   if (!state.isComplete) return null
 
   return (
-    <>
-      <section className="min-h-screen bg-navy-50 py-12 px-4 sm:px-6">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-navy-50">
+      <section className="min-h-screen py-12 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
           {/* Header */}
           <div className="text-center mb-10">
@@ -209,6 +209,6 @@ export default function GuidedResults() {
           }}
         />
       )}
-    </>
+    </div>
   )
 }
