@@ -1,49 +1,25 @@
 import type { Metadata } from 'next'
-import { readFileSync } from 'fs'
-import { join } from 'path'
+
+// Static JSON import — bundled at build time (guaranteed available on Vercel)
+const cruiseIndex: { s: string; t: string; d: string; n: number; p: number; cl: string; sn: string; img: string }[] =
+  require('../../../../public/data/cruises-index.json') // eslint-disable-line
 
 // ============================================================
-// Dynamic metadata per cruise slug — reads from JSON database
+// Dynamic metadata per cruise slug
 // ============================================================
 
-// Compact index entry (from cruises-index.json — 4 MB vs 23 MB full JSON)
-interface CompactCruise {
-  s: string   // slug
-  t: string   // title
-  d: string   // destination
-  n: number   // nights
-  p: number   // price_from
-  cl: string  // cruise_line
-  sn: string  // ship_name
-  img: string // image_url
-}
-
-// Lazy-loaded cruise map (cached in module scope for build)
-let cruiseMap: Map<string, { title: string; destination: string; nights: number; price_from: number; cruise_line: string; ship_name: string; image_url: string }> | null = null
-
-function loadCruiseMap() {
-  if (cruiseMap) return cruiseMap
-  try {
-    // Use compact index (4 MB) instead of full cruises.json (23 MB)
-    // to avoid serverless memory/timeout issues on Vercel
-    const filePath = join(process.cwd(), 'public', 'data', 'cruises-index.json')
-    const data: CompactCruise[] = JSON.parse(readFileSync(filePath, 'utf8'))
-    cruiseMap = new Map()
-    for (const c of data) {
-      cruiseMap.set(c.s, {
-        title: c.t,
-        destination: c.d,
-        nights: c.n,
-        price_from: c.p,
-        cruise_line: c.cl,
-        ship_name: c.sn,
-        image_url: c.img,
-      })
-    }
-    return cruiseMap
-  } catch {
-    return new Map()
-  }
+// Build the lookup map once (module-level, cached)
+const cruiseMap = new Map<string, { title: string; destination: string; nights: number; price_from: number; cruise_line: string; ship_name: string; image_url: string }>()
+for (const c of cruiseIndex) {
+  cruiseMap.set(c.s, {
+    title: c.t,
+    destination: c.d,
+    nights: c.n,
+    price_from: c.p,
+    cruise_line: c.cl,
+    ship_name: c.sn,
+    image_url: c.img,
+  })
 }
 
 export async function generateMetadata({
@@ -52,8 +28,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>
 }): Promise<Metadata> {
   const { slug } = await params
-  const map = loadCruiseMap()
-  const cruise = map.get(slug)
+  const cruise = cruiseMap.get(slug)
 
   if (!cruise) {
     return {
