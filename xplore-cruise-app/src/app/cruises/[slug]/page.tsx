@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { useParams } from 'next/navigation'
+import { useState, useEffect } from 'react'
+import { useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useT, useLocale } from '@/i18n/context'
@@ -11,6 +11,7 @@ import Container from '@/components/ui/Container'
 import Button from '@/components/ui/Button'
 import Badge from '@/components/ui/Badge'
 import CruiseCard from '@/components/cruise/CruiseCard'
+import BookingModal from '@/components/booking/BookingModal'
 import ChatWidget from '@/components/chat/ChatWidget'
 import { eurToRon } from '@/lib/supabase'
 import type { Cruise } from '@/lib/supabase'
@@ -106,7 +107,16 @@ export default function CruiseDetailPage() {
   const params = useParams()
   const slug = params.slug as string
 
+  const searchParams = useSearchParams()
   const [activeTab, setActiveTab] = useState<'overview' | 'itinerary' | 'included'>('overview')
+  const [showBooking, setShowBooking] = useState(false)
+
+  // Auto-open booking modal if ?book=1 in URL
+  useEffect(() => {
+    if (searchParams.get('book') === '1') {
+      setShowBooking(true)
+    }
+  }, [searchParams])
 
   // Find cruise by slug
   const cruise = demoCruises.find(c => c.slug === slug)
@@ -423,7 +433,7 @@ export default function CruiseDetailPage() {
                 )}
                 {locale !== 'ro' && <div className="mb-4" />}
 
-                <Button as="a" href={`/cruises/${cruise.slug}?book=1`} variant="primary" size="lg" className="w-full mb-3">
+                <Button onClick={() => setShowBooking(true)} variant="primary" size="lg" className="w-full mb-3">
                   {t('cruise_book_now')}
                 </Button>
                 <Button as="a" href="/contact" variant="secondary" size="md" className="w-full">
@@ -500,6 +510,13 @@ export default function CruiseDetailPage() {
         </section>
       )}
 
+      <BookingModal
+        isOpen={showBooking}
+        onClose={() => setShowBooking(false)}
+        cruiseTitle={title}
+        cruiseSlug={cruise.slug}
+        cruisePrice={cruise.price_from}
+      />
       <ChatWidget />
       <Footer />
     </>
