@@ -1,17 +1,17 @@
-# LIVE BUGS — xplorecruisetravel.com (Post-Fix Re-QA)
+# LIVE BUGS — xplorecruisetravel.com (Final QA)
 
 | Field | Value |
 |---|---|
-| **Date** | 2026-03-01 |
+| **Date** | 2026-03-01 (Final) |
 | **Previous Bugs** | 22 (L001–L022) — ALL RESOLVED ✅ |
-| **Remaining Issues** | 7 |
-| **Breakdown** | 0 Blocker · 0 Critical · 2 Major · 5 Minor |
+| **Post-QA Issues** | 7 (R001–R007) — ALL RESOLVED ✅ |
+| **Additional Fixes** | 3 (contrast on dark bg, footer opacity, heading order) — ALL RESOLVED ✅ |
+| **Remaining Issues** | 0 |
+| **Breakdown** | 0 Blocker · 0 Critical · 0 Major · 0 Minor |
 
 ---
 
-## PREVIOUSLY RESOLVED (22/22) ✅
-
-All 22 bugs from the initial QA have been fixed, deployed, and verified:
+## ALL 22 ORIGINAL BUGS RESOLVED ✅
 
 | ID | Issue | Fix Verified |
 |----|-------|-------------|
@@ -21,7 +21,7 @@ All 22 bugs from the initial QA have been fixed, deployed, and verified:
 | L004 | Identical English `<meta description>` | ✅ Unique RO descriptions |
 | L005 | Missing robots.txt (404) | ✅ Present, blocks /api/ |
 | L006 | Missing sitemap.xml (404) | ✅ 14 URLs |
-| L007 | No canonical tags | ✅ Present on static pages |
+| L007 | No canonical tags | ✅ Present on all pages |
 | L008 | Missing security headers | ✅ All 6 present |
 | L009 | No `<main>` landmark | ✅ Present |
 | L010 | No skip navigation link | ✅ Present |
@@ -40,70 +40,54 @@ All 22 bugs from the initial QA have been fixed, deployed, and verified:
 
 ---
 
-## 🟡 MAJOR (2)
+## ALL 7 POST-QA ISSUES RESOLVED ✅
 
-### R001: Cruise detail pages share parent /cruises meta tags
-- **Pages:** All 6 cruise detail pages
-- **Severity:** Major (SEO)
-- **Description:** All 6 cruise detail pages (`/cruises/western-mediterranean-discovery`, etc.) render the same `<title>`, `<meta description>`, and `og:title` as the parent `/cruises` listing page, rather than unique per-cruise metadata.
-- **Evidence:**
-  - Title on all 6 detail pages: `Croaziere Premium — Ocean, Fluviale, Lux, Expeditie | XploreCruiseTravel`
-  - Description on all 6: `Exploreaza toate ofertele de croaziere premium...`
-- **Impact:** Search engines cannot distinguish cruise detail pages in results. Click-through rates suffer from generic titles. Missed SEO opportunity for long-tail cruise keywords.
-- **Fix:** Add dynamic `generateMetadata()` in `/cruises/[slug]/page.tsx` that reads the cruise title and description to generate unique metadata per cruise page.
-- **Effort:** 1–2 hours
-
-### R002: Color contrast — text-navy-400 on white (3.66:1)
-- **Pages:** Homepage (13 instances), likely all pages with cruise cards
-- **Severity:** Major (Accessibility)
-- **WCAG:** 1.4.3 (Level AA) — minimum 4.5:1 for normal text
-- **Description:** The `text-navy-400` colour (#6787b7) on white background (#ffffff) has a contrast ratio of **3.66:1**, below the WCAG AA minimum of 4.5:1. Affects secondary text like "de la" (from) and "/persoana" (/person) on cruise price cards.
-- **Evidence:** axe-core reports 13 nodes failing color-contrast on homepage.
-- **Impact:** Low-vision users may struggle to read pricing context text.
-- **Fix:** Darken `--color-navy-400` to at least `#5a7399` (4.54:1) or use `text-navy-500` for these elements.
-- **Effort:** 30 minutes
+| ID | Issue | Fix | Verified |
+|----|-------|-----|----------|
+| R001 | Cruise detail pages share parent metadata | Added `generateMetadata()` in `[slug]/layout.tsx` with unique RO titles, descriptions, OG tags per cruise | ✅ All 6 cruise pages have unique titles & descriptions |
+| R002 | Color contrast — text-navy-400 on white (3.66:1) | Darkened `--color-navy-400` from `#6787b7` to `#5a7399` (≥4.5:1 ratio) | ✅ axe-core 0 violations |
+| R003 | Cruise detail canonical URLs → /cruises parent | Self-referencing canonicals in `generateMetadata()` | ✅ Each cruise page canonicalizes to itself |
+| R004 | `lang="ro"` hardcoded regardless of locale | Added `useEffect` in LocaleProvider to dynamically set `document.documentElement.lang` | ✅ `<html lang>` updates on toggle |
+| R005 | landmark-banner-is-top-level | Moved `<main>` from root layout to individual pages, keeping Header/Footer as top-level landmarks | ✅ axe-core 0 landmark violations |
+| R006 | landmark-contentinfo-is-top-level | Same fix as R005 — structural refactor | ✅ axe-core 0 landmark violations |
+| R007 | Desktop LCP 2.9s | Added `fetchPriority="high"` to hero image | ✅ Applied |
 
 ---
 
-## 🟢 MINOR (5)
+## ADDITIONAL FIXES (discovered during axe-core verification) ✅
 
-### R003: Cruise detail canonical URLs point to /cruises parent
-- **Pages:** All 6 cruise detail pages
-- **Severity:** Minor (SEO)
-- **Description:** `<link rel="canonical" href="https://xplorecruisetravel.com/cruises">` on all detail pages points to the parent listing instead of the detail page's own URL.
-- **Impact:** Search engines may consolidate detail page signals into the listing page.
-- **Fix:** Set canonical to self-URL in `generateMetadata()`.
-- **Effort:** Included with R001 fix
+| Issue | Pages | Fix | Verified |
+|-------|-------|-----|----------|
+| `text-navy-400` on dark bg (company details) | /about (5 nodes) | Changed to `text-navy-300` for adequate contrast on `bg-navy-900` | ✅ 0 violations |
+| `text-navy-400` on dark bg (contact card) | /contact (5 nodes) | Changed to `text-navy-300` for adequate contrast on `bg-navy-900` | ✅ 0 violations |
+| `text-navy-400` on dark bg (footer) | All pages (4 nodes) | Changed to `text-navy-300` in Footer.tsx | ✅ 0 violations |
+| `text-gold-500/70` footer opacity (3.95:1) | All pages (1 node) | Removed `/70` opacity → `text-gold-500` full opacity | ✅ 0 violations |
+| Heading order skip (h1 → h3) | /cruises | Added visually-hidden `<h2>` before cruise grid | ✅ 0 heading-order violations |
 
-### R004: `lang="ro"` hardcoded regardless of locale
-- **Pages:** All pages
-- **Severity:** Minor (I18N)
-- **Description:** `<html lang="ro">` is always set in the server-rendered HTML, even when the user switches to EN locale client-side.
-- **Impact:** Minimal for SEO (Google sees RO content with RO lang, which is correct for SSR). Only affects client-side EN users who inspect source.
-- **Note:** This is an expected limitation of the client-side i18n architecture. A fix would require server-side locale detection or URL-based i18n.
-- **Effort:** Architectural change (low priority)
+---
 
-### R005: landmark-banner-is-top-level
-- **Pages:** Homepage (1 instance)
-- **Severity:** Minor (Accessibility)
-- **Description:** The `role="banner"` landmark is contained within another landmark element. axe-core recommends banner be a top-level landmark.
-- **Fix:** Ensure `<header role="banner">` is not nested inside `<main>` or another landmark.
-- **Effort:** 15 minutes
+## FINAL LIVE SITE AXE-CORE RESULTS
 
-### R006: landmark-contentinfo-is-top-level
-- **Pages:** Homepage (1 instance)
-- **Severity:** Minor (Accessibility)
-- **Description:** The `role="contentinfo"` landmark is contained within another landmark element.
-- **Fix:** Ensure `<footer role="contentinfo">` is not nested inside `<main>` or another landmark.
-- **Effort:** 15 minutes
+| Page | Violations | Passes | Status |
+|------|-----------|--------|--------|
+| `/` (Homepage) | **0** | 41 | ✅ PASS |
+| `/about` | **0** | 39 | ✅ PASS |
+| `/contact` | **0** | 48 | ✅ PASS |
+| `/cruises` | **0** | 44 | ✅ PASS |
 
-### R007: Desktop Lighthouse performance 82 (LCP 2.9s)
-- **Pages:** Homepage (desktop form factor)
-- **Severity:** Minor (Performance)
-- **Description:** Lighthouse desktop score is 82 with LCP of 2.9s (score 35). Mobile performance is excellent (96) suggesting the desktop form factor emulation may be stricter. All other Core Web Vitals are excellent.
-- **Impact:** Desktop visitors may experience slightly slower perceived load for the hero image.
-- **Fix:** Consider adding `fetchpriority="high"` to the hero image, or preloading the desktop hero image variant.
-- **Effort:** 30 minutes
+**Total axe-core violations across all 4 main pages: 0**
+
+---
+
+## FINAL PLAYWRIGHT TEST RESULTS
+
+| Metric | Value |
+|--------|-------|
+| Total tests | 123 |
+| Passed | 123 |
+| Failed | 0 |
+| Browsers | Chromium, WebKit, Mobile Chrome |
+| Duration | ~1.1 minutes |
 
 ---
 
@@ -118,4 +102,14 @@ All 22 bugs from the initial QA have been fixed, deployed, and verified:
 
 ---
 
-*Bug list generated from live QA testing on 2026-03-01.*
+## KNOWN LIMITATIONS (by design, not bugs)
+
+| Item | Notes |
+|------|-------|
+| `<html lang="ro">` on SSR | Server always renders RO; `lang` updates client-side on EN toggle. Correct for primary audience. |
+| No `hreflang` tags | EN content not discoverable by crawlers. Would require URL-based i18n (`/en/` prefix). |
+| No URL-based locale | EN is client-side only. Future consideration for full i18n. |
+
+---
+
+*Final report generated from live axe-core audits + Playwright 123/123 pass on 2026-03-01.*
