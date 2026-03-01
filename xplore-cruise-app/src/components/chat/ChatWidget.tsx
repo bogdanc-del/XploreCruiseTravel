@@ -70,6 +70,10 @@ export default function ChatWidget() {
         })
       })
 
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`)
+      }
+
       const data = await response.json()
 
       setMessages(prev => [...prev, {
@@ -177,6 +181,7 @@ export default function ChatWidget() {
               <button
                 onClick={sendMessage}
                 disabled={!input.trim() || isLoading}
+                aria-label={locale === 'ro' ? 'Trimite mesajul' : 'Send message'}
                 className="px-4 py-2.5 rounded-xl bg-gradient-to-br from-gold-400 to-gold-500 text-white text-sm font-medium hover:from-gold-500 hover:to-gold-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

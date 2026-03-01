@@ -49,7 +49,7 @@ const demoCruises: Cruise[] = [
     id: '4', slug: 'romantic-danube-river-cruise', title: 'Romantic Danube River Cruise', title_ro: 'Croaziera Romantica pe Dunare',
     cruise_type: 'river', nights: 8, price_from: 2299, currency: 'EUR', departure_port: 'Budapest, Hungary',
     departure_date: '2026-06-20', ports_of_call: ['Bratislava', 'Vienna', 'Durnstein', 'Melk', 'Passau'], ports_of_call_ro: ['Bratislava', 'Viena', 'Durnstein', 'Melk', 'Passau'],
-    image_url: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800', gallery_urls: [],
+    image_url: 'https://images.unsplash.com/photo-1514539079130-25950c84af65?w=800', gallery_urls: [],
     included: ['All meals', 'Shore excursions', 'Wine tasting'], included_ro: ['Toate mesele', 'Excursii terestre', 'Degustare vin'],
     excluded: ['Premium wines', 'Spa treatments'], excluded_ro: ['Vinuri premium', 'Tratamente spa'],
     tags: ['romantic', 'cultural'], featured: true, active: true, source: 'manual',
@@ -59,7 +59,7 @@ const demoCruises: Cruise[] = [
     id: '5', slug: 'caribbean-perfect-day', title: 'Caribbean & Perfect Day', title_ro: 'Caraibe si Perfect Day',
     cruise_type: 'ocean', nights: 7, price_from: 749, currency: 'EUR', departure_port: 'Miami, FL, USA',
     departure_date: '2026-11-10', ports_of_call: ['CocoCay', 'Cozumel', 'Roatan', 'Costa Maya'], ports_of_call_ro: ['CocoCay', 'Cozumel', 'Roatan', 'Costa Maya'],
-    image_url: 'https://images.unsplash.com/photo-1580541631950-7282082b03fe?w=800', gallery_urls: [],
+    image_url: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800', gallery_urls: [],
     included: ['All meals', 'Entertainment', 'Pool deck'], included_ro: ['Toate mesele', 'Divertisment', 'Punte piscina'],
     excluded: ['Drink packages', 'WiFi'], excluded_ro: ['Pachet bauturi', 'WiFi'],
     tags: ['family', 'tropical'], featured: true, active: true, source: 'manual',
@@ -113,22 +113,36 @@ function StatCounter({ target, suffix = '', label }: { target: number; suffix?: 
   )
 }
 
-// Particle component for hero
+// Particle component for hero — uses deterministic seed to avoid hydration mismatch
 function HeroParticles() {
+  // Use a seeded pseudo-random to ensure server and client produce identical values
+  const particles = Array.from({ length: 20 }).map((_, i) => {
+    // Deterministic hash based on index
+    const seed = (i + 1) * 2654435761
+    const r1 = ((seed >>> 0) % 1000) / 10        // 0–99.9
+    const r2 = (((seed * 31) >>> 0) % 1000) / 10 // 0–99.9
+    const r3 = (((seed * 67) >>> 0) % 1200) / 100 // 0–11.99
+    const r4 = (((seed * 97) >>> 0) % 800) / 100  // 0–7.99
+    const r5 = (((seed * 127) >>> 0) % 2000) / 10 - 100 // -100–99.9
+    const r6 = (((seed * 157) >>> 0) % 2000) / 10       // 0–199.9
+    const r7 = (((seed * 197) >>> 0) % 3600) / 10       // 0–359.9
+    return { left: r1, top: r2, duration: 8 + r3, delay: r4, tx: r5, ty: -100 - r6, tr: r7 }
+  })
+
   return (
     <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
-      {Array.from({ length: 20 }).map((_, i) => (
+      {particles.map((p, i) => (
         <div
           key={i}
           className="absolute w-1 h-1 rounded-full bg-gold-400/30"
           style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-            animation: `particle-float ${8 + Math.random() * 12}s linear infinite`,
-            animationDelay: `${Math.random() * 8}s`,
-            ['--tx' as string]: `${(Math.random() - 0.5) * 200}px`,
-            ['--ty' as string]: `${-100 - Math.random() * 200}px`,
-            ['--tr' as string]: `${Math.random() * 360}deg`,
+            left: `${p.left}%`,
+            top: `${p.top}%`,
+            animation: `particle-float ${p.duration}s linear infinite`,
+            animationDelay: `${p.delay}s`,
+            ['--tx' as string]: `${p.tx}px`,
+            ['--ty' as string]: `${p.ty}px`,
+            ['--tr' as string]: `${p.tr}deg`,
           }}
         />
       ))}
@@ -147,15 +161,23 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="relative min-h-[90vh] flex items-center justify-center bg-gradient-to-br from-navy-950 via-navy-900 to-navy-800 overflow-hidden">
         <HeroParticles />
-        {/* Background image overlay */}
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1548574505-5e239809ee19?w=1920')] bg-cover bg-center opacity-20" />
+        {/* Background image overlay — using next/image for optimized loading */}
+        <Image
+          src="https://images.unsplash.com/photo-1548574505-5e239809ee19?w=1920"
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover opacity-20"
+          quality={60}
+        />
         <div className="absolute inset-0 bg-gradient-to-b from-navy-950/50 via-transparent to-navy-950/80" />
 
         <Container className="relative z-10 text-center py-20">
           <div className="animate-fade-in-up">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gold-500/10 border border-gold-500/20 text-gold-400 text-sm mb-8">
               <span className="w-2 h-2 rounded-full bg-gold-400 animate-pulse" />
-              {locale === 'ro' ? 'Tour Operator Autorizat din 2016' : 'Licensed Tour Operator since 2016'}
+              {locale === 'ro' ? 'Consilier de Croaziere din 2016' : 'Cruise Consultant since 2016'}
             </div>
           </div>
 
@@ -235,52 +257,76 @@ export default function HomePage() {
         </Container>
       </section>
 
-      {/* Destinations Section */}
-      <section className="py-20 bg-navy-50">
-        <Container>
-          <div className="text-center mb-14">
-            <h2 className="text-3xl md:text-4xl font-bold text-navy-900 font-[family-name:var(--font-heading)] mb-4">
-              {locale === 'ro' ? 'Destinatii Populare' : 'Popular Destinations'}
-            </h2>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            {[
-              { name: 'Mediterranean', nameRo: 'Mediterana', img: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=400', count: 45 },
-              { name: 'Caribbean', nameRo: 'Caraibe', img: 'https://images.unsplash.com/photo-1580541631950-7282082b03fe?w=400', count: 32 },
-              { name: 'Northern Europe', nameRo: 'Europa de Nord', img: 'https://images.unsplash.com/photo-1507272931001-fc06c17e4f43?w=400', count: 18 },
-              { name: 'River Cruises', nameRo: 'Croaziere Fluviale', img: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=400', count: 24 },
-            ].map((dest, i) => (
-              <Link
-                key={dest.name}
-                href={`/cruises?destination=${dest.name.toLowerCase().replace(/\s/g, '-')}`}
-                className="group relative rounded-2xl overflow-hidden aspect-[3/4] animate-fade-in-up"
-                style={{ animationDelay: `${i * 100}ms` }}
-              >
-                <Image
-                  src={dest.img}
-                  alt={locale === 'ro' ? dest.nameRo : dest.name}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-navy-950/80 via-navy-950/20 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-5">
-                  <h3 className="text-white font-bold text-lg font-[family-name:var(--font-heading)]">
-                    {locale === 'ro' ? dest.nameRo : dest.name}
-                  </h3>
-                  <p className="text-gold-400 text-sm mt-1">
-                    {dest.count} {locale === 'ro' ? 'croaziere' : 'cruises'}
-                  </p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </Container>
-      </section>
+      {/* Destinations Section — only show categories that have cruises */}
+      {(() => {
+        const allDestinations = [
+          { slug: 'mediterranean', name: 'Mediterranean', nameRo: 'Mediterana', img: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=400' },
+          { slug: 'caribbean', name: 'Caribbean', nameRo: 'Caraibe', img: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=400' },
+          { slug: 'northern-europe', name: 'Northern Europe', nameRo: 'Europa de Nord', img: 'https://images.unsplash.com/photo-1507272931001-fc06c17e4f43?w=400' },
+          { slug: 'river-cruises', name: 'River Cruises', nameRo: 'Croaziere Fluviale', img: 'https://images.unsplash.com/photo-1514539079130-25950c84af65?w=400' },
+        ]
+        const destinations = allDestinations
+          .map(d => ({
+            ...d,
+            count: demoCruises.filter(c => c.destination_slug === d.slug).length,
+          }))
+          .filter(d => d.count > 0)
+
+        if (destinations.length === 0) return null
+
+        return (
+          <section className="py-20 bg-navy-50">
+            <Container>
+              <div className="text-center mb-14">
+                <h2 className="text-3xl md:text-4xl font-bold text-navy-900 font-[family-name:var(--font-heading)] mb-4">
+                  {locale === 'ro' ? 'Destinatii Populare' : 'Popular Destinations'}
+                </h2>
+              </div>
+              <div className={`grid gap-6 ${destinations.length <= 2 ? 'grid-cols-1 md:grid-cols-2 max-w-2xl mx-auto' : destinations.length === 3 ? 'grid-cols-2 md:grid-cols-3 max-w-4xl mx-auto' : 'grid-cols-2 md:grid-cols-4'}`}>
+                {destinations.map((dest, i) => (
+                  <Link
+                    key={dest.slug}
+                    href={`/cruises?destination=${dest.slug}`}
+                    className="group relative rounded-2xl overflow-hidden aspect-[3/4] animate-fade-in-up"
+                    style={{ animationDelay: `${i * 100}ms` }}
+                  >
+                    <Image
+                      src={dest.img}
+                      alt={locale === 'ro' ? dest.nameRo : dest.name}
+                      fill
+                      sizes="(max-width: 768px) 50vw, 25vw"
+                      loading="lazy"
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-navy-950/80 via-navy-950/20 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-5">
+                      <h3 className="text-white font-bold text-lg font-[family-name:var(--font-heading)]">
+                        {locale === 'ro' ? dest.nameRo : dest.name}
+                      </h3>
+                      <p className="text-gold-400 text-sm mt-1">
+                        {dest.count} {locale === 'ro' ? (dest.count === 1 ? 'croaziera' : 'croaziere') : (dest.count === 1 ? 'cruise' : 'cruises')}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </Container>
+          </section>
+        )
+      })()}
 
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-br from-navy-900 via-navy-800 to-navy-900 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1599640842225-85d111c60e6b?w=1920')] bg-cover bg-center" />
+          <Image
+            src="https://images.unsplash.com/photo-1599640842225-85d111c60e6b?w=1920"
+            alt=""
+            fill
+            sizes="100vw"
+            className="object-cover"
+            loading="lazy"
+            quality={50}
+          />
         </div>
         <Container className="relative z-10 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white font-[family-name:var(--font-heading)] mb-6">

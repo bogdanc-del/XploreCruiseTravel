@@ -29,7 +29,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: 'XploreCruiseTravel - Premium Cruise Experiences',
   description:
-    'Discover and book premium cruise experiences worldwide. Ocean, river, luxury and expedition cruises curated by XploreCruiseTravel, licensed tour operator in Romania. Best prices guaranteed.',
+    'Discover and book premium cruise experiences worldwide. Ocean, river, luxury and expedition cruises curated by XploreCruiseTravel, licensed cruise consultant in Romania since 2016. Best prices guaranteed.',
   keywords: [
     'cruise',
     'cruise booking',
@@ -39,16 +39,16 @@ export const metadata: Metadata = {
     'expedition cruise',
     'croaziere',
     'XploreCruiseTravel',
-    'tour operator Romania',
+    'cruise consultant Romania',
   ],
   authors: [{ name: 'XploreCruiseTravel' }],
   openGraph: {
     title: 'XploreCruiseTravel - Premium Cruise Experiences',
     description:
-      'Discover and book premium cruise experiences worldwide. Licensed tour operator in Romania since 2016.',
+      'Discover and book premium cruise experiences worldwide. Licensed cruise consultant in Romania since 2016.',
     type: 'website',
-    locale: 'en_US',
-    alternateLocale: 'ro_RO',
+    locale: 'ro_RO',
+    alternateLocale: 'en_US',
   },
 }
 
@@ -62,7 +62,7 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${playfairDisplay.variable} ${inter.variable}`}>
+    <html lang="ro" className={`${playfairDisplay.variable} ${inter.variable}`}>
       <body className="min-h-screen bg-white font-body text-navy-900 antialiased">
         <LocaleProvider>
           {children}

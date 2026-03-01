@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useT, useLocale } from '@/i18n/context'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
@@ -49,7 +50,7 @@ const demoCruises: Cruise[] = [
     id: '4', slug: 'romantic-danube-river-cruise', title: 'Romantic Danube River Cruise', title_ro: 'Croaziera Romantica pe Dunare',
     cruise_type: 'river', nights: 8, price_from: 2299, currency: 'EUR', departure_port: 'Budapest, Hungary',
     departure_date: '2026-06-20', ports_of_call: ['Bratislava', 'Vienna', 'Durnstein', 'Melk', 'Passau'], ports_of_call_ro: ['Bratislava', 'Viena', 'Durnstein', 'Melk', 'Passau'],
-    image_url: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800', gallery_urls: [],
+    image_url: 'https://images.unsplash.com/photo-1514539079130-25950c84af65?w=800', gallery_urls: [],
     included: ['All meals', 'Shore excursions', 'Wine tasting'], included_ro: ['Toate mesele', 'Excursii terestre', 'Degustare vin'],
     excluded: ['Premium wines', 'Spa treatments'], excluded_ro: ['Vinuri premium', 'Tratamente spa'],
     tags: ['romantic', 'cultural'], featured: true, active: true, source: 'manual',
@@ -59,7 +60,7 @@ const demoCruises: Cruise[] = [
     id: '5', slug: 'caribbean-perfect-day', title: 'Caribbean & Perfect Day', title_ro: 'Caraibe si Perfect Day',
     cruise_type: 'ocean', nights: 7, price_from: 749, currency: 'EUR', departure_port: 'Miami, FL, USA',
     departure_date: '2026-11-10', ports_of_call: ['CocoCay', 'Cozumel', 'Roatan', 'Costa Maya'], ports_of_call_ro: ['CocoCay', 'Cozumel', 'Roatan', 'Costa Maya'],
-    image_url: 'https://images.unsplash.com/photo-1580541631950-7282082b03fe?w=800', gallery_urls: [],
+    image_url: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800', gallery_urls: [],
     included: ['All meals', 'Entertainment', 'Pool deck'], included_ro: ['Toate mesele', 'Divertisment', 'Punte piscina'],
     excluded: ['Drink packages', 'WiFi'], excluded_ro: ['Pachet bauturi', 'WiFi'],
     tags: ['family', 'tropical'], featured: true, active: true, source: 'manual',
@@ -188,7 +189,7 @@ export default function CruisesPage() {
 
       {/* Hero Banner */}
       <section className="relative pt-20 pb-16 bg-gradient-to-br from-navy-950 via-navy-900 to-navy-800 overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1548574505-5e239809ee19?w=1920')] bg-cover bg-center opacity-15" />
+        <Image src="https://images.unsplash.com/photo-1548574505-5e239809ee19?w=1920" alt="" fill sizes="100vw" className="object-cover opacity-15" priority quality={60} />
         <div className="absolute inset-0 bg-gradient-to-b from-navy-950/60 via-transparent to-navy-950/80" />
         <Container className="relative z-10 text-center py-12">
           <h1 className="text-3xl md:text-5xl font-bold text-white font-[family-name:var(--font-heading)] mb-4">

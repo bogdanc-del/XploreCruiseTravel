@@ -5,7 +5,7 @@ const anthropic = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY || '',
 })
 
-const SYSTEM_PROMPT = `You are a friendly and knowledgeable cruise travel consultant for XploreCruiseTravel, a licensed tour operator (CAEN 7912) based in Romania since 2016.
+const SYSTEM_PROMPT = `You are a friendly and knowledgeable cruise travel consultant for XploreCruiseTravel, a licensed cruise consultant (CAEN 7912) based in Romania since 2016.
 
 Your role:
 - Help customers find the perfect cruise based on their preferences (destination, budget, dates, interests)

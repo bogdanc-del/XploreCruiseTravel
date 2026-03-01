@@ -44,6 +44,24 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email.trim())) {
+      return NextResponse.json(
+        { error: 'Invalid email format' },
+        { status: 400 }
+      )
+    }
+
+    // Passengers range validation
+    const passengersNum = Number(passengers) || 1
+    if (passengersNum < 1 || passengersNum > 20) {
+      return NextResponse.json(
+        { error: 'Passengers must be between 1 and 20' },
+        { status: 400 }
+      )
+    }
+
     if (!gdprConsent || !termsAccepted) {
       return NextResponse.json(
         { error: 'GDPR consent and terms acceptance are required' },

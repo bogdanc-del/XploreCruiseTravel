@@ -47,8 +47,7 @@
   --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap');
+/* Fonts are loaded via next/font/google in layout.tsx — no @import needed */
 
 /* Base styles */
 body {
@@ -166,6 +165,15 @@ html {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+}
+
+/* Hide scrollbar but keep scrolling */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
 /* Glass morphism */

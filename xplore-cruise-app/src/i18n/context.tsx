@@ -22,7 +22,7 @@ const LOCALE_STORAGE_KEY = 'xplore-locale'
 // ============================================================
 
 export function LocaleProvider({ children }: { children: React.ReactNode }) {
-  const [locale, setLocaleState] = useState<Locale>('en')
+  const [locale, setLocaleState] = useState<Locale>('ro')
   const [mounted, setMounted] = useState(false)
 
   // Load persisted locale from localStorage on mount

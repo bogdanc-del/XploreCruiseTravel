@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useParams, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -13,6 +13,12 @@ import Badge from '@/components/ui/Badge'
 import CruiseCard from '@/components/cruise/CruiseCard'
 import BookingModal from '@/components/booking/BookingModal'
 import ChatWidget from '@/components/chat/ChatWidget'
+import dynamic from 'next/dynamic'
+
+const RouteMap = dynamic(() => import('@/components/cruise/RouteMap'), {
+  ssr: false,
+  loading: () => <div className="h-[380px] bg-navy-50 rounded-2xl animate-pulse" />,
+})
 import { eurToRon } from '@/lib/supabase'
 import type { Cruise } from '@/lib/supabase'
 
@@ -63,7 +69,7 @@ const demoCruises: Cruise[] = [
     id: '4', slug: 'romantic-danube-river-cruise', title: 'Romantic Danube River Cruise', title_ro: 'Croaziera Romantica pe Dunare',
     cruise_type: 'river', nights: 8, price_from: 2299, currency: 'EUR', departure_port: 'Budapest, Hungary',
     departure_date: '2026-06-20', ports_of_call: ['Bratislava', 'Vienna', 'Durnstein', 'Melk', 'Passau'], ports_of_call_ro: ['Bratislava', 'Viena', 'Durnstein', 'Melk', 'Passau'],
-    image_url: 'https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=800', gallery_urls: [],
+    image_url: 'https://images.unsplash.com/photo-1514539079130-25950c84af65?w=800', gallery_urls: [],
     included: ['All meals', 'Shore excursions', 'Wine tasting'], included_ro: ['Toate mesele', 'Excursii terestre', 'Degustare vin'],
     excluded: ['Premium wines', 'Spa treatments'], excluded_ro: ['Vinuri premium', 'Tratamente spa'],
     tags: ['romantic', 'cultural'], featured: true, active: true, source: 'manual',
@@ -75,7 +81,7 @@ const demoCruises: Cruise[] = [
     id: '5', slug: 'caribbean-perfect-day', title: 'Caribbean & Perfect Day', title_ro: 'Caraibe si Perfect Day',
     cruise_type: 'ocean', nights: 7, price_from: 749, currency: 'EUR', departure_port: 'Miami, FL, USA',
     departure_date: '2026-11-10', ports_of_call: ['CocoCay', 'Cozumel', 'Roatan', 'Costa Maya'], ports_of_call_ro: ['CocoCay', 'Cozumel', 'Roatan', 'Costa Maya'],
-    image_url: 'https://images.unsplash.com/photo-1580541631950-7282082b03fe?w=800', gallery_urls: [],
+    image_url: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800', gallery_urls: [],
     included: ['All meals', 'Entertainment', 'Pool deck'], included_ro: ['Toate mesele', 'Divertisment', 'Punte piscina'],
     excluded: ['Drink packages', 'WiFi'], excluded_ro: ['Pachet bauturi', 'WiFi'],
     tags: ['family', 'tropical'], featured: true, active: true, source: 'manual',
@@ -98,17 +104,105 @@ const demoCruises: Cruise[] = [
 ]
 
 // ============================================================
+// Cancellation policies by cruise line (source: croaziere.net)
+// ============================================================
+
+interface CancellationTier {
+  period_en: string
+  period_ro: string
+  penalty: string
+  penalty_en?: string
+  penalty_ro?: string
+}
+
+const CANCELLATION_POLICIES: Record<string, {
+  tiers: CancellationTier[]
+  notes_en?: string
+  notes_ro?: string
+}> = {
+  'MSC Cruises': {
+    tiers: [
+      { period_en: 'More than 60 days before', period_ro: 'Mai mult de 60 zile inainte', penalty: '50 EUR/pers.' },
+      { period_en: '59 – 30 days before', period_ro: '59 – 30 zile inainte', penalty: '25%' },
+      { period_en: '29 – 22 days before', period_ro: '29 – 22 zile inainte', penalty: '40%' },
+      { period_en: '21 – 15 days before', period_ro: '21 – 15 zile inainte', penalty: '60%' },
+      { period_en: '14 – 6 days before', period_ro: '14 – 6 zile inainte', penalty: '80%' },
+      { period_en: 'Under 6 days / no-show', period_ro: 'Sub 6 zile / neprezentare', penalty: '100%' },
+    ],
+    notes_en: 'For cruises of 15+ nights the periods start earlier (90 days). Name changes: €50/person.',
+    notes_ro: 'Pentru croazierele de 15+ nopti perioadele incep mai devreme (90 zile). Schimbari de nume: 50 EUR/persoana.',
+  },
+  'Costa Cruises': {
+    tiers: [
+      { period_en: 'More than 60 days before', period_ro: 'Mai mult de 60 zile inainte', penalty: '100 EUR/pers.' },
+      { period_en: '59 – 30 days before', period_ro: '59 – 30 zile inainte', penalty: '20%' },
+      { period_en: '29 – 15 days before', period_ro: '29 – 15 zile inainte', penalty: '50%' },
+      { period_en: '14 – 8 days before', period_ro: '14 – 8 zile inainte', penalty: '75%' },
+      { period_en: '7 – 0 days / no-show', period_ro: '7 – 0 zile / neprezentare', penalty: '100%' },
+    ],
+    notes_en: 'Long-duration & World cruises have stricter policies (penalties start from 90 days). Last Minute offers: 100% penalty.',
+    notes_ro: 'Croazierele lungi si In Jurul Lumii au politici mai stricte (penalitati de la 90 zile). Oferte Last Minute: penalitate 100%.',
+  },
+  'Norwegian Cruise Line': {
+    tiers: [
+      { period_en: '29+ days before', period_ro: '29+ zile inainte', penalty: '20%' },
+      { period_en: '28 – 15 days before', period_ro: '28 – 15 zile inainte', penalty: '50%' },
+      { period_en: '14 – 8 days before', period_ro: '14 – 8 zile inainte', penalty: '75%' },
+      { period_en: '7 – 0 days / no-show', period_ro: '7 – 0 zile / neprezentare', penalty: '95%' },
+    ],
+  },
+  'Royal Caribbean': {
+    tiers: [
+      { period_en: '53+ days before', period_ro: '53+ zile inainte', penalty: 'Deposit (nerambursabil)', penalty_en: 'Deposit (non-refundable)', penalty_ro: 'Deposit (nerambursabil)' },
+      { period_en: '52 – 34 days before', period_ro: '52 – 34 zile inainte', penalty: '50%' },
+      { period_en: '33 – 18 days before', period_ro: '33 – 18 zile inainte', penalty: '75%' },
+      { period_en: '17 – 0 days / no-show', period_ro: '17 – 0 zile / neprezentare', penalty: '100%' },
+    ],
+    notes_en: 'For cruises of 15+ nights, the cancellation periods are stricter (from 123 days).',
+    notes_ro: 'Pentru croazierele de 15+ nopti, perioadele sunt mai stricte (de la 123 zile).',
+  },
+  'Viking River Cruises': {
+    tiers: [
+      { period_en: '120+ days before', period_ro: '120+ zile inainte', penalty: '250 EUR/pers.' },
+      { period_en: '119 – 90 days before', period_ro: '119 – 90 zile inainte', penalty: '25%' },
+      { period_en: '89 – 60 days before', period_ro: '89 – 60 zile inainte', penalty: '50%' },
+      { period_en: '59 – 30 days before', period_ro: '59 – 30 zile inainte', penalty: '75%' },
+      { period_en: 'Under 30 days / no-show', period_ro: 'Sub 30 zile / neprezentare', penalty: '100%' },
+    ],
+  },
+  'Silversea': {
+    tiers: [
+      { period_en: '120+ days before', period_ro: '120+ zile inainte', penalty: 'Deposit (nerambursabil)', penalty_en: 'Deposit (non-refundable)', penalty_ro: 'Deposit (nerambursabil)' },
+      { period_en: '119 – 90 days before', period_ro: '119 – 90 zile inainte', penalty: '25%' },
+      { period_en: '89 – 60 days before', period_ro: '89 – 60 zile inainte', penalty: '50%' },
+      { period_en: '59 – 31 days before', period_ro: '59 – 31 zile inainte', penalty: '75%' },
+      { period_en: '30 – 0 days / no-show', period_ro: '30 – 0 zile / neprezentare', penalty: '100%' },
+    ],
+    notes_en: 'Luxury cruise cancellation terms may vary. Contact us for specific conditions.',
+    notes_ro: 'Termenii de anulare pentru croazierele de lux pot varia. Contactati-ne pentru conditii specifice.',
+  },
+}
+
+// ============================================================
 // Cruise Detail Page
 // ============================================================
 
 export default function CruiseDetailPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-navy-50" />}>
+      <CruiseDetailContent />
+    </Suspense>
+  )
+}
+
+function CruiseDetailContent() {
   const t = useT()
   const { locale } = useLocale()
   const params = useParams()
   const slug = params.slug as string
 
   const searchParams = useSearchParams()
-  const [activeTab, setActiveTab] = useState<'overview' | 'itinerary' | 'included'>('overview')
+  const [activeTab, setActiveTab] = useState<'overview' | 'itinerary' | 'included' | 'cancellation'>('overview')
   const [showBooking, setShowBooking] = useState(false)
 
   // Auto-open booking modal if ?book=1 in URL
@@ -175,7 +269,10 @@ export default function CruiseDetailPage() {
     { key: 'overview' as const, label: t('detail_overview') },
     { key: 'itinerary' as const, label: t('detail_itinerary') },
     { key: 'included' as const, label: t('detail_included') },
+    { key: 'cancellation' as const, label: t('detail_cancellation') },
   ]
+
+  const cancellationPolicy = cruise.cruise_line ? CANCELLATION_POLICIES[cruise.cruise_line] : undefined
 
   return (
     <>
@@ -188,8 +285,10 @@ export default function CruiseDetailPage() {
             src={cruise.image_url.replace('w=800', 'w=1920')}
             alt={title}
             fill
+            sizes="100vw"
             className="object-cover"
             priority
+            quality={75}
           />
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-navy-950/80 via-navy-950/30 to-transparent" />
@@ -244,13 +343,13 @@ export default function CruiseDetailPage() {
             {/* Main Content Area (70%) */}
             <div>
               {/* Tabs */}
-              <div className="border-b border-navy-200 mb-8">
-                <div className="flex gap-0">
+              <div className="border-b border-navy-200 mb-8 overflow-x-auto scrollbar-hide">
+                <div className="flex gap-0 min-w-max">
                   {tabs.map(tab => (
                     <button
                       key={tab.key}
                       onClick={() => setActiveTab(tab.key)}
-                      className={`px-5 py-3 text-sm font-medium border-b-2 transition-colors ${
+                      className={`px-5 py-3 text-sm font-medium border-b-2 transition-colors whitespace-nowrap ${
                         activeTab === tab.key
                           ? 'border-gold-500 text-gold-600'
                           : 'border-transparent text-navy-500 hover:text-navy-700 hover:border-navy-200'
@@ -301,6 +400,13 @@ export default function CruiseDetailPage() {
               {/* Tab Content: Itinerary */}
               {activeTab === 'itinerary' && (
                 <div>
+                  {/* Route Map */}
+                  <RouteMap
+                    departurePort={cruise.departure_port}
+                    portsOfCall={cruise.ports_of_call}
+                    className="mb-8"
+                  />
+
                   <h3 className="text-lg font-bold text-navy-900 font-[family-name:var(--font-heading)] mb-6">
                     {t('cruise_ports')}
                   </h3>
@@ -398,6 +504,94 @@ export default function CruiseDetailPage() {
                 </div>
               )}
 
+              {/* Tab Content: Cancellation Policy */}
+              {activeTab === 'cancellation' && cancellationPolicy && (
+                <div className="space-y-6">
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center">
+                      <ShieldIcon className="w-4 h-4 text-amber-600" />
+                    </span>
+                    <div>
+                      <h3 className="text-lg font-bold text-navy-900 font-[family-name:var(--font-heading)]">
+                        {t('detail_cancellation')}
+                      </h3>
+                      <p className="text-xs text-navy-400">{cruise.cruise_line}</p>
+                    </div>
+                  </div>
+
+                  {/* Policy Table */}
+                  <div className="overflow-hidden rounded-xl border border-navy-200">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="bg-navy-50">
+                          <th className="text-left py-3 px-4 font-semibold text-navy-700 border-b border-navy-200">
+                            {t('detail_cancellation_period')}
+                          </th>
+                          <th className="text-right py-3 px-4 font-semibold text-navy-700 border-b border-navy-200">
+                            {t('detail_cancellation_penalty')}
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {cancellationPolicy.tiers.map((tier, i) => (
+                          <tr
+                            key={i}
+                            className={`${i % 2 === 0 ? 'bg-white' : 'bg-navy-50/50'} ${
+                              i === cancellationPolicy.tiers.length - 1 ? '' : 'border-b border-navy-100'
+                            }`}
+                          >
+                            <td className="py-3 px-4 text-navy-600">
+                              {locale === 'ro' ? tier.period_ro : tier.period_en}
+                            </td>
+                            <td className="py-3 px-4 text-right font-semibold text-navy-800">
+                              {(() => {
+                                const penaltyText = locale === 'ro' && tier.penalty_ro ? tier.penalty_ro : tier.penalty_en ? tier.penalty_en : tier.penalty
+                                return (
+                                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                                    tier.penalty === '100%'
+                                      ? 'bg-red-100 text-red-700'
+                                      : tier.penalty.includes('75%') || tier.penalty.includes('80%') || tier.penalty.includes('95%')
+                                        ? 'bg-orange-100 text-orange-700'
+                                        : tier.penalty.includes('50%') || tier.penalty.includes('40%') || tier.penalty.includes('60%')
+                                          ? 'bg-amber-100 text-amber-700'
+                                          : 'bg-emerald-100 text-emerald-700'
+                                  }`}>
+                                    {penaltyText}
+                                  </span>
+                                )
+                              })()}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Notes */}
+                  {(cancellationPolicy.notes_en || cancellationPolicy.notes_ro) && (
+                    <div className="flex items-start gap-3 p-4 rounded-lg bg-amber-50 border border-amber-200">
+                      <InfoCircleIcon className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                      <p className="text-sm text-amber-800">
+                        {locale === 'ro' ? cancellationPolicy.notes_ro : cancellationPolicy.notes_en}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Source disclaimer */}
+                  <p className="text-xs text-navy-400 italic">
+                    {t('detail_cancellation_source')}
+                  </p>
+                </div>
+              )}
+
+              {activeTab === 'cancellation' && !cancellationPolicy && (
+                <p className="text-sm text-navy-500">
+                  {locale === 'ro'
+                    ? 'Politica de anulare nu este disponibila pentru aceasta croaziera. Contactati-ne pentru detalii.'
+                    : 'Cancellation policy is not available for this cruise. Contact us for details.'}
+                </p>
+              )}
+
               {/* Advisor Note */}
               {advisorNote && (
                 <div className="mt-10 p-6 rounded-xl bg-gold-50 border border-gold-200">
@@ -408,9 +602,15 @@ export default function CruiseDetailPage() {
                     {t('detail_advisor')}
                   </h3>
                   <p className="text-sm text-navy-600 leading-relaxed">{advisorNote}</p>
-                  <p className="text-xs text-gold-600 mt-3 font-medium">
-                    - Ceausu Daniel Antonina, {locale === 'ro' ? 'Consultant Croaziere' : 'Cruise Consultant'}
-                  </p>
+                  <div className="flex items-center gap-3 mt-4 pt-3 border-t border-gold-200">
+                    <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gold-400 flex-shrink-0">
+                      <img src="/images/daniela-ceausu.jpg" alt="Ceausu Daniel Antonina" className="w-full h-full object-cover object-top" />
+                    </div>
+                    <div>
+                      <p className="text-xs font-semibold text-navy-800">Ceausu Daniel Antonina</p>
+                      <p className="text-xs text-gold-600">{locale === 'ro' ? 'Consultant Croaziere' : 'Cruise Consultant'}</p>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
@@ -629,6 +829,22 @@ function EmailIcon({ className }: { className?: string }) {
   return (
     <svg className={className || 'w-4 h-4'} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+    </svg>
+  )
+}
+
+function ShieldIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className || 'w-4 h-4'} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+    </svg>
+  )
+}
+
+function InfoCircleIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className || 'w-5 h-5'} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
     </svg>
   )
 }

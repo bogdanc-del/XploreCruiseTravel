@@ -63,6 +63,10 @@ export const translations = {
     detail_advisor: 'Advisor Notes',
     detail_similar: 'Similar Cruises',
     detail_cabin_from: 'from',
+    detail_cancellation: 'Cancellation Policy',
+    detail_cancellation_period: 'Period before departure',
+    detail_cancellation_penalty: 'Penalty',
+    detail_cancellation_source: 'Source: croaziere.net. Penalties are calculated as % of total package price. Conditions may vary — contact us for details.',
 
     // Booking Modal
     booking_title: 'Book Your Cruise',
@@ -111,7 +115,7 @@ export const translations = {
     about_mission_title: 'Our Mission',
     about_mission: 'We curate the finest cruise experiences from world-renowned cruise lines, making luxury ocean and river travel accessible to everyone. With over 8 years of experience, we bring you exclusive deals and personalized service.',
     about_why_title: 'Why Choose Us?',
-    about_why_1: 'Licensed tour operator with access to exclusive deals',
+    about_why_1: 'Licensed cruise consultant with access to exclusive deals',
     about_why_2: 'Personalized cruise consulting',
     about_why_3: 'Best price guarantee in Romania',
     about_why_4: 'Complete GDPR-compliant booking process',
@@ -128,7 +132,7 @@ export const translations = {
     footer_gdpr: 'GDPR',
     footer_contact: 'Contact',
     footer_copyright: '© 2026 XploreCruiseTravel. All rights reserved.',
-    footer_partner: 'Licensed Tour Operator — CUI 36785800',
+    footer_partner: 'Licensed Cruise Consultant — CUI 36785800',
 
     // Chat
     chat_title: 'Cruise Advisor',
@@ -143,6 +147,13 @@ export const translations = {
     cookie_accept: 'Accept All',
     cookie_reject: 'Reject Optional',
     cookie_settings: 'Cookie Settings',
+
+    // Route Map
+    map_title: 'Cruise Route',
+    map_departure: 'Departure port',
+    map_port: 'Port of call',
+    map_route: 'Route',
+    map_departure_label: 'Departure',
 
     // Common
     loading: 'Loading...',
@@ -215,6 +226,10 @@ export const translations = {
     detail_advisor: 'Nota Consultantului',
     detail_similar: 'Croaziere Similare',
     detail_cabin_from: 'de la',
+    detail_cancellation: 'Politica de Anulare',
+    detail_cancellation_period: 'Perioada inainte de plecare',
+    detail_cancellation_penalty: 'Penalitate',
+    detail_cancellation_source: 'Sursa: croaziere.net. Penalitatile sunt calculate ca % din pretul total al pachetului. Conditiile pot varia — contactati-ne pentru detalii.',
 
     // Booking Modal
     booking_title: 'Rezerva Croaziera',
@@ -263,7 +278,7 @@ export const translations = {
     about_mission_title: 'Misiunea Noastra',
     about_mission: 'Selectam cele mai bune experiente de croaziera de la companii de renume mondial, facand calatoriile de lux pe ocean si rau accesibile tuturor. Cu peste 8 ani de experienta, va aducem oferte exclusive si servicii personalizate.',
     about_why_title: 'De Ce Sa Ne Alegi?',
-    about_why_1: 'Tour operator autorizat cu acces la oferte exclusive',
+    about_why_1: 'Consilier de croaziere autorizat cu acces la oferte exclusive',
     about_why_2: 'Consultanta personalizata pentru croaziere',
     about_why_3: 'Garantia celui mai bun pret din Romania',
     about_why_4: 'Proces de rezervare complet conform GDPR',
@@ -280,7 +295,7 @@ export const translations = {
     footer_gdpr: 'GDPR',
     footer_contact: 'Contact',
     footer_copyright: '© 2026 XploreCruiseTravel. Toate drepturile rezervate.',
-    footer_partner: 'Tour Operator Autorizat — CUI 36785800',
+    footer_partner: 'Consilier de Croaziere Autorizat — CUI 36785800',
 
     // Chat
     chat_title: 'Consilier Croaziere',
@@ -295,6 +310,13 @@ export const translations = {
     cookie_accept: 'Accepta Tot',
     cookie_reject: 'Respinge Optionale',
     cookie_settings: 'Setari Cookie',
+
+    // Route Map
+    map_title: 'Traseu Croaziera',
+    map_departure: 'Port plecare',
+    map_port: 'Escala',
+    map_route: 'Traseu',
+    map_departure_label: 'Plecare',
 
     // Common
     loading: 'Se incarca...',

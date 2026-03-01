@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import { useT, useLocale } from '@/i18n/context'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
@@ -24,6 +25,8 @@ export default function ContactPage() {
   const [message, setMessage] = useState('')
   const [gdprConsent, setGdprConsent] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle')
+  const [errorMessage, setErrorMessage] = useState('')
 
   const cruiseInterestOptions = locale === 'ro'
     ? [
@@ -51,9 +54,12 @@ export default function ContactPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setSubmitStatus('idle')
+    setErrorMessage('')
 
     if (!gdprConsent) {
-      alert(locale === 'ro'
+      setSubmitStatus('error')
+      setErrorMessage(locale === 'ro'
         ? 'Va rugam sa acceptati prelucrarea datelor personale conform GDPR.'
         : 'Please accept the GDPR data processing consent.')
       return
@@ -61,19 +67,34 @@ export default function ContactPage() {
 
     setIsSubmitting(true)
 
-    // Simulated submission -- replace with Supabase call later
-    await new Promise(resolve => setTimeout(resolve, 800))
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, phone, cruiseInterest, message, gdprConsent, locale }),
+      })
 
-    alert(t('contact_success'))
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`)
+      }
 
-    // Clear form
-    setName('')
-    setEmail('')
-    setPhone('')
-    setCruiseInterest('')
-    setMessage('')
-    setGdprConsent(false)
-    setIsSubmitting(false)
+      setSubmitStatus('success')
+
+      // Clear form
+      setName('')
+      setEmail('')
+      setPhone('')
+      setCruiseInterest('')
+      setMessage('')
+      setGdprConsent(false)
+    } catch {
+      setSubmitStatus('error')
+      setErrorMessage(locale === 'ro'
+        ? 'Mesajul nu a putut fi trimis. Va rugam incercati din nou sau contactati-ne direct la xplorecruisetravel@gmail.com.'
+        : 'Message could not be sent. Please try again or contact us directly at xplorecruisetravel@gmail.com.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -82,7 +103,7 @@ export default function ContactPage() {
 
       {/* Hero Banner */}
       <section className="relative pt-20 pb-16 bg-gradient-to-br from-navy-950 via-navy-900 to-navy-800 overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=1920')] bg-cover bg-center opacity-15" />
+        <Image src="https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=1920" alt="" fill sizes="100vw" className="object-cover opacity-15" priority quality={60} />
         <div className="absolute inset-0 bg-gradient-to-b from-navy-950/60 via-transparent to-navy-950/80" />
         <Container className="relative z-10 text-center py-12">
           <h1 className="text-3xl md:text-5xl font-bold text-white font-[family-name:var(--font-heading)] mb-4">
@@ -220,6 +241,18 @@ export default function ContactPage() {
                     ? (locale === 'ro' ? 'Se trimite...' : 'Sending...')
                     : t('contact_send')}
                 </Button>
+
+                {/* Status messages */}
+                {submitStatus === 'success' && (
+                  <div className="p-4 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm">
+                    {t('contact_success')}
+                  </div>
+                )}
+                {submitStatus === 'error' && errorMessage && (
+                  <div className="p-4 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
+                    {errorMessage}
+                  </div>
+                )}
               </form>
             </div>
 
@@ -299,11 +332,18 @@ export default function ContactPage() {
 
                 {/* Contact person */}
                 <div className="mt-6 pt-6 border-t border-navy-700">
-                  <p className="text-xs text-navy-400 uppercase tracking-wider mb-1">
+                  <p className="text-xs text-navy-400 uppercase tracking-wider mb-2">
                     {locale === 'ro' ? 'Persoana de contact' : 'Contact Person'}
                   </p>
-                  <p className="text-sm font-semibold text-white">Ceausu Daniel Antonina</p>
-                  <p className="text-xs text-gold-400 mt-0.5">CEO & {locale === 'ro' ? 'Consultant Croaziere' : 'Cruise Consultant'}</p>
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-gold-400 flex-shrink-0">
+                      <img src="/images/daniela-ceausu.jpg" alt="Ceausu Daniel Antonina" className="w-full h-full object-cover object-top" />
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-white">Ceausu Daniel Antonina</p>
+                      <p className="text-xs text-gold-400 mt-0.5">CEO & {locale === 'ro' ? 'Consultant Croaziere' : 'Cruise Consultant'}</p>
+                    </div>
+                  </div>
                 </div>
               </div>
 

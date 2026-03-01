@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { useT, useLocale } from '@/i18n/context'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
@@ -45,7 +46,7 @@ export default function AboutPage() {
 
       {/* Hero Banner */}
       <section className="relative pt-20 pb-16 bg-gradient-to-br from-navy-950 via-navy-900 to-navy-800 overflow-hidden">
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1599640842225-85d111c60e6b?w=1920')] bg-cover bg-center opacity-15" />
+        <Image src="https://images.unsplash.com/photo-1599640842225-85d111c60e6b?w=1920" alt="" fill sizes="100vw" className="object-cover opacity-15" priority quality={60} />
         <div className="absolute inset-0 bg-gradient-to-b from-navy-950/60 via-transparent to-navy-950/80" />
         <Container className="relative z-10 text-center py-12">
           <h1 className="text-3xl md:text-5xl font-bold text-white font-[family-name:var(--font-heading)] mb-4">
@@ -63,7 +64,7 @@ export default function AboutPage() {
           <div className="max-w-3xl mx-auto text-center">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gold-500/10 border border-gold-500/20 text-gold-600 text-sm mb-6">
               <span className="w-2 h-2 rounded-full bg-gold-400" />
-              {locale === 'ro' ? 'CAEN 7912 — Tour Operator Autorizat' : 'CAEN 7912 — Licensed Tour Operator'}
+              {locale === 'ro' ? 'CAEN 7912 — Consilier de Croaziere' : 'CAEN 7912 — Cruise Consultant'}
             </div>
             <h2 className="text-2xl md:text-4xl font-bold text-navy-900 font-[family-name:var(--font-heading)] mb-6">
               {t('about_mission_title')}
@@ -114,11 +115,13 @@ export default function AboutPage() {
 
           <div className="max-w-sm mx-auto">
             <div className="text-center group">
-              {/* Placeholder avatar */}
-              <div className="w-32 h-32 mx-auto mb-6 rounded-full bg-gradient-to-br from-navy-100 to-navy-200 border-4 border-gold-400 flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300">
-                <svg className="w-16 h-16 text-navy-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
-                </svg>
+              {/* Daniela Ceausu photo */}
+              <div className="w-32 h-32 mx-auto mb-6 rounded-full border-4 border-gold-400 shadow-lg group-hover:shadow-xl transition-shadow duration-300 overflow-hidden">
+                <img
+                  src="/images/daniela-ceausu.jpg"
+                  alt="Ceausu Daniel Antonina"
+                  className="w-full h-full object-cover object-top"
+                />
               </div>
               <h3 className="text-xl font-bold text-navy-900 font-[family-name:var(--font-heading)]">
                 Ceausu Daniel Antonina
@@ -163,8 +166,8 @@ export default function AboutPage() {
             </h2>
             <p className="text-navy-300 leading-relaxed mb-8">
               {locale === 'ro'
-                ? 'XPLORE CRUISE TRAVEL SRL este un tour operator autorizat, inregistrat in Romania din 2016, specializat in organizarea si vanzarea de croaziere premium.'
-                : 'XPLORE CRUISE TRAVEL SRL is a licensed tour operator registered in Romania since 2016, specializing in organizing and selling premium cruise experiences.'}
+                ? 'XPLORE CRUISE TRAVEL SRL este un operator autorizat de croaziere, inregistrat in Romania din 2016, specializat in organizarea si vanzarea de croaziere premium.'
+                : 'XPLORE CRUISE TRAVEL SRL is a licensed cruise consultant registered in Romania since 2016, specializing in organizing and selling premium cruise experiences.'}
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg mx-auto text-left">
@@ -186,7 +189,7 @@ export default function AboutPage() {
               </div>
               <div className="p-4 rounded-lg bg-white/5 border border-white/10">
                 <p className="text-navy-400 text-xs uppercase tracking-wider mb-1">CAEN</p>
-                <p className="text-white font-semibold text-sm">7912 — Tour Operator</p>
+                <p className="text-white font-semibold text-sm">7912 — Organizare Croaziere</p>
               </div>
               <div className="p-4 rounded-lg bg-white/5 border border-white/10 sm:col-span-2">
                 <p className="text-navy-400 text-xs uppercase tracking-wider mb-1">
@@ -200,7 +203,7 @@ export default function AboutPage() {
 
             <div className="mt-8 inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gold-500/10 border border-gold-500/30 text-gold-400 text-sm font-semibold">
               <span className="w-2 h-2 rounded-full bg-gold-400" />
-              {locale === 'ro' ? 'Tour Operator Autorizat din 2016' : 'Licensed Tour Operator Since 2016'}
+              {locale === 'ro' ? 'Consilier de Croaziere din 2016' : 'Licensed Cruise Consultant Since 2016'}
             </div>
           </div>
         </Container>
@@ -209,7 +212,7 @@ export default function AboutPage() {
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-br from-navy-800 via-navy-900 to-navy-950 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10">
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1548574505-5e239809ee19?w=1920')] bg-cover bg-center" />
+          <Image src="https://images.unsplash.com/photo-1548574505-5e239809ee19?w=1920" alt="" fill sizes="100vw" className="object-cover" loading="lazy" quality={50} />
         </div>
         <Container className="relative z-10 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white font-[family-name:var(--font-heading)] mb-6">

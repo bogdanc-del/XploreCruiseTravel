@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import { useLocale } from '@/i18n/context'
 
 // ============================================================
@@ -193,9 +194,9 @@ export default function AdminPage() {
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <a href="/" className="text-sm text-navy-300 hover:text-white transition-colors">
+            <Link href="/" className="text-sm text-navy-300 hover:text-white transition-colors">
               {locale === 'ro' ? 'Viziteaza site' : 'View Site'} &rarr;
-            </a>
+            </Link>
             <button
               onClick={handleLogout}
               className="text-sm text-navy-400 hover:text-red-400 transition-colors"
@@ -472,7 +473,7 @@ export default function AdminPage() {
                   <span className="text-navy-500">{locale === 'ro' ? 'Nr. Reg.' : 'Trade Reg.'}:</span>
                   <span className="text-navy-800 font-medium">J03/1962/2016</span>
                   <span className="text-navy-500">CAEN:</span>
-                  <span className="text-navy-800 font-medium">7912 — Tour Operator</span>
+                  <span className="text-navy-800 font-medium">7912 — Organizare Croaziere</span>
                 </div>
               </div>
 

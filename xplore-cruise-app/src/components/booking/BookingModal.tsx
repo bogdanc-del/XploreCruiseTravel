@@ -215,6 +215,7 @@ export default function BookingModal({
       className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
+      aria-labelledby="booking-modal-title"
     >
       {/* Backdrop */}
       <div
@@ -237,7 +238,7 @@ export default function BookingModal({
 
         {/* Header */}
         <div className="px-6 pt-6 pb-4 border-b border-navy-100">
-          <h2 className="text-xl font-bold text-navy-900 font-[family-name:var(--font-heading)] pr-8">
+          <h2 id="booking-modal-title" className="text-xl font-bold text-navy-900 font-[family-name:var(--font-heading)] pr-8">
             {t('booking_title')}
           </h2>
           {cruiseTitle && (
