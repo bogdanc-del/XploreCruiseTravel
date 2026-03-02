@@ -645,10 +645,10 @@ function CruiseDetailContent() {
                   <p className="text-sm text-navy-600 leading-relaxed">{advisorNote}</p>
                   <div className="flex items-center gap-3 mt-4 pt-3 border-t border-gold-200">
                     <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gold-400 flex-shrink-0">
-                      <img src="/images/daniela-ceausu.jpg" alt="Ceausu Daniel Antonina" className="w-full h-full object-cover object-top" />
+                      <img src="/images/daniela-ceausu.jpg" alt="Ceausu Daniela Antonina" className="w-full h-full object-cover object-top" />
                     </div>
                     <div>
-                      <p className="text-xs font-semibold text-navy-800">Ceausu Daniel Antonina</p>
+                      <p className="text-xs font-semibold text-navy-800">Ceausu Daniela Antonina</p>
                       <p className="text-xs text-gold-600">{locale === 'ro' ? 'Consultant Croaziere' : 'Cruise Consultant'}</p>
                     </div>
                   </div>

@@ -120,12 +120,12 @@ export default function AboutPage() {
               <div className="w-32 h-32 mx-auto mb-6 rounded-full border-4 border-gold-400 shadow-lg group-hover:shadow-xl transition-shadow duration-300 overflow-hidden">
                 <img
                   src="/images/daniela-ceausu.jpg"
-                  alt="Ceausu Daniel Antonina"
+                  alt="Ceausu Daniela Antonina"
                   className="w-full h-full object-cover object-top"
                 />
               </div>
               <h3 className="text-xl font-bold text-navy-900 font-[family-name:var(--font-heading)]">
-                Ceausu Daniel Antonina
+                Ceausu Daniela Antonina
               </h3>
               <p className="text-gold-600 font-medium text-sm mt-1">
                 CEO & {locale === 'ro' ? 'Consultant Croaziere' : 'Cruise Consultant'}
