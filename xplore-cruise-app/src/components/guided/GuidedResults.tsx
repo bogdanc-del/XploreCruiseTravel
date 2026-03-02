@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { useLocale, useT } from '@/i18n/context'
 import { useGuidedFlow } from '@/context/GuidedFlowContext'
-import { getRecommendations, getRecommendationReason } from '@/lib/recommendation-engine'
+import { getRecommendations, getRecommendationReason, getRecommendationTags } from '@/lib/recommendation-engine'
 import type { CruiseIndex } from '@/lib/recommendation-engine'
 import { trackGuidedComplete, trackGuidedResultClick, trackGuidedResultOffer } from '@/lib/analytics'
 import GuidedResultCard from './GuidedResultCard'
@@ -143,6 +143,7 @@ export default function GuidedResults() {
                   <GuidedResultCard
                     cruise={cruise}
                     reason={getRecommendationReason(cruise, state, locale)}
+                    reasonTags={getRecommendationTags(cruise, state, locale)}
                     position={i}
                     locale={locale}
                     onCardClick={() => {

@@ -16,6 +16,17 @@ import { eurToRon } from '@/lib/supabase'
 import type { Cruise } from '@/lib/supabase'
 import { FEATURED_CRUISES } from '@/data/cruises-database'
 
+// ============================================================
+// Site Stats — single source of truth (EN + RO share these)
+// "Cruise Consultant since 2016" → 10+ years is correct
+// ============================================================
+const SITE_STATS = {
+  cruises: 150,
+  destinations: 25,
+  clients: 500,
+  years: 10,
+} as const
+
 // Show 6 best cruises on the homepage (variety of types)
 const homepageCruises = FEATURED_CRUISES.slice(0, 6)
 
@@ -169,10 +180,10 @@ export default function HomePage() {
       <section className="py-16 bg-navy-900 -mt-1">
         <Container>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <StatCounter target={150} suffix="+" label={t('stats_cruises')} />
-            <StatCounter target={25} suffix="+" label={t('stats_destinations')} />
-            <StatCounter target={500} suffix="+" label={t('stats_clients')} />
-            <StatCounter target={10} suffix="+" label={t('stats_years')} />
+            <StatCounter target={SITE_STATS.cruises} suffix="+" label={t('stats_cruises')} />
+            <StatCounter target={SITE_STATS.destinations} suffix="+" label={t('stats_destinations')} />
+            <StatCounter target={SITE_STATS.clients} suffix="+" label={t('stats_clients')} />
+            <StatCounter target={SITE_STATS.years} suffix="+" label={t('stats_years')} />
           </div>
         </Container>
       </section>
@@ -211,7 +222,7 @@ export default function HomePage() {
       {(() => {
         const allDestinations = [
           { slug: 'western-mediterranean', name: 'Western Mediterranean', nameRo: 'Mediterana de Vest', img: 'https://images.unsplash.com/photo-1548574505-5e239809ee19?w=400' },
-          { slug: 'caribbean', name: 'Caribbean', nameRo: 'Caraibe', img: 'https://images.unsplash.com/photo-1580541631950-7282082b04a2?w=400' },
+          { slug: 'caribbean', name: 'Caribbean', nameRo: 'Caraibe', img: 'https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=400' },
           { slug: 'eastern-mediterranean', name: 'Eastern Mediterranean', nameRo: 'Mediterana de Est', img: 'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=400' },
           { slug: 'norwegian-fjords', name: 'Norwegian Fjords', nameRo: 'Fiordurile Norvegiei', img: 'https://images.unsplash.com/photo-1507272931001-fc06c17e4f43?w=400' },
           { slug: 'danube', name: 'Danube', nameRo: 'Dunărea', img: 'https://images.unsplash.com/photo-1509023464722-18d996393ca8?w=400' },
@@ -249,6 +260,17 @@ export default function HomePage() {
                       sizes="(max-width: 768px) 50vw, 25vw"
                       loading="lazy"
                       className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      onError={(e) => {
+                        const target = e.currentTarget as HTMLImageElement
+                        target.style.display = 'none'
+                        const parent = target.parentElement
+                        if (parent && !parent.querySelector('.img-fallback')) {
+                          const fallback = document.createElement('div')
+                          fallback.className = 'img-fallback absolute inset-0 flex items-center justify-center bg-gradient-to-br from-navy-100 to-navy-200'
+                          fallback.innerHTML = '<svg class="h-12 w-12 text-navy-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a2.25 2.25 0 002.25-2.25V5.25a2.25 2.25 0 00-2.25-2.25H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" /></svg>'
+                          parent.appendChild(fallback)
+                        }
+                      }}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-navy-950/80 via-navy-950/20 to-transparent" />
                     <div className="absolute bottom-0 left-0 right-0 p-5">

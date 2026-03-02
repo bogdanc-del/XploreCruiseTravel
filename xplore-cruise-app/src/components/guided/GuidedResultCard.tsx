@@ -12,12 +12,13 @@ import { getBestImageUrl } from '@/data/ship-images'
 import type { CruiseIndex } from '@/lib/recommendation-engine'
 
 // ============================================================
-// GuidedResultCard — enhanced card with "why recommended" badge
+// GuidedResultCard — enhanced card with "why recommended" badges
 // ============================================================
 
 interface GuidedResultCardProps {
   cruise: CruiseIndex & { _score: number }
   reason: string
+  reasonTags?: string[]
   position: number
   locale: Locale
   onRequestOffer: () => void
@@ -27,6 +28,7 @@ interface GuidedResultCardProps {
 export default function GuidedResultCard({
   cruise,
   reason,
+  reasonTags,
   position,
   locale,
   onRequestOffer,
@@ -49,11 +51,17 @@ export default function GuidedResultCard({
 
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-xl bg-white shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover">
-      {/* Recommendation badge */}
-      <div className="absolute top-3 left-3 z-10">
-        <Badge variant="gold">
-          #{position + 1} — {reason}
-        </Badge>
+      {/* Recommendation badges */}
+      <div className="absolute top-3 left-3 z-10 flex flex-wrap gap-1.5 max-w-[calc(100%-1.5rem)]">
+        <Badge variant="gold">#{position + 1}</Badge>
+        {(reasonTags && reasonTags.length > 0 ? reasonTags : [reason]).map((tag, i) => (
+          <span
+            key={i}
+            className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-white/90 text-navy-800 shadow-sm backdrop-blur-sm"
+          >
+            {tag}
+          </span>
+        ))}
       </div>
 
       {/* Image */}
@@ -65,6 +73,17 @@ export default function GuidedResultCard({
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 600px"
+            onError={(e) => {
+              const target = e.currentTarget as HTMLImageElement
+              target.style.display = 'none'
+              const parent = target.parentElement
+              if (parent && !parent.querySelector('.img-fallback')) {
+                const fallback = document.createElement('div')
+                fallback.className = 'img-fallback flex h-full w-full items-center justify-center bg-gradient-to-br from-navy-100 to-navy-200'
+                fallback.innerHTML = '<svg class="h-12 w-12 text-navy-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909M3.75 21h16.5a2.25 2.25 0 002.25-2.25V5.25a2.25 2.25 0 00-2.25-2.25H3.75A2.25 2.25 0 001.5 5.25v13.5A2.25 2.25 0 003.75 21z" /></svg>'
+                parent.appendChild(fallback)
+              }
+            }}
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-navy-100 to-navy-200">
