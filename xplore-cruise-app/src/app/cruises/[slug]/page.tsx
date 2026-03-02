@@ -100,6 +100,7 @@ function apiToCruise(data: Record<string, unknown>): Cruise {
     destination: data.destination as string || '',
     destination_ro: data.destination_ro as string || data.destination as string || '',
     destination_slug: data.destination_slug as string || '',
+    departure_dates: (data.departure_dates || []) as string[],
     // Store itinerary data for display
     _itinerary: itinerary,
     _cabin_types: (data.cabin_types || []) as { name: string; price_from: number }[],
@@ -117,6 +118,7 @@ function CruiseDetailContent() {
   const [activeTab, setActiveTab] = useState<TabKey>('overview')
   const [showLeadForm, setShowLeadForm] = useState(false)
   const [selectedPort, setSelectedPort] = useState<string | null>(null)
+  const [selectedDateIdx, setSelectedDateIdx] = useState(0)
 
   // State for API-loaded cruise
   const [apiCruise, setApiCruise] = useState<Cruise | null>(null)
@@ -231,12 +233,20 @@ function CruiseDetailContent() {
   const advisorNote = locale === 'ro' && cruise.advisor_note_ro ? cruise.advisor_note_ro : cruise.advisor_note
 
   const nightsLabel = cruise.nights === 1 ? t('cruise_night') : t('cruise_nights')
-  const departureDate = cruise.departure_date
-    ? new Date(cruise.departure_date).toLocaleDateString(
-        locale === 'ro' ? 'ro-RO' : 'en-GB',
-        { day: 'numeric', month: 'long', year: 'numeric' },
-      )
-    : ''
+  const formatDate = (dateStr: string) =>
+    new Date(dateStr).toLocaleDateString(
+      locale === 'ro' ? 'ro-RO' : 'en-GB',
+      { day: 'numeric', month: 'long', year: 'numeric' },
+    )
+  const departureDate = cruise.departure_date ? formatDate(cruise.departure_date) : ''
+
+  // All available departure dates (sorted, deduplicated, future only)
+  const now = new Date()
+  now.setHours(0, 0, 0, 0)
+  const allDepartureDates = (cruise.departure_dates || [])
+    .filter(d => new Date(d) >= now)
+    .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
+  const hasMultipleDates = allDepartureDates.length > 1
   const priceEur = cruise.price_from
   const priceRon = eurToRon(priceEur)
 
@@ -386,7 +396,8 @@ function CruiseDetailContent() {
                     <InfoCard
                       icon={<CalendarIcon />}
                       label={t('cruise_departure')}
-                      value={departureDate}
+                      value={hasMultipleDates ? formatDate(allDepartureDates[selectedDateIdx]) : departureDate}
+                      suffix={hasMultipleDates ? `+${allDepartureDates.length - 1}` : undefined}
                     />
                     <InfoCard
                       icon={<AnchorIcon />}
@@ -433,8 +444,10 @@ function CruiseDetailContent() {
                             {locale === 'ro' ? 'Plecare' : 'Departure'}
                           </p>
                           <p className="font-semibold text-navy-900">{cruise.departure_port}</p>
-                          {departureDate && (
-                            <p className="text-xs text-navy-500 mt-0.5">{departureDate}</p>
+                          {(hasMultipleDates || departureDate) && (
+                            <p className="text-xs text-navy-500 mt-0.5">
+                              {hasMultipleDates ? formatDate(allDepartureDates[selectedDateIdx]) : departureDate}
+                            </p>
                           )}
                         </div>
                       </div>
@@ -705,7 +718,31 @@ function CruiseDetailContent() {
 
                 {/* Departure info */}
                 <div className="mt-6 pt-6 border-t border-navy-100 space-y-3">
-                  <SidebarRow label={t('cruise_departure')} value={departureDate} />
+                  {hasMultipleDates ? (
+                    <div>
+                      <p className="text-xs text-navy-500 mb-1.5">{locale === 'ro' ? 'Data plecare' : 'Departure Date'}</p>
+                      <div className="flex flex-wrap gap-1.5">
+                        {allDepartureDates.map((d, i) => (
+                          <button
+                            key={d}
+                            onClick={() => setSelectedDateIdx(i)}
+                            className={`text-xs px-2.5 py-1.5 rounded-full border transition-colors ${
+                              i === selectedDateIdx
+                                ? 'bg-navy-700 text-white border-navy-700'
+                                : 'bg-white text-navy-700 border-navy-200 hover:border-navy-400'
+                            }`}
+                          >
+                            {formatDate(d)}
+                          </button>
+                        ))}
+                      </div>
+                      <p className="text-[10px] text-gold-600 mt-1.5">
+                        {allDepartureDates.length} {locale === 'ro' ? 'date disponibile' : 'dates available'}
+                      </p>
+                    </div>
+                  ) : (
+                    <SidebarRow label={t('cruise_departure')} value={departureDate} />
+                  )}
                   <SidebarRow
                     label={locale === 'ro' ? 'Port plecare' : 'Departure Port'}
                     value={cruise.departure_port}
@@ -798,14 +835,19 @@ function CruiseDetailContent() {
 // Sub-components
 // ============================================================
 
-function InfoCard({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
+function InfoCard({ icon, label, value, suffix }: { icon: React.ReactNode; label: string; value: string; suffix?: string }) {
   return (
     <div className="rounded-lg bg-navy-50 p-4 border border-navy-100">
       <div className="flex items-center gap-2 text-gold-500 mb-2">
         {icon}
         <span className="text-xs text-navy-400 uppercase tracking-wider">{label}</span>
       </div>
-      <p className="text-sm font-semibold text-navy-900">{value}</p>
+      <div className="flex items-center gap-1.5">
+        <p className="text-sm font-semibold text-navy-900">{value}</p>
+        {suffix && (
+          <span className="text-[10px] font-semibold bg-gold-100 text-gold-700 px-1.5 py-0.5 rounded-full">{suffix}</span>
+        )}
+      </div>
     </div>
   )
 }
