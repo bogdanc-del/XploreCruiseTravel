@@ -103,7 +103,8 @@ function apiToCruise(data: Record<string, unknown>): Cruise {
     // Store itinerary data for display
     _itinerary: itinerary,
     _cabin_types: (data.cabin_types || []) as { name: string; price_from: number }[],
-  } as Cruise & { _itinerary: typeof itinerary; _cabin_types: { name: string; price_from: number }[] }
+    _disembarkation_port: (data.disembarkation_port as string) || '',
+  } as Cruise & { _itinerary: typeof itinerary; _cabin_types: { name: string; price_from: number }[]; _disembarkation_port: string }
 }
 
 function CruiseDetailContent() {
@@ -203,8 +204,27 @@ function CruiseDetailContent() {
 
   const title = locale === 'ro' && cruise.title_ro ? cruise.title_ro : cruise.title
   const destination = locale === 'ro' && cruise.destination_ro ? cruise.destination_ro : cruise.destination || ''
-  const ports = locale === 'ro' && cruise.ports_of_call_ro?.length ? cruise.ports_of_call_ro : cruise.ports_of_call
-  const portsOriginal = cruise.ports_of_call // Always use original (EN) port names for port data lookup
+  const rawPorts = locale === 'ro' && cruise.ports_of_call_ro?.length ? cruise.ports_of_call_ro : cruise.ports_of_call
+  const rawPortsOriginal = cruise.ports_of_call // Always use original (EN) port names for port data lookup
+
+  // Deduplicate: if first port of call matches departure_port, skip it to avoid showing it twice
+  const depNorm = (cruise.departure_port || '').trim().toLowerCase()
+  const firstPortNorm = (rawPorts[0] || '').trim().toLowerCase()
+  const skipFirst = rawPorts.length > 0 && depNorm === firstPortNorm
+
+  // Determine arrival/disembarkation port for one-way cruises
+  const disembarkPort = (cruise as Cruise & { _disembarkation_port?: string })._disembarkation_port || ''
+  const isOneWay = disembarkPort && disembarkPort.trim().toLowerCase() !== depNorm
+  const arrivalPort = isOneWay ? disembarkPort : cruise.departure_port
+
+  // Deduplicate: if last port of call matches arrival/disembarkation port, skip it too
+  const arrivalNorm = (arrivalPort || '').trim().toLowerCase()
+  const trimmedFromStart = skipFirst ? rawPorts.slice(1) : rawPorts
+  const trimmedFromStartOriginal = skipFirst ? rawPortsOriginal.slice(1) : rawPortsOriginal
+  const lastPortNorm = trimmedFromStart.length > 0 ? (trimmedFromStart[trimmedFromStart.length - 1] || '').trim().toLowerCase() : ''
+  const skipLast = trimmedFromStart.length > 0 && lastPortNorm === arrivalNorm
+  const ports = skipLast ? trimmedFromStart.slice(0, -1) : trimmedFromStart
+  const portsOriginal = skipLast ? trimmedFromStartOriginal.slice(0, -1) : trimmedFromStartOriginal
   const included = locale === 'ro' && cruise.included_ro?.length ? cruise.included_ro : cruise.included
   const excluded = locale === 'ro' && cruise.excluded_ro?.length ? cruise.excluded_ro : cruise.excluded
   const description = locale === 'ro' && cruise.description_ro ? cruise.description_ro : cruise.description
@@ -424,21 +444,23 @@ function CruiseDetailContent() {
                         <PortHighlight
                           key={i}
                           portName={portsOriginal[i] || port}
-                          dayNumber={i + 2}
+                          dayNumber={skipFirst ? i + 2 : i + 2}
                           onClick={handlePortClick}
                         />
                       ))}
 
-                      {/* Return */}
+                      {/* Arrival / Return */}
                       <div className="relative flex items-start gap-5">
                         <div className="relative z-10 flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-gold-400 to-gold-500 flex items-center justify-center">
                           <AnchorIcon className="w-4 h-4 text-white" />
                         </div>
                         <div className="pt-1">
                           <p className="text-xs text-gold-600 font-medium uppercase tracking-wider mb-0.5">
-                            {locale === 'ro' ? 'Întoarcere' : 'Return'}
+                            {isOneWay
+                              ? (locale === 'ro' ? 'Sosire' : 'Arrival')
+                              : (locale === 'ro' ? 'Întoarcere' : 'Return')}
                           </p>
-                          <p className="font-semibold text-navy-900">{cruise.departure_port}</p>
+                          <p className="font-semibold text-navy-900">{arrivalPort}</p>
                         </div>
                       </div>
                     </div>
