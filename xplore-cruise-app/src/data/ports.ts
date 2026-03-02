@@ -456,11 +456,313 @@ export const PORTS: Record<string, PortInfo> = {
       },
     ],
   },
+  // ── Additional Popular Cruise Ports ──────────────────────────
+
+  'Naples': {
+    name: 'Naples',
+    country: 'Italy',
+    country_ro: 'Italia',
+    description: 'Gateway to Pompeii, the Amalfi Coast and Capri. Naples is a city of incredible history, pizza and vibrant street life, set against the dramatic backdrop of Mount Vesuvius.',
+    description_ro: 'Poarta de acces catre Pompei, Coasta Amalfi si Capri. Napoli este un oras cu o istorie incredibila, pizza si viata stradala vibranta, cu Muntele Vezuviu pe fundal.',
+    highlights: ['Pompeii Ruins', 'Amalfi Coast', 'Capri Island', 'Mount Vesuvius', 'Historic Center'],
+    highlights_ro: ['Ruinele Pompeii', 'Coasta Amalfi', 'Insula Capri', 'Muntele Vezuviu', 'Centrul Istoric'],
+    image_url: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=800',
+    youtube_video_id: 'hBKkC0WnTzk',
+    excursions: [],
+  },
+
+  'Genoa': {
+    name: 'Genoa',
+    country: 'Italy',
+    country_ro: 'Italia',
+    description: 'A major Mediterranean port city with a stunning old town, birthplace of Christopher Columbus. Famous for its palaces, beautiful harbor, and delicious pesto sauce.',
+    description_ro: 'Un port important din Mediterana cu un centru vechi superb, locul nasterii lui Cristofor Columb. Celebru pentru palate, portul frumos si sosul pesto delicios.',
+    highlights: ['Old Port (Porto Antico)', 'Via Garibaldi Palaces', 'Aquarium of Genoa', 'Cathedral of San Lorenzo'],
+    highlights_ro: ['Portul Vechi (Porto Antico)', 'Palatele Via Garibaldi', 'Acvariul din Genova', 'Catedrala San Lorenzo'],
+    image_url: 'https://images.unsplash.com/photo-1530841377377-3ff06c0ca713?w=800',
+    excursions: [],
+  },
+
+  'Nice': {
+    name: 'Nice',
+    country: 'France',
+    country_ro: 'Franta',
+    description: 'The jewel of the French Riviera with its famous Promenade des Anglais, stunning blue waters, and colorful old town. A gateway to Monaco and Cannes.',
+    description_ro: 'Bijuteria Rivierei Franceze cu celebra Promenade des Anglais, ape albastre superbe si centrul vechi colorat. Poarta de acces catre Monaco si Cannes.',
+    highlights: ['Promenade des Anglais', 'Old Town (Vieux Nice)', 'Castle Hill', 'Matisse Museum'],
+    highlights_ro: ['Promenade des Anglais', 'Centrul Vechi', 'Dealul Castelului', 'Muzeul Matisse'],
+    image_url: 'https://images.unsplash.com/photo-1491166617655-0723a0999cfc?w=800',
+    youtube_video_id: 'iGL4EU8uEIo',
+    excursions: [],
+  },
+
+  'Monte Carlo': {
+    name: 'Monte Carlo',
+    country: 'Monaco',
+    country_ro: 'Monaco',
+    description: 'The glamorous principality of Monaco, famous for its casino, Grand Prix circuit, and stunning yachts. A playground for the rich and famous on the French Riviera.',
+    description_ro: 'Glamurosul principat al Monaco, celebru pentru cazinou, circuitul de Grand Prix si iahturile spectaculoase. Un loc de recreere pentru bogati si faimosi pe Riviera Franceza.',
+    highlights: ['Monte Carlo Casino', 'Prince\'s Palace', 'Oceanographic Museum', 'Grand Prix Circuit'],
+    highlights_ro: ['Cazinoul Monte Carlo', 'Palatul Princiar', 'Muzeul Oceanografic', 'Circuitul Grand Prix'],
+    image_url: 'https://images.unsplash.com/photo-1596394516093-501ba68a0ba6?w=800',
+    excursions: [],
+  },
+
+  'Istanbul': {
+    name: 'Istanbul',
+    country: 'Turkey',
+    country_ro: 'Turcia',
+    description: 'The city where East meets West, spanning two continents. Famous for its stunning mosques, the Grand Bazaar, and the Bosphorus strait.',
+    description_ro: 'Orasul unde Estul intalneste Vestul, intins pe doua continente. Celebru pentru moschei superbe, Marele Bazar si stramtoarea Bosfor.',
+    highlights: ['Hagia Sophia', 'Blue Mosque', 'Grand Bazaar', 'Topkapi Palace', 'Bosphorus Cruise'],
+    highlights_ro: ['Hagia Sophia', 'Moscheea Albastra', 'Marele Bazar', 'Palatul Topkapi', 'Croaziera pe Bosfor'],
+    image_url: 'https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?w=800',
+    youtube_video_id: 'hZE0GWXESYM',
+    excursions: [],
+  },
+
+  'Split': {
+    name: 'Split',
+    country: 'Croatia',
+    country_ro: 'Croatia',
+    description: 'Croatia\'s second-largest city, built around the stunning Diocletian\'s Palace. A UNESCO World Heritage Site with beautiful beaches and vibrant nightlife.',
+    description_ro: 'Al doilea oras ca marime din Croatia, construit in jurul uimitorului Palat al lui Diocletian. Sit UNESCO cu plaje frumoase si viata de noapte vibranta.',
+    highlights: ['Diocletian\'s Palace', 'Riva Promenade', 'Marjan Hill', 'Cathedral of St. Domnius'],
+    highlights_ro: ['Palatul lui Diocletian', 'Promenada Riva', 'Dealul Marjan', 'Catedrala Sf. Domnius'],
+    image_url: 'https://images.unsplash.com/photo-1555990793-da11153b2473?w=800',
+    youtube_video_id: '5abamRO41fE',
+    excursions: [],
+  },
+
+  'Lisbon': {
+    name: 'Lisbon',
+    country: 'Portugal',
+    country_ro: 'Portugalia',
+    description: 'Portugal\'s sun-drenched capital built on seven hills, known for its colorful tiles, historic trams, and delicious pasteis de nata.',
+    description_ro: 'Capitala insorita a Portugaliei construita pe sapte dealuri, cunoscuta pentru faiantele colorate, tramvaiele istorice si delicioasele pasteis de nata.',
+    highlights: ['Belem Tower', 'Alfama District', 'Tram 28', 'Jeronimos Monastery', 'Time Out Market'],
+    highlights_ro: ['Turnul Belem', 'Cartierul Alfama', 'Tramvaiul 28', 'Manastirea Jeronimos', 'Piata Time Out'],
+    image_url: 'https://images.unsplash.com/photo-1585208798174-6cedd86e019a?w=800',
+    youtube_video_id: 'VCqnQFOQaMA',
+    excursions: [],
+  },
+
+  'Malaga': {
+    name: 'Malaga',
+    country: 'Spain',
+    country_ro: 'Spania',
+    description: 'Birthplace of Picasso and the vibrant gateway to the Costa del Sol. Known for its Moorish fortress, beautiful beaches, and thriving food scene.',
+    description_ro: 'Locul nasterii lui Picasso si poarta de acces vibranta catre Costa del Sol. Cunoscut pentru cetatea maura, plajele frumoase si scena gastronomica infloritoare.',
+    highlights: ['Alcazaba Fortress', 'Picasso Museum', 'Malaga Cathedral', 'Muelle Uno Port Area'],
+    highlights_ro: ['Cetatea Alcazaba', 'Muzeul Picasso', 'Catedrala din Malaga', 'Zona Portuara Muelle Uno'],
+    image_url: 'https://images.unsplash.com/photo-1592859600972-1b0834d83747?w=800',
+    excursions: [],
+  },
+
+  'Cadiz': {
+    name: 'Cadiz',
+    country: 'Spain',
+    country_ro: 'Spania',
+    description: 'One of Europe\'s oldest cities, perched on a narrow peninsula jutting into the Atlantic. Known for its golden beaches, seafood, and flamenco culture.',
+    description_ro: 'Unul dintre cele mai vechi orase din Europa, asezat pe o peninsula ingusta care intra in Atlantic. Cunoscut pentru plajele aurii, fructele de mare si cultura flamenco.',
+    highlights: ['Cadiz Cathedral', 'Torre Tavira', 'La Caleta Beach', 'Old Town'],
+    highlights_ro: ['Catedrala din Cadiz', 'Torre Tavira', 'Plaja La Caleta', 'Centrul Vechi'],
+    image_url: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=800',
+    excursions: [],
+  },
+
+  'Palma de Mallorca': {
+    name: 'Palma de Mallorca',
+    country: 'Spain',
+    country_ro: 'Spania',
+    description: 'The beautiful capital of Mallorca island with its stunning Gothic cathedral overlooking the bay. A mix of beachside relaxation and historic charm.',
+    description_ro: 'Frumoasa capitala a insulei Mallorca cu superba sa catedrala gotica ce domina golful. Un mix de relaxare pe plaja si farmec istoric.',
+    highlights: ['La Seu Cathedral', 'Bellver Castle', 'Old Town', 'Palma Aquarium'],
+    highlights_ro: ['Catedrala La Seu', 'Castelul Bellver', 'Centrul Vechi', 'Acvariul Palma'],
+    image_url: 'https://images.unsplash.com/photo-1577000747824-f6c8e1be4712?w=800',
+    excursions: [],
+  },
+
+  'Corfu': {
+    name: 'Corfu',
+    country: 'Greece',
+    country_ro: 'Grecia',
+    description: 'A lush green Greek island with Venetian-era architecture, crystal-clear waters and charming old town that is a UNESCO World Heritage Site.',
+    description_ro: 'O insula greceasca verde luxurianta cu arhitectura din era venetiana, ape cristaline si un centru vechi fermecator, sit UNESCO.',
+    highlights: ['Old Fortress', 'Liston Promenade', 'Achilleion Palace', 'Canal d\'Amour'],
+    highlights_ro: ['Fortareata Veche', 'Promenada Liston', 'Palatul Achilleion', 'Canalul Iubirii'],
+    image_url: 'https://images.unsplash.com/photo-1600429991827-5e62e1a58ae6?w=800',
+    excursions: [],
+  },
+
+  'Heraklion': {
+    name: 'Heraklion',
+    country: 'Greece',
+    country_ro: 'Grecia',
+    description: 'Capital of Crete and gateway to the ancient Minoan palace of Knossos. A vibrant city with rich history, traditional Cretan cuisine and nearby beaches.',
+    description_ro: 'Capitala Cretei si poarta de acces catre palatul antic minoic de la Knossos. Un oras vibrant cu istorie bogata, bucatarie cretana traditionala si plaje in apropiere.',
+    highlights: ['Knossos Palace', 'Heraklion Archaeological Museum', 'Venetian Fortress', 'Old Town'],
+    highlights_ro: ['Palatul Knossos', 'Muzeul Arheologic Heraklion', 'Cetatea Venetiana', 'Centrul Vechi'],
+    image_url: 'https://images.unsplash.com/photo-1558005137-d9619a5c539f?w=800',
+    excursions: [],
+  },
+
+  'Catania': {
+    name: 'Catania',
+    country: 'Italy',
+    country_ro: 'Italia',
+    description: 'A dynamic Sicilian city at the foot of Mount Etna. Known for its baroque architecture, lively fish market, and proximity to Europe\'s most active volcano.',
+    description_ro: 'Un oras sicilian dinamic la poalele Muntelui Etna. Cunoscut pentru arhitectura baroca, piata de peste animata si apropierea de cel mai activ vulcan din Europa.',
+    highlights: ['Mount Etna', 'Fish Market (Pescheria)', 'Piazza Duomo', 'Roman Amphitheatre'],
+    highlights_ro: ['Muntele Etna', 'Piata de Peste (Pescheria)', 'Piazza Duomo', 'Amfiteatrul Roman'],
+    image_url: 'https://images.unsplash.com/photo-1523365280197-f1783db9fe62?w=800',
+    excursions: [],
+  },
+
+  'Messina': {
+    name: 'Messina',
+    country: 'Italy',
+    country_ro: 'Italia',
+    description: 'Gateway to Sicily, located on the strait between the island and mainland Italy. Famous for its Norman cathedral and as a base for visiting Taormina and Mount Etna.',
+    description_ro: 'Poarta de acces catre Sicilia, situata pe stramtoarea dintre insula si Italia continentala. Celebra pentru catedrala normanda si ca baza pentru vizitarea Taorminei si Muntelui Etna.',
+    highlights: ['Messina Cathedral', 'Astronomical Clock', 'Taormina Day Trip', 'Strait of Messina'],
+    highlights_ro: ['Catedrala din Messina', 'Ceasul Astronomic', 'Excursie la Taormina', 'Stramtoarea Messina'],
+    image_url: 'https://images.unsplash.com/photo-1560703650-ef3e0f254ae0?w=800',
+    excursions: [],
+  },
+
+  'La Spezia': {
+    name: 'La Spezia',
+    country: 'Italy',
+    country_ro: 'Italia',
+    description: 'Gateway to the stunning Cinque Terre, five colorful fishing villages perched on the Ligurian coast. A beautiful naval port surrounded by hills and the Mediterranean.',
+    description_ro: 'Poarta de acces catre uimitoarele Cinque Terre, cinci sate de pescari colorate asezate pe coasta Liguriei. Un port naval frumos inconjurat de dealuri si Mediterana.',
+    highlights: ['Cinque Terre', 'Portovenere', 'Lerici Castle', 'Naval Museum'],
+    highlights_ro: ['Cinque Terre', 'Portovenere', 'Castelul Lerici', 'Muzeul Naval'],
+    image_url: 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=800',
+    excursions: [],
+  },
+
+  'Savona': {
+    name: 'Savona',
+    country: 'Italy',
+    country_ro: 'Italia',
+    description: 'A charming Ligurian port city between Genoa and Nice. Known for its medieval towers, beautiful beaches, and as a popular cruise homeport for western Mediterranean itineraries.',
+    description_ro: 'Un port fermecator din Liguria intre Genova si Nisa. Cunoscut pentru turnurile medievale, plajele frumoase si ca port de baza popular pentru itinerariile din Mediterana de Vest.',
+    highlights: ['Priamar Fortress', 'Historic Center', 'Ligurian Beaches', 'Cathedral of Our Lady'],
+    highlights_ro: ['Cetatea Priamar', 'Centrul Istoric', 'Plajele Liguriei', 'Catedrala Sfintei Fecioare'],
+    image_url: 'https://images.unsplash.com/photo-1534113414509-0eec2bfb493f?w=800',
+    excursions: [],
+  },
+
+  'Katakolon': {
+    name: 'Katakolon',
+    country: 'Greece',
+    country_ro: 'Grecia',
+    description: 'A small Greek port town that is the gateway to Ancient Olympia, birthplace of the Olympic Games. Beautiful beaches and a charming waterfront promenade.',
+    description_ro: 'Un mic port grecesc care este poarta de acces catre Olimpia Antica, locul nasterii Jocurilor Olimpice. Plaje frumoase si o promenada fermecatoare pe malul marii.',
+    highlights: ['Ancient Olympia', 'Archaeological Museum', 'Agios Andreas Beach', 'Waterfront Tavernas'],
+    highlights_ro: ['Olimpia Antica', 'Muzeul Arheologic', 'Plaja Agios Andreas', 'Tavernele de pe Mal'],
+    image_url: 'https://images.unsplash.com/photo-1603565816030-6b389eeb23cb?w=800',
+    excursions: [],
+  },
+
+  'Funchal': {
+    name: 'Funchal',
+    country: 'Portugal (Madeira)',
+    country_ro: 'Portugalia (Madeira)',
+    description: 'The capital of Madeira island, known as the floating garden of the Atlantic. Famous for its botanical gardens, levada walks, and Madeira wine.',
+    description_ro: 'Capitala insulei Madeira, cunoscuta ca gradina plutitoare a Atlanticului. Celebra pentru gradinile botanice, plimbarile pe levade si vinul de Madeira.',
+    highlights: ['Monte Palace Gardens', 'Toboggan Ride', 'Mercado dos Lavradores', 'Madeira Wine Lodge'],
+    highlights_ro: ['Gradinile Palatului Monte', 'Sania de Rachita', 'Piata Lavradores', 'Pivnitele de Vin Madeira'],
+    image_url: 'https://images.unsplash.com/photo-1571400832291-f41acb39f37d?w=800',
+    excursions: [],
+  },
+
+  'Hvar': {
+    name: 'Hvar',
+    country: 'Croatia',
+    country_ro: 'Croatia',
+    description: 'A stunning Croatian island known as the sunniest spot in the Adriatic. Famous for its lavender fields, medieval architecture, and crystal-clear turquoise waters.',
+    description_ro: 'O insula croata superba cunoscuta ca cel mai insorit loc din Adriatica. Celebra pentru campurile de lavanda, arhitectura medievala si apele turcoaz cristaline.',
+    highlights: ['Hvar Fortress', 'St. Stephen\'s Square', 'Pakleni Islands', 'Lavender Fields'],
+    highlights_ro: ['Cetatea Hvar', 'Piata Sf. Stefan', 'Insulele Pakleni', 'Campurile de Lavanda'],
+    image_url: 'https://images.unsplash.com/photo-1555990793-da11153b2473?w=800',
+    excursions: [],
+  },
+
+  'Zadar': {
+    name: 'Zadar',
+    country: 'Croatia',
+    country_ro: 'Croatia',
+    description: 'A charming Croatian city with Roman ruins, medieval churches, and the famous Sea Organ — a unique musical instrument played by the waves of the Adriatic.',
+    description_ro: 'Un oras croat fermecator cu ruine romane, biserici medievale si celebrele Orgi ale Marii — un instrument muzical unic cantat de valurile Adriaticii.',
+    highlights: ['Sea Organ', 'Sun Salutation', 'St. Donatus Church', 'Roman Forum'],
+    highlights_ro: ['Orgile Marii', 'Salutul Soarelui', 'Biserica Sf. Donatus', 'Forumul Roman'],
+    image_url: 'https://images.unsplash.com/photo-1592478411213-6153e4ebc07d?w=800',
+    excursions: [],
+  },
+
+  'Nassau': {
+    name: 'Nassau',
+    country: 'Bahamas',
+    country_ro: 'Bahamas',
+    description: 'The colorful capital of the Bahamas with stunning turquoise waters, colonial architecture, and world-famous Atlantis resort on nearby Paradise Island.',
+    description_ro: 'Capitala colorata a Bahamelor cu ape turcoaz superbe, arhitectura coloniala si celebrul resort Atlantis pe apropiata Insula Paradis.',
+    highlights: ['Atlantis Resort', 'Cable Beach', 'Queen\'s Staircase', 'Straw Market'],
+    highlights_ro: ['Resort-ul Atlantis', 'Plaja Cable', 'Scara Reginei', 'Piata de Paie'],
+    image_url: 'https://images.unsplash.com/photo-1548574505-5e239809ee19?w=800',
+    excursions: [],
+  },
+
+  'Fort Lauderdale': {
+    name: 'Fort Lauderdale',
+    country: 'USA (Florida)',
+    country_ro: 'SUA (Florida)',
+    description: 'Known as the Venice of America for its extensive canal system. A major cruise homeport with beautiful beaches, upscale shopping, and vibrant nightlife.',
+    description_ro: 'Cunoscut ca Venetia Americii pentru sistemul sau extins de canale. Un port de baza major pentru croaziere cu plaje frumoase, shopping de lux si viata de noapte vibranta.',
+    highlights: ['Las Olas Boulevard', 'Fort Lauderdale Beach', 'Everglades', 'Riverwalk'],
+    highlights_ro: ['Bulevardul Las Olas', 'Plaja Fort Lauderdale', 'Everglades', 'Riverwalk'],
+    image_url: 'https://images.unsplash.com/photo-1535498730771-e735b998cd64?w=800',
+    excursions: [],
+  },
+}
+
+// ============================================================
+// Romanian → English name aliases for port lookup
+// ============================================================
+
+const PORT_ALIASES: Record<string, string> = {
+  // Romanian names → PORTS database keys
+  'Roma': 'Rome',
+  'Atena': 'Athens',
+  'Venetia': 'Venice',
+  'Marsilia': 'Marseille',
+  'Lisabona': 'Lisbon',
+  'Copenhaga': 'Copenhagen',
+  'Viena': 'Vienna',
+  'Budapesta': 'Budapest',
+  'Rodos': 'Rhodes',
+  'Napoli': 'Naples',
+  'Genova': 'Genoa',
+  // Port with alternate name patterns
+  'Civitavecchia': 'Rome',
+  'Piraeus': 'Athens',
+  'Pireus': 'Athens',
+  'Livorno': 'Florence',
+  'Florenta': 'Florence',
+  // Common alternate spellings
+  'Valleta': 'Valletta',
+  'Messine': 'Messina',
+  'Kotor Bay': 'Kotor',
+  'Olympia': 'Katakolon',
+  'Kusadasi': 'Ephesus',
+  'Ephesus': 'Kusadasi',
 }
 
 /**
  * Look up port info by port name.
- * Handles partial matches (e.g. "Barcelona, Spain" → "Barcelona")
+ * Handles partial matches, Romanian names, and "City, Country" format.
  */
 export function getPortInfo(portName: string): PortInfo | undefined {
   // Try exact match first
@@ -470,10 +772,33 @@ export function getPortInfo(portName: string): PortInfo | undefined {
   const cityName = portName.replace(/,.*$/, '').replace(/\s*\(.*\)/, '').trim()
   if (PORTS[cityName]) return PORTS[cityName]
 
-  // Try case-insensitive match
+  // Try aliases (e.g., "Roma" → "Rome", "Civitavecchia" → "Rome")
+  if (PORT_ALIASES[cityName]) return PORTS[PORT_ALIASES[cityName]]
+
+  // Handle "City / AltName (Port), Country" patterns
+  const slashParts = cityName.split('/').map(s => s.trim())
+  for (const part of slashParts) {
+    const clean = part.replace(/\s*\(.*\)/, '').trim()
+    if (PORTS[clean]) return PORTS[clean]
+    if (PORT_ALIASES[clean]) return PORTS[PORT_ALIASES[clean]]
+    // Check parenthetical name too
+    const parenMatch = part.match(/\(([^)]+)\)/)
+    if (parenMatch) {
+      const parenName = parenMatch[1].trim()
+      if (PORTS[parenName]) return PORTS[parenName]
+      if (PORT_ALIASES[parenName]) return PORTS[PORT_ALIASES[parenName]]
+    }
+  }
+
+  // Try case-insensitive match on city name
   const lower = cityName.toLowerCase()
   for (const [key, info] of Object.entries(PORTS)) {
     if (key.toLowerCase() === lower) return info
+  }
+
+  // Try case-insensitive alias match
+  for (const [alias, target] of Object.entries(PORT_ALIASES)) {
+    if (alias.toLowerCase() === lower) return PORTS[target]
   }
 
   return undefined

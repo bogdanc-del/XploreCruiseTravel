@@ -35,7 +35,6 @@ export default function VideoEmbed({ videoId, title = 'Video', className = '' }:
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
           className="absolute inset-0 w-full h-full border-0"
-          loading="lazy"
         />
       ) : (
         <button
