@@ -8,6 +8,8 @@ interface HeroGalleryProps {
   gallery: string[]
   alt: string
   className?: string
+  /** Optional content (title, badges) rendered inside the gradient overlay for guaranteed contrast */
+  children?: React.ReactNode
 }
 
 /**
@@ -15,7 +17,7 @@ interface HeroGalleryProps {
  * Shows the main hero image with a thumbnail strip below.
  * Click any image → full-screen lightbox with prev/next navigation.
  */
-export default function HeroGallery({ mainImage, gallery, alt, className = '' }: HeroGalleryProps) {
+export default function HeroGallery({ mainImage, gallery, alt, className = '', children }: HeroGalleryProps) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null)
 
   // Combine main + gallery images
@@ -77,6 +79,17 @@ export default function HeroGallery({ mainImage, gallery, alt, className = '' }:
             quality={75}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-navy-950/80 via-navy-950/30 to-transparent" />
+
+          {/* Hero content slot — inside gradient for guaranteed contrast, no z-index conflicts */}
+          {children && (
+            <div
+              className="absolute bottom-0 left-0 right-0 z-[2]"
+              onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => e.stopPropagation()}
+            >
+              {children}
+            </div>
+          )}
 
           {/* Zoom icon on hover */}
           {allImages.length > 1 && (
