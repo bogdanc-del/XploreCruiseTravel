@@ -248,7 +248,23 @@ function CruiseDetailContent() {
           mainImage={cruise.image_url}
           gallery={cruise.gallery_urls}
           alt={title}
-        />
+        >
+          {/* Title/badges rendered inside hero gradient — guaranteed contrast, no overlap with thumbnails */}
+          <Container className="pb-8 pt-16">
+            <div className="flex flex-wrap items-center gap-2 mb-3">
+              {cruise.featured && <Badge variant="gold">{t('cruise_featured')}</Badge>}
+              {cruise.cruise_type && (
+                <Badge variant="navy">{t(`type_${cruise.cruise_type}` as 'type_ocean')}</Badge>
+              )}
+            </div>
+            <h1 className="text-3xl md:text-5xl font-bold text-white font-[family-name:var(--font-heading)] mb-2 drop-shadow-lg">
+              {title}
+            </h1>
+            <p className="text-navy-200 text-sm md:text-base drop-shadow">
+              {cruise.cruise_line} {cruise.ship_name ? `- ${cruise.ship_name}` : ''}
+            </p>
+          </Container>
+        </HeroGallery>
       ) : (
         <section className="relative h-[60vh] min-h-[400px] bg-navy-900">
           {cruise.image_url && (
@@ -263,26 +279,25 @@ function CruiseDetailContent() {
             />
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-navy-950/80 via-navy-950/30 to-transparent" />
+          {/* Title/badges inside gradient — consistent with HeroGallery path */}
+          <div className="absolute bottom-0 left-0 right-0">
+            <Container className="pb-8 pt-16">
+              <div className="flex flex-wrap items-center gap-2 mb-3">
+                {cruise.featured && <Badge variant="gold">{t('cruise_featured')}</Badge>}
+                {cruise.cruise_type && (
+                  <Badge variant="navy">{t(`type_${cruise.cruise_type}` as 'type_ocean')}</Badge>
+                )}
+              </div>
+              <h1 className="text-3xl md:text-5xl font-bold text-white font-[family-name:var(--font-heading)] mb-2 drop-shadow-lg">
+                {title}
+              </h1>
+              <p className="text-navy-200 text-sm md:text-base drop-shadow">
+                {cruise.cruise_line} {cruise.ship_name ? `- ${cruise.ship_name}` : ''}
+              </p>
+            </Container>
+          </div>
         </section>
       )}
-
-      {/* Hero Content Overlay */}
-      <section className="relative -mt-24 z-10">
-        <Container className="pb-2">
-          <div className="flex flex-wrap items-center gap-2 mb-3">
-            {cruise.featured && <Badge variant="gold">{t('cruise_featured')}</Badge>}
-            {cruise.cruise_type && (
-              <Badge variant="navy">{t(`type_${cruise.cruise_type}` as 'type_ocean')}</Badge>
-            )}
-          </div>
-          <h1 className="text-3xl md:text-5xl font-bold text-white font-[family-name:var(--font-heading)] mb-2 drop-shadow-lg">
-            {title}
-          </h1>
-          <p className="text-navy-200 text-sm md:text-base drop-shadow">
-            {cruise.cruise_line} {cruise.ship_name ? `- ${cruise.ship_name}` : ''}
-          </p>
-        </Container>
-      </section>
 
       {/* Breadcrumb */}
       <section className="bg-navy-50 border-b border-navy-100">

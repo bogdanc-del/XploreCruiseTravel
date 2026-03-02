@@ -3,6 +3,8 @@
 // Top cruise ports with curated content (EN/RO)
 // ============================================================
 
+import { parsePortName, fuzzyMatchPort } from '@/lib/port-name-utils'
+
 export interface PortExcursion {
   name: string
   name_ro: string
@@ -761,45 +763,21 @@ const PORT_ALIASES: Record<string, string> = {
 }
 
 /**
- * Look up port info by port name.
- * Handles partial matches, Romanian names, and "City, Country" format.
+ * Look up port info by raw API name.
+ *
+ * Uses shared `parsePortName` + `fuzzyMatchPort` for consistent
+ * name normalization across the codebase. Handles:
+ *   - "Marseille, Franta" → city extraction → "Marseille"
+ *   - "Roma (Civitavecchia), Italia" → parenthetical matching
+ *   - "Florenta / Pisa (Livorno), Italia" → slash-part matching
+ *   - Romanian aliases → English keys
+ *   - Case-insensitive fallback
+ *
+ * @param portName - Raw port name from API or user input
+ * @returns PortInfo if matched, undefined otherwise
  */
 export function getPortInfo(portName: string): PortInfo | undefined {
-  // Try exact match first
-  if (PORTS[portName]) return PORTS[portName]
-
-  // Try matching by extracting city name (before comma or parenthesis)
-  const cityName = portName.replace(/,.*$/, '').replace(/\s*\(.*\)/, '').trim()
-  if (PORTS[cityName]) return PORTS[cityName]
-
-  // Try aliases (e.g., "Roma" → "Rome", "Civitavecchia" → "Rome")
-  if (PORT_ALIASES[cityName]) return PORTS[PORT_ALIASES[cityName]]
-
-  // Handle "City / AltName (Port), Country" patterns
-  const slashParts = cityName.split('/').map(s => s.trim())
-  for (const part of slashParts) {
-    const clean = part.replace(/\s*\(.*\)/, '').trim()
-    if (PORTS[clean]) return PORTS[clean]
-    if (PORT_ALIASES[clean]) return PORTS[PORT_ALIASES[clean]]
-    // Check parenthetical name too
-    const parenMatch = part.match(/\(([^)]+)\)/)
-    if (parenMatch) {
-      const parenName = parenMatch[1].trim()
-      if (PORTS[parenName]) return PORTS[parenName]
-      if (PORT_ALIASES[parenName]) return PORTS[PORT_ALIASES[parenName]]
-    }
-  }
-
-  // Try case-insensitive match on city name
-  const lower = cityName.toLowerCase()
-  for (const [key, info] of Object.entries(PORTS)) {
-    if (key.toLowerCase() === lower) return info
-  }
-
-  // Try case-insensitive alias match
-  for (const [alias, target] of Object.entries(PORT_ALIASES)) {
-    if (alias.toLowerCase() === lower) return PORTS[target]
-  }
-
-  return undefined
+  const parsed = parsePortName(portName)
+  const matchedKey = fuzzyMatchPort(parsed, PORTS, PORT_ALIASES)
+  return matchedKey ? PORTS[matchedKey] : undefined
 }
