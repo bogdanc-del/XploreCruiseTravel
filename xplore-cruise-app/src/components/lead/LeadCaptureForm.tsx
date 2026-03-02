@@ -287,23 +287,32 @@ export default function LeadCaptureForm({
 
         {/* Header */}
         <div className="px-6 pt-6 pb-4 border-b border-navy-100">
-          <h2
-            id="lead-form-title"
-            className="text-xl font-bold text-navy-900 font-[family-name:var(--font-heading)] pr-8"
-          >
-            {t('lead_form_title')}
-          </h2>
-          <p className="text-sm text-navy-500 mt-1">{t('lead_form_subtitle')}</p>
-          {cruiseTitle && (
-            <div className="mt-3 p-3 rounded-lg bg-gold-50 border border-gold-200">
-              <p className="text-sm font-semibold text-navy-900 truncate">{cruiseTitle}</p>
-              {cruisePrice && (
-                <p className="text-xs text-gold-600 mt-0.5">
-                  {t('cruise_from')} &euro;{cruisePrice.toLocaleString()}{t('cruise_per_person')}
-                </p>
-              )}
-            </div>
+          {cruiseTitle ? (
+            <>
+              <h2
+                id="lead-form-title"
+                className="text-lg font-bold text-navy-900 font-[family-name:var(--font-heading)] pr-8"
+              >
+                {t('lead_form_title_for')}
+              </h2>
+              <div className="mt-2 p-3 rounded-lg bg-gold-50 border border-gold-200">
+                <p className="text-sm font-semibold text-navy-900 line-clamp-2">{cruiseTitle}</p>
+                {cruisePrice && (
+                  <p className="text-xs text-gold-600 mt-0.5">
+                    {t('cruise_from')} &euro;{cruisePrice.toLocaleString()}{t('cruise_per_person')}
+                  </p>
+                )}
+              </div>
+            </>
+          ) : (
+            <h2
+              id="lead-form-title"
+              className="text-xl font-bold text-navy-900 font-[family-name:var(--font-heading)] pr-8"
+            >
+              {t('lead_form_title')}
+            </h2>
           )}
+          <p className="text-sm text-navy-500 mt-1">{t('lead_form_subtitle')}</p>
         </div>
 
         {/* Body */}

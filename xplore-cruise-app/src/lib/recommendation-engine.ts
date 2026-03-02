@@ -237,7 +237,7 @@ export function getRecommendations(
 }
 
 // ============================================================
-// "Why this cruise?" — explanation text
+// "Why this cruise?" — explanation text (legacy, single string)
 // ============================================================
 
 export function getRecommendationReason(
@@ -245,48 +245,60 @@ export function getRecommendationReason(
   state: GuidedFlowState,
   locale: 'en' | 'ro'
 ): string {
-  const reasons: string[] = []
+  return getRecommendationTags(c, state, locale).join(' · ')
+}
+
+// ============================================================
+// "Why this cruise?" — tag-based badges (1-3 short tags)
+// ============================================================
+
+export function getRecommendationTags(
+  c: CruiseIndex & { _score: number },
+  state: GuidedFlowState,
+  locale: 'en' | 'ro'
+): string[] {
+  const tags: string[] = []
 
   // Priority match
   if (state.mainPriority === 'budget' && c.p < 600) {
-    reasons.push(locale === 'ro' ? 'Preț excelent' : 'Great price')
+    tags.push(locale === 'ro' ? 'Preț excelent' : 'Great price')
   }
   if (state.mainPriority === 'luxury' && (c.ct === 'luxury' || LUXURY_LINES.includes(c.cl))) {
-    reasons.push(locale === 'ro' ? 'Experiență premium' : 'Premium experience')
+    tags.push(locale === 'ro' ? 'Experiență premium' : 'Premium')
   }
   if (state.mainPriority === 'adventure' && ADVENTURE_DESTS.includes(c.ds)) {
-    reasons.push(locale === 'ro' ? 'Destinație exotică' : 'Exotic destination')
+    tags.push(locale === 'ro' ? 'Destinație exotică' : 'Exotic destination')
   }
   if (state.mainPriority === 'relaxation' && RELAXATION_DESTS.includes(c.ds)) {
-    reasons.push(locale === 'ro' ? 'Perfectă pentru relaxare' : 'Perfect for relaxation')
+    tags.push(locale === 'ro' ? 'Relaxare' : 'Relaxation')
   }
   if (state.mainPriority === 'family' && FAMILY_LINES.includes(c.cl)) {
-    reasons.push(locale === 'ro' ? 'Ideală pentru familie' : 'Great for families')
+    tags.push(locale === 'ro' ? 'Pentru familie' : 'Family-friendly')
   }
 
   // Travel party match
   if (state.travelParty === 'couple' && (c.ct === 'luxury' || LUXURY_LINES.includes(c.cl))) {
-    reasons.push(locale === 'ro' ? 'Romantică' : 'Romantic')
+    tags.push(locale === 'ro' ? 'Romantică' : 'Romantic')
   }
-  if (state.travelParty === 'family' && FAMILY_LINES.includes(c.cl)) {
-    reasons.push(locale === 'ro' ? 'Prietenoasă cu copiii' : 'Kid-friendly')
+  if (state.travelParty === 'family' && FAMILY_LINES.includes(c.cl) && !tags.includes(locale === 'ro' ? 'Pentru familie' : 'Family-friendly')) {
+    tags.push(locale === 'ro' ? 'Copii bineveniți' : 'Kid-friendly')
   }
 
   // First cruise match
   if (state.isFirstCruise && c.n <= 7 && FIRST_CRUISE_LINES.includes(c.cl)) {
-    reasons.push(locale === 'ro' ? 'Ideală pentru prima croazieră' : 'Perfect for first-timers')
+    tags.push(locale === 'ro' ? 'Prima croazieră' : 'First-timers')
   }
 
-  // Score-based generic
-  if (reasons.length === 0) {
+  // Score-based generic fallback
+  if (tags.length === 0) {
     if (c._score >= 50) {
-      reasons.push(locale === 'ro' ? 'Potrivire foarte bună' : 'Excellent match')
+      tags.push(locale === 'ro' ? 'Potrivire excelentă' : 'Top match')
     } else if (c._score >= 30) {
-      reasons.push(locale === 'ro' ? 'Potrivire bună' : 'Good match')
+      tags.push(locale === 'ro' ? 'Potrivire bună' : 'Good match')
     } else {
-      reasons.push(locale === 'ro' ? 'Recomandare' : 'Recommended')
+      tags.push(locale === 'ro' ? 'Recomandare' : 'Recommended')
     }
   }
 
-  return reasons.slice(0, 2).join(' · ')
+  return tags.slice(0, 3)
 }

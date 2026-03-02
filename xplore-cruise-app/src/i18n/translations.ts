@@ -265,6 +265,12 @@ export const translations = {
     budget_over_2000: 'Over €2,000',
     budget_any: 'Any budget',
 
+    // Persistent guided CTA
+    guided_persistent_cta: 'Need help choosing?',
+
+    // Lead form contextual heading
+    lead_form_title_for: 'Request an offer for:',
+
     // Common
     loading: 'Loading...',
     error: 'Something went wrong',
@@ -537,6 +543,12 @@ export const translations = {
     budget_1000_2000: '€1.000 – €2.000',
     budget_over_2000: 'Peste €2.000',
     budget_any: 'Orice buget',
+
+    // Persistent guided CTA
+    guided_persistent_cta: 'Ai nevoie de ajutor?',
+
+    // Lead form contextual heading
+    lead_form_title_for: 'Solicită ofertă pentru:',
 
     // Common
     loading: 'Se încarcă...',

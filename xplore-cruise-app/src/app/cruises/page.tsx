@@ -97,6 +97,21 @@ export default function CruisesPage() {
   const { locale } = useLocale()
   const { openFlow } = useGuidedFlow()
 
+  // Persistent floating CTA — visible when guided banner scrolls out of view
+  const bannerRef = useRef<HTMLDivElement>(null)
+  const [showFloatingCta, setShowFloatingCta] = useState(false)
+
+  useEffect(() => {
+    const banner = bannerRef.current
+    if (!banner) return
+    const observer = new IntersectionObserver(
+      ([entry]) => setShowFloatingCta(!entry.isIntersecting),
+      { threshold: 0 }
+    )
+    observer.observe(banner)
+    return () => observer.disconnect()
+  }, [])
+
   // Night range presets
   const NIGHT_RANGES = [
     { label: { en: '1-3 nights', ro: '1-3 nopți' }, min: '1', max: '3' },
@@ -232,7 +247,7 @@ export default function CruisesPage() {
       </section>
 
       {/* Guided Recommendation Banner */}
-      <section className="bg-navy-50 py-4">
+      <section ref={bannerRef} className="bg-navy-50 py-4">
         <Container>
           <GuidedEntryCard variant="banner" onStart={() => openFlow('listing')} locale={locale} />
         </Container>
@@ -509,6 +524,26 @@ export default function CruisesPage() {
           ) : null}
         </Container>
       </section>
+
+      {/* Persistent floating guided CTA pill — bottom-right, above chat widget */}
+      <div
+        className={`fixed bottom-20 right-4 z-40 transition-all duration-300 ${
+          showFloatingCta
+            ? 'translate-y-0 opacity-100'
+            : 'translate-y-4 opacity-0 pointer-events-none'
+        }`}
+      >
+        <button
+          onClick={() => openFlow('listing')}
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-gradient-to-r from-gold-500 to-gold-600 text-white text-sm font-semibold shadow-lg hover:from-gold-600 hover:to-gold-700 hover:shadow-xl transition-all duration-200"
+          aria-label={t('guided_persistent_cta')}
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z" />
+          </svg>
+          {t('guided_persistent_cta')}
+        </button>
+      </div>
 
       <ChatWidget />
       </main>

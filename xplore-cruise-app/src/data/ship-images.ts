@@ -13,8 +13,8 @@ export const CRUISE_LINE_IMAGES: Record<string, string> = {
   // --- Contemporary / Mass Market ---
   'MSC Cruises':                'https://images.unsplash.com/photo-1548574505-5e239809ee19?w=800&q=80',
   'Costa Cruises':              'https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800&q=80',
-  'Royal Caribbean Cruise Line':'https://images.unsplash.com/photo-1580541631950-7282082b04a2?w=800&q=80',
-  'Royal Caribbean':            'https://images.unsplash.com/photo-1580541631950-7282082b04a2?w=800&q=80',
+  'Royal Caribbean Cruise Line':'https://images.unsplash.com/photo-1559599746-8823b38544c6?w=800&q=80',
+  'Royal Caribbean':            'https://images.unsplash.com/photo-1559599746-8823b38544c6?w=800&q=80',
   'Norwegian Cruise Line':      'https://images.unsplash.com/photo-1507272931001-fc06c17e4f43?w=800&q=80',
   'Carnival Cruise Line':       'https://images.unsplash.com/photo-1559599746-8823b38544c6?w=800&q=80',
   'Disney Cruise Line':         'https://images.unsplash.com/photo-1559599238-308793637427?w=800&q=80',
@@ -61,7 +61,7 @@ export const SHIP_IMAGES: Record<string, string> = {
   // ── MSC Cruises ──────────────────────────────────────────
   'MSC World Europa':     'https://images.unsplash.com/photo-1548574505-5e239809ee19?w=800&q=80',
   'MSC Meraviglia':       'https://images.unsplash.com/photo-1559599238-308793637427?w=800&q=80',
-  'MSC Grandiosa':        'https://images.unsplash.com/photo-1580541631950-7282082b04a2?w=800&q=80',
+  'MSC Grandiosa':        'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=800&q=80',
   'MSC Virtuosa':         'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=80',
   'MSC Euribia':          'https://images.unsplash.com/photo-1515005318787-cc68052b38f3?w=800&q=80',
   'MSC Seashore':         'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=800&q=80',
@@ -87,7 +87,7 @@ export const SHIP_IMAGES: Record<string, string> = {
   'Costa Deliziosa':      'https://images.unsplash.com/photo-1552832230-c0197dd311b5?w=800&q=80',
 
   // ── Royal Caribbean ──────────────────────────────────────
-  'Icon of the Seas':           'https://images.unsplash.com/photo-1580541631950-7282082b04a2?w=800&q=80',
+  'Icon of the Seas':           'https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=800&q=80',
   'Allure of the Seas':         'https://images.unsplash.com/photo-1559599238-308793637427?w=800&q=80',
   'Explorer of the Seas':       'https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=800&q=80',
   'Freedom of the Seas':        'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&q=80',
@@ -100,7 +100,7 @@ export const SHIP_IMAGES: Record<string, string> = {
 
   // ── Norwegian Cruise Line ────────────────────────────────
   'Norwegian Prima':      'https://images.unsplash.com/photo-1507272931001-fc06c17e4f43?w=800&q=80',
-  'Norwegian Breakaway':  'https://images.unsplash.com/photo-1580541631950-7282082b04a2?w=800&q=80',
+  'Norwegian Breakaway':  'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=800&q=80',
   'Norwegian Star':       'https://images.unsplash.com/photo-1513519245088-0e12902e35ca?w=800&q=80',
   'Norwegian Spirit':     'https://images.unsplash.com/photo-1520769669658-f07657f5a307?w=800&q=80',
   'Norwegian Joy':        'https://images.unsplash.com/photo-1531366936337-7c912a4589a7?w=800&q=80',
