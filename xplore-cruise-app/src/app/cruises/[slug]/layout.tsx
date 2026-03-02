@@ -39,7 +39,7 @@ export async function generateMetadata({
   }
 
   const title = `${cruise.title} | XploreCruiseTravel`
-  const description = `${cruise.cruise_line} - ${cruise.ship_name}. ${cruise.destination}, ${cruise.nights} nopți. De la €${cruise.price_from}/persoană. Rezervă acum la XploreCruiseTravel.`
+  const description = `${cruise.cruise_line} - ${cruise.ship_name}. ${cruise.destination}, ${cruise.nights} nopți. De la €${cruise.price_from}/persoană. Solicită ofertă la XploreCruiseTravel.`
 
   return {
     title,
