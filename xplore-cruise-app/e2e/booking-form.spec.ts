@@ -1,50 +1,121 @@
 import { test, expect } from '@playwright/test'
 
 /**
- * Phase 2 — Booking modal: validation, happy path, double-submit prevention
+ * Lead Capture Form — validation, happy path, keyboard & auto-open
+ *
+ * The LeadCaptureForm replaced the old BookingModal.
+ * It opens from the cruise detail page via "Solicita oferta" / "Request an offer".
  */
 
-test.describe('Booking modal', () => {
+test.describe('Lead Capture Form', () => {
   test.beforeEach(async ({ page }) => {
-    // Navigate to a cruise detail page to trigger booking modal
+    // Navigate to a cruise detail page
     await page.goto('/cruises', { waitUntil: 'networkidle' })
     await page.waitForTimeout(500)
 
-    // Click on the first cruise card
+    // Click on the first cruise card link
     const firstCard = page.locator('a[href^="/cruises/"]').first()
     await firstCard.click()
     await page.waitForLoadState('networkidle')
     await page.waitForTimeout(500)
   })
 
-  test('Book Now button opens the booking modal', async ({ page }) => {
-    // Find and click the "Book Now" / "Rezerva Acum" button
-    const bookBtn = page.locator('button:has-text("Book"), button:has-text("Rezerva")')
-    await bookBtn.first().click()
+  test('"Request an offer" button opens the lead capture form', async ({ page }) => {
+    // Find and click the "Solicita oferta" / "Request an offer" button
+    const offerBtn = page.locator(
+      'button:has-text("Solicita"), button:has-text("Request an offer"), button:has-text("Solicită")'
+    )
+    await offerBtn.first().click()
 
-    // Modal should be visible
+    // Modal should be visible with role="dialog"
     const modal = page.locator('[role="dialog"]')
     await expect(modal).toBeVisible({ timeout: 3000 })
+
+    // Should contain form fields
+    await expect(modal.locator('input[name="name"]')).toBeVisible()
+    await expect(modal.locator('input[name="email"]')).toBeVisible()
+    await expect(modal.locator('input[name="phone"]')).toBeVisible()
+    await expect(modal.locator('textarea[name="message"]')).toBeVisible()
   })
 
-  test('Step 1 validation: empty fields show error', async ({ page }) => {
-    // Open booking modal
-    const bookBtn = page.locator('button:has-text("Book"), button:has-text("Rezerva")')
-    await bookBtn.first().click()
+  test('Validation: empty fields show error', async ({ page }) => {
+    // Open lead form
+    const offerBtn = page.locator(
+      'button:has-text("Solicita"), button:has-text("Request an offer"), button:has-text("Solicită")'
+    )
+    await offerBtn.first().click()
     await page.waitForTimeout(500)
 
-    // Try to proceed without filling fields
-    const nextBtn = page.locator('[role="dialog"] button:has-text("Next"), [role="dialog"] button:has-text("Pasul")')
-    await nextBtn.first().click()
+    const modal = page.locator('[role="dialog"]')
+
+    // Try to submit without filling fields
+    const submitBtn = modal.locator(
+      'button:has-text("Trimite"), button:has-text("Send request")'
+    )
+    await submitBtn.first().click()
+
+    // Should show validation error (red error box)
+    const errorMsg = modal.locator('.bg-red-50')
+    await expect(errorMsg.first()).toBeVisible({ timeout: 3000 })
+  })
+
+  test('Validation: invalid email shows error', async ({ page }) => {
+    // Open lead form
+    const offerBtn = page.locator(
+      'button:has-text("Solicita"), button:has-text("Request an offer"), button:has-text("Solicită")'
+    )
+    await offerBtn.first().click()
+    await page.waitForTimeout(500)
+
+    const modal = page.locator('[role="dialog"]')
+
+    // Fill name and phone but invalid email
+    await modal.locator('input[name="name"]').fill('John Doe')
+    await modal.locator('input[name="email"]').fill('not-an-email')
+    await modal.locator('input[name="phone"]').fill('+40 749 000 000')
+
+    // Try to submit
+    const submitBtn = modal.locator(
+      'button:has-text("Trimite"), button:has-text("Send request")'
+    )
+    await submitBtn.first().click()
 
     // Should show validation error
-    const errorMsg = page.locator('[role="dialog"] .bg-red-50')
+    const errorMsg = modal.locator('.bg-red-50')
+    await expect(errorMsg.first()).toBeVisible({ timeout: 3000 })
+  })
+
+  test('Validation: missing GDPR consent shows error', async ({ page }) => {
+    // Open lead form
+    const offerBtn = page.locator(
+      'button:has-text("Solicita"), button:has-text("Request an offer"), button:has-text("Solicită")'
+    )
+    await offerBtn.first().click()
+    await page.waitForTimeout(500)
+
+    const modal = page.locator('[role="dialog"]')
+
+    // Fill all fields but don't check GDPR
+    await modal.locator('input[name="name"]').fill('John Doe')
+    await modal.locator('input[name="email"]').fill('john@example.com')
+    await modal.locator('input[name="phone"]').fill('+40 749 000 000')
+
+    // Try to submit without GDPR consent
+    const submitBtn = modal.locator(
+      'button:has-text("Trimite"), button:has-text("Send request")'
+    )
+    await submitBtn.first().click()
+
+    // Should show GDPR validation error
+    const errorMsg = modal.locator('.bg-red-50')
     await expect(errorMsg.first()).toBeVisible({ timeout: 3000 })
   })
 
   test('Escape key closes the modal', async ({ page }) => {
-    const bookBtn = page.locator('button:has-text("Book"), button:has-text("Rezerva")')
-    await bookBtn.first().click()
+    const offerBtn = page.locator(
+      'button:has-text("Solicita"), button:has-text("Request an offer"), button:has-text("Solicită")'
+    )
+    await offerBtn.first().click()
 
     const modal = page.locator('[role="dialog"]')
     await expect(modal).toBeVisible()
@@ -53,70 +124,62 @@ test.describe('Booking modal', () => {
     await expect(modal).not.toBeVisible({ timeout: 3000 })
   })
 
-  test('Happy path: fill 3 steps and submit', async ({ page, browserName }) => {
+  test('Happy path: fill form and submit', async ({ page, browserName }) => {
     test.setTimeout(browserName === 'webkit' ? 60_000 : 30_000)
-    // Open modal
-    const bookBtn = page.locator('button:has-text("Book"), button:has-text("Rezerva")')
-    await bookBtn.first().click()
+
+    // Open lead form
+    const offerBtn = page.locator(
+      'button:has-text("Solicita"), button:has-text("Request an offer"), button:has-text("Solicită")'
+    )
+    await offerBtn.first().click()
     await page.waitForTimeout(500)
 
     const modal = page.locator('[role="dialog"]')
 
-    // Step 1: Fill personal details
-    const allInputs = modal.locator('input:not([type="checkbox"]):not([type="hidden"])')
-    const inputCount = await allInputs.count()
+    // Fill personal details
+    await modal.locator('input[name="name"]').fill('John Doe')
+    await modal.locator('input[name="email"]').fill('john@example.com')
+    await modal.locator('input[name="phone"]').fill('+40 749 000 000')
+    await modal.locator('textarea[name="message"]').fill('I would like to request an offer for this cruise.')
 
-    for (let i = 0; i < inputCount; i++) {
-      const input = allInputs.nth(i)
-      const type = await input.getAttribute('type')
-      if (type === 'date') await input.fill('1990-01-15')
-      else if (type === 'email') await input.fill('john@example.com')
-      else if (type === 'tel') await input.fill('+40 749 000 000')
-      else await input.fill(i === 0 ? 'John' : 'Doe')
-    }
-
-    // Click Next
-    const nextBtn = modal.locator('button:has-text("Next"), button:has-text("Pasul")')
-    await nextBtn.first().click()
-    await page.waitForTimeout(600)
-
-    // Step 2: Cruise selection (fields are optional, just proceed)
-    const nextBtn2 = modal.locator('button:has-text("Next"), button:has-text("Pasul")')
-    if (await nextBtn2.count() > 0) {
-      await nextBtn2.first().click()
-      await page.waitForTimeout(600)
-    }
-
-    // Step 3: Consent checkboxes — click the visible label wrapper
-    await page.waitForTimeout(300)
-    // The CheckboxField uses a <label> wrapping a sr-only <input> + visible div.
-    // Clicking the label toggles the React state reliably across all browsers.
-    const checkboxLabels = modal.locator('label:has(input[type="checkbox"])')
-    const checkboxCount = await checkboxLabels.count()
-    // Check GDPR and terms (first two)
-    for (let i = 0; i < Math.min(2, checkboxCount); i++) {
-      await checkboxLabels.nth(i).click()
-      await page.waitForTimeout(200)
-    }
+    // Check GDPR consent — click the label wrapper
+    const gdprLabel = modal.locator('label:has(input[name="gdprConsent"])')
+    await gdprLabel.click()
+    await page.waitForTimeout(200)
 
     // Mock the API
-    await page.route('**/api/booking', (route) => {
+    await page.route('**/api/contact', (route) => {
       route.fulfill({
         status: 200,
         contentType: 'application/json',
         body: JSON.stringify({
           success: true,
-          bookingRef: 'BK-20260301-TEST',
-          message: 'Booking registered successfully!',
+          message: 'Message sent successfully!',
         }),
       })
     })
 
     // Submit
-    const submitBtn = modal.locator('button:has-text("Submit"), button:has-text("Trimite")')
+    const submitBtn = modal.locator(
+      'button:has-text("Trimite"), button:has-text("Send request")'
+    )
     await submitBtn.first().click()
 
-    // Success state should appear
-    await expect(modal.locator('text=/BK-|Primita|Received/i').first()).toBeVisible({ timeout: 5000 })
+    // Success state should appear (green checkmark area or success text)
+    await expect(
+      modal.locator('text=/trimis|sent|success|Felicitări|Congratulations/i').first()
+    ).toBeVisible({ timeout: 5000 })
+  })
+
+  test('?offer=1 query param auto-opens the form', async ({ page }) => {
+    // Get the current URL and append ?offer=1
+    const currentUrl = page.url()
+    const separator = currentUrl.includes('?') ? '&' : '?'
+    await page.goto(`${currentUrl}${separator}offer=1`, { waitUntil: 'networkidle' })
+    await page.waitForTimeout(1000)
+
+    // Modal should auto-open
+    const modal = page.locator('[role="dialog"]')
+    await expect(modal).toBeVisible({ timeout: 5000 })
   })
 })
