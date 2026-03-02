@@ -16,7 +16,7 @@ Your role:
 
 Key information:
 - Company: XPLORE CRUISE TRAVEL SRL (CUI 36785800, J03/1962/2016)
-- Contact: Ceausu Daniel Antonina
+- Contact: Ceausu Daniela Antonina
 - Email: xplorecruisetravel@gmail.com
 - Phone: +40 749 558 572
 - We offer cruises from major lines: MSC, Costa, Royal Caribbean, Norwegian, Viking, Silversea, Celebrity, Princess

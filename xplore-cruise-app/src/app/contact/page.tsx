@@ -347,10 +347,10 @@ export default function ContactPage() {
                   </p>
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-gold-400 flex-shrink-0">
-                      <img src="/images/daniela-ceausu.jpg" alt="Ceausu Daniel Antonina" className="w-full h-full object-cover object-top" />
+                      <img src="/images/daniela-ceausu.jpg" alt="Ceausu Daniela Antonina" className="w-full h-full object-cover object-top" />
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-white">Ceausu Daniel Antonina</p>
+                      <p className="text-sm font-semibold text-white">Ceausu Daniela Antonina</p>
                       <p className="text-xs text-gold-400 mt-0.5">CEO & {locale === 'ro' ? 'Consultant Croaziere' : 'Cruise Consultant'}</p>
                     </div>
                   </div>

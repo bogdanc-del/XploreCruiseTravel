@@ -115,7 +115,7 @@ export default function Footer() {
                 <span className="mb-1 block text-xs font-medium uppercase text-navy-300">
                   {locale === 'ro' ? 'Persoana de Contact' : 'Contact Person'}
                 </span>
-                Ceausu Daniel Antonina
+                Ceausu Daniela Antonina
               </li>
               <li>
                 <a
