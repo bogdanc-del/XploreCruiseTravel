@@ -311,7 +311,7 @@ XploreCruiseTravel is a lead-generation cruise travel website for a licensed Rom
 |-------------|-----------|--------|
 | Supabase (PostgreSQL) | @supabase/supabase-js 2.49 | Configured (with demo fallback) |
 | Claude AI (chat) | @anthropic-ai/sdk 0.39 | Configured (with fallback) |
-| Google Analytics 4 | window.gtag | Ready (tag pending) |
+| Google Analytics 4 | window.gtag | Active (G-HR3D09PT3J) |
 | Leaflet Maps | leaflet 1.9 + react-leaflet 5.0 | Active |
 | Image CDN | Supabase Storage + Unsplash + croaziere.net | Active |
 | BNR Exchange Rate | REST XML (bnr.ro) | Active (daily, auto-cached) |

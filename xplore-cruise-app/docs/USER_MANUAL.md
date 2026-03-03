@@ -415,8 +415,10 @@ RON prices are **approximate** and for reference only. The final price in any cu
 - The site works fully with demo data for development
 
 **Chat widget not responding**
-- Check that `ANTHROPIC_API_KEY` is set in `.env.local`
-- Without the key, the chat widget shows a fallback message
+- Check that `ANTHROPIC_API_KEY` is set in Vercel Environment Variables
+- The Anthropic account must have purchased API credits (Evaluation plan has no free credits)
+- Verify credit balance at [platform.claude.com/settings/billing](https://platform.claude.com/settings/billing)
+- Without a valid key or credits, the chat widget shows a friendly fallback message with contact details
 
 **Reviews not appearing after submission**
 - Reviews require admin approval before they appear publicly
