@@ -270,6 +270,21 @@ export const translations = {
     // Lead form contextual heading
     lead_form_title_for: 'Request an offer for:',
 
+    // Price freshness & urgency
+    price_updated: 'Price updated',
+    price_updated_today: 'Updated today',
+    price_recently_changed: 'Price recently changed',
+    price_decreased: 'Price dropped',
+    price_increased: 'Price increased',
+    price_was: 'was',
+
+    // Departure date filter
+    filter_departure: 'Departure Date',
+    filter_departure_any: 'Any date',
+    filter_departure_3m: 'Next 3 months',
+    filter_departure_6m: 'Next 6 months',
+    filter_departure_year: 'Next year',
+
     // Common
     loading: 'Loading...',
     error: 'Something went wrong',
@@ -547,6 +562,21 @@ export const translations = {
 
     // Lead form contextual heading
     lead_form_title_for: 'Solicită ofertă pentru:',
+
+    // Price freshness & urgency
+    price_updated: 'Preț actualizat',
+    price_updated_today: 'Actualizat azi',
+    price_recently_changed: 'Preț schimbat recent',
+    price_decreased: 'Preț scăzut',
+    price_increased: 'Preț crescut',
+    price_was: 'era',
+
+    // Departure date filter
+    filter_departure: 'Data Plecării',
+    filter_departure_any: 'Orice dată',
+    filter_departure_3m: 'Următoarele 3 luni',
+    filter_departure_6m: 'Următoarele 6 luni',
+    filter_departure_year: 'Anul viitor',
 
     // Common
     loading: 'Se încarcă...',

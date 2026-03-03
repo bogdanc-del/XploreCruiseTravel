@@ -21,6 +21,8 @@ const RouteMap = dynamic(() => import('@/components/cruise/RouteMap'), {
 })
 import { eurToRon } from '@/lib/supabase'
 import type { Cruise } from '@/lib/supabase'
+import { timeAgo, isPriceRecentlyChanged } from '@/lib/time-ago'
+import { trackCruiseDetailView, trackCtaClick } from '@/lib/analytics'
 
 // Phase 2 imports
 import HeroGallery from '@/components/cruise/HeroGallery'
@@ -101,6 +103,10 @@ function apiToCruise(data: Record<string, unknown>): Cruise {
     destination_ro: data.destination_ro as string || data.destination as string || '',
     destination_slug: data.destination_slug as string || '',
     departure_dates: (data.departure_dates || []) as string[],
+    // Price tracking fields from sync
+    previous_price_from: (data.previous_price_from as number) || null,
+    price_changed_at: (data.price_changed_at as string) || null,
+    last_synced_at: (data.last_synced_at as string) || null,
     // Store itinerary data for display
     _itinerary: itinerary,
     _cabin_types: (data.cabin_types || []) as { name: string; price_from: number }[],
@@ -155,6 +161,13 @@ function CruiseDetailContent() {
   }, [slug, featuredCruise])
 
   const cruise = featuredCruise || apiCruise
+
+  // Track detail page view once cruise is loaded
+  useEffect(() => {
+    if (cruise) {
+      trackCruiseDetailView(locale, cruise.slug)
+    }
+  }, [cruise?.slug, locale]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Similar cruises — use featured cruises for suggestions
   const similarCruises = cruise ? getSimilarCruises(cruise, 3) : []
@@ -249,6 +262,13 @@ function CruiseDetailContent() {
   const hasMultipleDates = allDepartureDates.length > 1
   const priceEur = cruise.price_from
   const priceRon = eurToRon(priceEur)
+
+  // Price tracking computed values
+  const syncedAgo = timeAgo(cruise.last_synced_at, locale as 'en' | 'ro')
+  const priceChanged = isPriceRecentlyChanged(cruise.price_changed_at)
+  const previousPrice = cruise.previous_price_from
+  const priceDecreased = priceChanged && previousPrice && previousPrice > priceEur
+  const priceIncreased = priceChanged && previousPrice && previousPrice < priceEur
 
   // Build tabs — only show Beverages/Terms if data exists for this cruise line
   const cruiseLineTerms = cruise.cruise_line ? CRUISE_LINE_TERMS[cruise.cruise_line] : undefined
@@ -695,6 +715,26 @@ function CruiseDetailContent() {
             <div className="space-y-6">
               {/* Price Card */}
               <div className="rounded-xl border border-navy-200 bg-white shadow-lg p-6 sticky top-24">
+                {/* Urgency badge */}
+                {syncedAgo?.isToday && (
+                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full mb-2">
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                    {t('price_updated_today')}
+                  </span>
+                )}
+                {priceDecreased && (
+                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full mb-2">
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
+                    {t('price_decreased')}
+                  </span>
+                )}
+                {priceIncreased && (
+                  <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full mb-2">
+                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" /></svg>
+                    {t('price_increased')}
+                  </span>
+                )}
+
                 <p className="text-xs text-navy-400 uppercase tracking-wider mb-1">{t('cruise_from')}</p>
                 <div className="flex items-baseline gap-2 mb-1">
                   <span className="text-3xl font-bold text-navy-900">
@@ -702,17 +742,33 @@ function CruiseDetailContent() {
                   </span>
                   <span className="text-sm text-navy-500">{t('cruise_per_person')}</span>
                 </div>
+
+                {/* Previous price strikethrough */}
+                {previousPrice && previousPrice !== priceEur && priceChanged && (
+                  <p className="text-xs text-navy-400 mb-0.5">
+                    {t('price_was')} <span className="line-through">&euro;{previousPrice.toLocaleString()}</span>
+                  </p>
+                )}
+
                 {locale === 'ro' && (
-                  <p className="text-sm text-gold-600 font-medium mb-4">
+                  <p className="text-sm text-gold-600 font-medium mb-1">
                     ~{priceRon.toLocaleString()} {t('cruise_lei')}
                   </p>
                 )}
-                {locale !== 'ro' && <div className="mb-4" />}
 
-                <Button onClick={() => setShowLeadForm(true)} variant="primary" size="lg" className="w-full mb-3">
+                {/* Price freshness label */}
+                {syncedAgo && (
+                  <p className="text-[10px] text-navy-400 mb-3">
+                    {t('price_updated')} {syncedAgo.label}
+                  </p>
+                )}
+                {!syncedAgo && locale === 'ro' && <div className="mb-3" />}
+                {!syncedAgo && locale !== 'ro' && <div className="mb-3" />}
+
+                <Button onClick={() => { setShowLeadForm(true); trackCtaClick(locale, cruise.slug, 'request_offer') }} variant="primary" size="lg" className="w-full mb-3">
                   {t('cta_request_offer')}
                 </Button>
-                <Button onClick={() => setShowLeadForm(true)} variant="secondary" size="md" className="w-full">
+                <Button onClick={() => { setShowLeadForm(true); trackCtaClick(locale, cruise.slug, 'check_availability') }} variant="secondary" size="md" className="w-full">
                   {t('cta_check_availability')}
                 </Button>
 

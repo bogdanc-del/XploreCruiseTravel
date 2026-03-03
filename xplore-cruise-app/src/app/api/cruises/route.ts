@@ -24,6 +24,10 @@ interface CompactCruise {
   d: string    // destination
   dr: string   // destination_ro
   ds: string   // destination_slug
+  // Price tracking (optional — added by sync)
+  pp?: number | null   // previous_price_from
+  pca?: string | null  // price_changed_at
+  lsa?: string | null  // last_synced_at
 }
 
 // Expanded format returned to clients
@@ -43,6 +47,10 @@ interface CruiseIndex {
   destination: string
   destination_ro: string
   destination_slug: string
+  // Price tracking
+  previous_price_from?: number | null
+  price_changed_at?: string | null
+  last_synced_at?: string | null
 }
 
 // Grouped cruise — a representative cruise + group metadata
@@ -81,6 +89,9 @@ function expand(c: CompactCruise): CruiseIndex {
     destination: c.d,
     destination_ro: c.dr,
     destination_slug: c.ds,
+    previous_price_from: c.pp || null,
+    price_changed_at: c.pca || null,
+    last_synced_at: c.lsa || null,
   }
 }
 
@@ -222,7 +233,19 @@ export async function GET(request: NextRequest) {
   const maxPrice = parseInt(searchParams.get('maxPrice') || '0') || 0
   const minNights = parseInt(searchParams.get('minNights') || '0') || 0
   const maxNights = parseInt(searchParams.get('maxNights') || '0') || 0
+  const departureWindow = searchParams.get('departure') || ''
   const sortBy = searchParams.get('sort') || 'featured'
+
+  // Compute departure date bounds
+  let departureMaxDate: number | null = null
+  if (departureWindow) {
+    const now = Date.now()
+    switch (departureWindow) {
+      case '3m': departureMaxDate = now + 90 * 86_400_000; break
+      case '6m': departureMaxDate = now + 180 * 86_400_000; break
+      case 'year': departureMaxDate = now + 365 * 86_400_000; break
+    }
+  }
 
   // Apply filters
   let filtered = cruises.filter(c => {
@@ -244,6 +267,11 @@ export async function GET(request: NextRequest) {
     if (minNights > 0 && c.nights < minNights) return false
     if (maxNights > 0 && c.nights > maxNights) return false
     if (c.price_from <= 0) return false
+    // Departure date filter
+    if (departureMaxDate && c.departure_date) {
+      const depTime = new Date(c.departure_date).getTime()
+      if (depTime > departureMaxDate || depTime < Date.now()) return false
+    }
     return true
   })
 

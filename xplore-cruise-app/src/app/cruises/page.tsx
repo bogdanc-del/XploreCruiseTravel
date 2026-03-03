@@ -11,6 +11,7 @@ import GuidedEntryCard from '@/components/guided/GuidedEntryCard'
 import { useGuidedFlow } from '@/context/GuidedFlowContext'
 import ChatWidget from '@/components/chat/ChatWidget'
 import type { Cruise } from '@/lib/supabase'
+import { trackCruisesListView } from '@/lib/analytics'
 
 // ============================================================
 // Types for the API response
@@ -38,6 +39,10 @@ interface ApiCruise {
   price_min?: number
   price_max?: number
   next_departures?: string[]
+  // Price tracking fields
+  previous_price_from?: number | null
+  price_changed_at?: string | null
+  last_synced_at?: string | null
 }
 
 interface FilterMeta {
@@ -98,6 +103,10 @@ function apiToCruise(c: ApiCruise): Cruise & {
     price_min: c.price_min,
     price_max: c.price_max,
     next_departures: c.next_departures,
+    // Price tracking (from sync)
+    previous_price_from: c.previous_price_from || null,
+    price_changed_at: c.price_changed_at || null,
+    last_synced_at: c.last_synced_at || null,
   } as Cruise & {
     departure_count?: number
     price_min?: number
@@ -151,6 +160,7 @@ export default function CruisesPage() {
   const [maxPrice, setMaxPrice] = useState('')
   const [minNights, setMinNights] = useState('')
   const [maxNights, setMaxNights] = useState('')
+  const [selectedDeparture, setSelectedDeparture] = useState('')
   const [sortBy, setSortBy] = useState('price_asc')
   const [showFilters, setShowFilters] = useState(false)
 
@@ -173,7 +183,13 @@ export default function CruisesPage() {
   }, [search])
 
   // Reset to page 1 when filters change
-  useEffect(() => { setPage(1) }, [selectedDestination, selectedType, selectedLine, minPrice, maxPrice, minNights, maxNights, sortBy])
+  useEffect(() => { setPage(1) }, [selectedDestination, selectedType, selectedLine, selectedDeparture, minPrice, maxPrice, minNights, maxNights, sortBy])
+
+  // Track page view on initial render
+  useEffect(() => {
+    trackCruisesListView(locale, 1, 0)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   // Load filter metadata once
   useEffect(() => {
@@ -204,6 +220,7 @@ export default function CruisesPage() {
     if (maxPrice) params.set('maxPrice', maxPrice)
     if (minNights) params.set('minNights', minNights)
     if (maxNights) params.set('maxNights', maxNights)
+    if (selectedDeparture) params.set('departure', selectedDeparture)
     if (sortBy) params.set('sort', sortBy)
 
     try {
@@ -218,7 +235,7 @@ export default function CruisesPage() {
     } finally {
       setLoading(false)
     }
-  }, [page, searchDebounced, selectedDestination, selectedType, selectedLine, minPrice, maxPrice, minNights, maxNights, sortBy])
+  }, [page, searchDebounced, selectedDestination, selectedType, selectedLine, selectedDeparture, minPrice, maxPrice, minNights, maxNights, sortBy])
 
   useEffect(() => { fetchCruises() }, [fetchCruises])
 
@@ -232,11 +249,12 @@ export default function CruisesPage() {
     setMaxPrice('')
     setMinNights('')
     setMaxNights('')
+    setSelectedDeparture('')
     setSortBy('price_asc')
     setPage(1)
   }
 
-  const hasActiveFilters = search || selectedDestination || selectedType || selectedLine || minPrice || maxPrice || minNights || maxNights
+  const hasActiveFilters = search || selectedDestination || selectedType || selectedLine || selectedDeparture || minPrice || maxPrice || minNights || maxNights
 
   // Cruise type display names
   const typeNames: Record<string, { en: string; ro: string }> = {
@@ -361,6 +379,19 @@ export default function CruisesPage() {
                     {typeNames[type]?.[locale] ?? type}
                   </option>
                 ))}
+              </select>
+
+              {/* Departure Date Window */}
+              <select
+                value={selectedDeparture}
+                onChange={e => setSelectedDeparture(e.target.value)}
+                aria-label={t('filter_departure')}
+                className="px-4 py-2.5 rounded-lg border border-navy-200 bg-white text-sm text-navy-700 focus:outline-none focus:ring-2 focus:ring-gold-400/50 focus:border-gold-400 cursor-pointer"
+              >
+                <option value="">{t('filter_departure')}: {t('filter_departure_any')}</option>
+                <option value="3m">{t('filter_departure_3m')}</option>
+                <option value="6m">{t('filter_departure_6m')}</option>
+                <option value="year">{t('filter_departure_year')}</option>
               </select>
 
               {/* Price Range */}

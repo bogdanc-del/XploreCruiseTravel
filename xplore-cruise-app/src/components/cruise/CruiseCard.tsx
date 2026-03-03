@@ -10,9 +10,10 @@ import { t } from '@/i18n/translations'
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
 import { getBestImageUrl } from '@/data/ship-images'
+import { timeAgo, isPriceRecentlyChanged } from '@/lib/time-ago'
 
 // ============================================================
-// CruiseCard — supports both individual & grouped route display
+// CruiseCard — supports grouped routes + price freshness labels
 // ============================================================
 
 interface CruiseCardProps {
@@ -58,6 +59,13 @@ export default function CruiseCard({ cruise, locale }: CruiseCardProps) {
 
   // Use HD image mapping — upgrades low-quality scraped thumbnails
   const imageUrl = getBestImageUrl(cruise.image_url, cruise.ship_name, cruise.cruise_line)
+
+  // Price freshness & urgency
+  const syncedAgo = timeAgo(cruise.last_synced_at, locale)
+  const priceChanged = isPriceRecentlyChanged(cruise.price_changed_at, 7)
+  const previousPrice = cruise.previous_price_from
+  const priceDecreased = previousPrice && previousPrice > cruise.price_from
+  const priceIncreased = previousPrice && previousPrice < cruise.price_from
 
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-xl bg-white shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover">
@@ -118,6 +126,28 @@ export default function CruiseCard({ cruise, locale }: CruiseCardProps) {
             </Badge>
           </div>
         )}
+
+        {/* Urgency badges — bottom-right overlay */}
+        <div className="absolute bottom-3 right-3 z-10 flex flex-col items-end gap-1">
+          {syncedAgo?.isToday && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-600/90 text-white text-[10px] font-semibold backdrop-blur-sm">
+              <RefreshIcon />
+              {t('price_updated_today', locale)}
+            </span>
+          )}
+          {priceChanged && priceDecreased && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-600/90 text-white text-[10px] font-semibold backdrop-blur-sm">
+              <ArrowDownIcon />
+              {t('price_decreased', locale)}
+            </span>
+          )}
+          {priceChanged && priceIncreased && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-600/90 text-white text-[10px] font-semibold backdrop-blur-sm">
+              <ArrowUpIcon />
+              {t('price_increased', locale)}
+            </span>
+          )}
+        </div>
 
         {/* Departure count badge — bottom-left overlay on image */}
         {isGrouped && (
@@ -192,6 +222,12 @@ export default function CruiseCard({ cruise, locale }: CruiseCardProps) {
                 {t('cruise_per_person', locale)}
               </span>
             </p>
+            {/* Previous price (strikethrough) when price changed */}
+            {priceChanged && previousPrice && previousPrice !== cruise.price_from && (
+              <p className="text-[10px] text-navy-400 line-through">
+                {t('price_was', locale)} &euro;{previousPrice.toLocaleString()}
+              </p>
+            )}
             {hasPriceRange && (
               <p className="text-[10px] text-navy-400">
                 {locale === 'ro' ? 'până la' : 'up to'} &euro;{priceMax.toLocaleString()}
@@ -200,6 +236,12 @@ export default function CruiseCard({ cruise, locale }: CruiseCardProps) {
             {locale === 'ro' && (
               <p className="text-xs text-gold-600">
                 ~{priceRon.toLocaleString()} {t('cruise_lei', locale)}
+              </p>
+            )}
+            {/* Price freshness label */}
+            {syncedAgo && (
+              <p className="mt-0.5 text-[10px] text-navy-300" title={cruise.last_synced_at || ''}>
+                {t('price_updated', locale)} {syncedAgo.label}
               </p>
             )}
           </div>
@@ -269,6 +311,30 @@ function CalendarMultiIcon() {
   return (
     <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z" />
+    </svg>
+  )
+}
+
+function RefreshIcon() {
+  return (
+    <svg className="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182M21.016 4.649v4.992" />
+    </svg>
+  )
+}
+
+function ArrowDownIcon() {
+  return (
+    <svg className="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 13.5L12 21m0 0l-7.5-7.5M12 21V3" />
+    </svg>
+  )
+}
+
+function ArrowUpIcon() {
+  return (
+    <svg className="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18" />
     </svg>
   )
 }

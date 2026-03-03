@@ -73,6 +73,10 @@ export interface Cruise {
   destination?: string
   destination_ro?: string
   destination_slug?: string
+  // Price tracking (populated by /api/sync/prices)
+  previous_price_from?: number | null
+  price_changed_at?: string | null
+  last_synced_at?: string | null
 }
 
 export interface CabinType {
