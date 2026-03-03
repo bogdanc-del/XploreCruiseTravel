@@ -19,15 +19,22 @@ import type { Cruise } from '@/lib/supabase'
 import { FEATURED_CRUISES } from '@/data/cruises-database'
 
 // ============================================================
-// Site Stats — single source of truth (EN + RO share these)
-// "Cruise Consultant since 2016" → 10+ years is correct
+// Site Stats — fallback values; real values fetched from /api/stats
 // ============================================================
-const SITE_STATS = {
+const FALLBACK_STATS = {
   cruises: 150,
   destinations: 25,
   clients: 500,
   years: 10,
 } as const
+
+interface SiteStatData {
+  stat_key: string
+  stat_value: number
+  label_en: string
+  label_ro: string
+  suffix: string
+}
 
 // Show 6 best cruises on the homepage (variety of types)
 const homepageCruises = FEATURED_CRUISES.slice(0, 6)
@@ -109,6 +116,28 @@ export default function HomePage() {
   const t = useT()
   const { locale } = useLocale()
   const { openFlow } = useGuidedFlow()
+  const [siteStats, setSiteStats] = useState<SiteStatData[]>([])
+
+  // Fetch live stats from /api/stats
+  useEffect(() => {
+    fetch('/api/stats')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.stats && data.stats.length > 0) {
+          setSiteStats(data.stats)
+        }
+      })
+      .catch(() => {
+        // Fallback handled in render
+      })
+  }, [])
+
+  // Helper: get stat value (API or fallback)
+  const getStat = (key: keyof typeof FALLBACK_STATS) => {
+    const found = siteStats.find((s) => s.stat_key === key)
+    if (found) return { target: found.stat_value, suffix: found.suffix, label: locale === 'ro' ? found.label_ro : found.label_en }
+    return null
+  }
 
   return (
     <>
@@ -178,14 +207,27 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Stats Section */}
+      {/* Stats Section — driven by /api/stats or fallback */}
       <section className="py-16 bg-navy-900 -mt-1">
         <Container>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
-            <StatCounter target={SITE_STATS.cruises} suffix="+" label={t('stats_cruises')} />
-            <StatCounter target={SITE_STATS.destinations} suffix="+" label={t('stats_destinations')} />
-            <StatCounter target={SITE_STATS.clients} suffix="+" label={t('stats_clients')} />
-            <StatCounter target={SITE_STATS.years} suffix="+" label={t('stats_years')} />
+            {siteStats.length > 0 ? (
+              siteStats.map((stat) => (
+                <StatCounter
+                  key={stat.stat_key}
+                  target={stat.stat_value}
+                  suffix={stat.suffix}
+                  label={locale === 'ro' ? stat.label_ro : stat.label_en}
+                />
+              ))
+            ) : (
+              <>
+                <StatCounter target={FALLBACK_STATS.cruises} suffix="+" label={t('stats_cruises')} />
+                <StatCounter target={FALLBACK_STATS.destinations} suffix="+" label={t('stats_destinations')} />
+                <StatCounter target={FALLBACK_STATS.clients} suffix="+" label={t('stats_clients')} />
+                <StatCounter target={FALLBACK_STATS.years} suffix="+" label={t('stats_years')} />
+              </>
+            )}
           </div>
         </Container>
       </section>
