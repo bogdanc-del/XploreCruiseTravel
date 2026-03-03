@@ -445,9 +445,10 @@ interface RouteMapProps {
   portsOfCall: string[]
   className?: string
   onPortClick?: (portName: string) => void
+  isOneWay?: boolean
 }
 
-export default function RouteMap({ departurePort, portsOfCall, className = '', onPortClick }: RouteMapProps) {
+export default function RouteMap({ departurePort, portsOfCall, className = '', onPortClick, isOneWay = false }: RouteMapProps) {
   const mapRef = useRef<HTMLDivElement>(null)
   const mapInstanceRef = useRef<L.Map | null>(null)
   const t = useT()
@@ -557,8 +558,8 @@ export default function RouteMap({ departurePort, portsOfCall, className = '', o
       }
     })
 
-    // Build the complete route including return to departure
-    const routePorts = [...ports, ports[0]] // close the loop
+    // Build the complete route — only close the loop for round-trip cruises
+    const routePorts = isOneWay ? ports : [...ports, ports[0]]
 
     // Generate curved sea-route polyline
     const { allPoints: seaRoute, segments } = buildSeaRoute(routePorts)

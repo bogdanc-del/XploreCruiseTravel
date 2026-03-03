@@ -17,6 +17,7 @@ interface RouteMapStaticProps {
   portsOfCall: string[]
   className?: string
   onPortClick?: (portName: string) => void
+  isOneWay?: boolean
 }
 
 /**
@@ -30,6 +31,7 @@ export default function RouteMapStatic({
   portsOfCall,
   className = '',
   onPortClick,
+  isOneWay = false,
 }: RouteMapStaticProps) {
   const [showInteractive, setShowInteractive] = useState(false)
   const t = useT()
@@ -53,6 +55,7 @@ export default function RouteMapStatic({
           departurePort={departurePort}
           portsOfCall={portsOfCall}
           onPortClick={onPortClick}
+          isOneWay={isOneWay}
           className=""
         />
       </div>

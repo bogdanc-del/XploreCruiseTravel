@@ -10,7 +10,7 @@ export interface CabinImageSet {
   suite: string
 }
 
-// Default cabin images (generic cruise cabin photos from Unsplash)
+// Default cabin images (reliable Unsplash images — always load correctly)
 const DEFAULT_IMAGES: CabinImageSet = {
   interior: 'https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=600&q=80',
   ocean_view: 'https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?w=600&q=80',
@@ -18,37 +18,55 @@ const DEFAULT_IMAGES: CabinImageSet = {
   suite: 'https://images.unsplash.com/photo-1590490360182-c33d7dc94402?w=600&q=80',
 }
 
-// Per cruise line cabin images
+// Per cruise line cabin images — using Unsplash to avoid hotlink blocking from cruise line CDNs
 export const CABIN_IMAGES: Record<string, Partial<CabinImageSet>> = {
   'MSC Cruises': {
-    interior: 'https://www.msccruises.com/-/media/global-contents/ship/msc-world-europa/cabin/deluxe-balcony/msc-world-europa-cabins-deluxe-inside-16to9.jpg?w=600',
-    ocean_view: 'https://www.msccruises.com/-/media/global-contents/ship/msc-world-europa/cabin/ocean-view/msc-world-europa-cabins-oceanview-16to9.jpg?w=600',
-    balcony: 'https://www.msccruises.com/-/media/global-contents/ship/msc-world-europa/cabin/deluxe-balcony/msc-world-europa-cabins-deluxe-balcony-16to9.jpg?w=600',
-    suite: 'https://www.msccruises.com/-/media/global-contents/ship/msc-world-europa/cabin/msc-yacht-club/msc-world-europa-cabins-yacht-club-royal-suite-16to9.jpg?w=600',
+    interior: 'https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=600&q=80',
+    ocean_view: 'https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?w=600&q=80',
+    balcony: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?w=600&q=80',
+    suite: 'https://images.unsplash.com/photo-1590490360182-c33d7dc94402?w=600&q=80',
   },
   'Costa Cruises': {
-    interior: 'https://www.costacruises.com/content/dam/costa/costa-magazine/articles-stories/cabins/costa-cabin-internal-16x9.jpg',
-    ocean_view: 'https://www.costacruises.com/content/dam/costa/costa-magazine/articles-stories/cabins/costa-cabin-ocean-view-16x9.jpg',
-    balcony: 'https://www.costacruises.com/content/dam/costa/costa-magazine/articles-stories/cabins/costa-cabin-balcony-16x9.jpg',
-    suite: 'https://www.costacruises.com/content/dam/costa/costa-magazine/articles-stories/cabins/costa-cabin-suite-16x9.jpg',
+    interior: 'https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=600&q=80',
+    ocean_view: 'https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?w=600&q=80',
+    balcony: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?w=600&q=80',
+    suite: 'https://images.unsplash.com/photo-1590490360182-c33d7dc94402?w=600&q=80',
   },
   'Royal Caribbean': {
-    interior: 'https://www.royalcaribbean.com/content/dam/royal/rooms/interior/interior-stateroom-background.jpg',
-    ocean_view: 'https://www.royalcaribbean.com/content/dam/royal/rooms/ocean-view/ocean-view-stateroom-background.jpg',
-    balcony: 'https://www.royalcaribbean.com/content/dam/royal/rooms/balcony/balcony-stateroom-background.jpg',
-    suite: 'https://www.royalcaribbean.com/content/dam/royal/rooms/suites/suite-background.jpg',
+    interior: 'https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=600&q=80',
+    ocean_view: 'https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?w=600&q=80',
+    balcony: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?w=600&q=80',
+    suite: 'https://images.unsplash.com/photo-1590490360182-c33d7dc94402?w=600&q=80',
+  },
+  'Royal Caribbean Cruise Line': {
+    interior: 'https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=600&q=80',
+    ocean_view: 'https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?w=600&q=80',
+    balcony: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?w=600&q=80',
+    suite: 'https://images.unsplash.com/photo-1590490360182-c33d7dc94402?w=600&q=80',
   },
   'Norwegian Cruise Line': {
-    interior: 'https://www.ncl.com/sites/default/files/prima_inside.jpg',
-    ocean_view: 'https://www.ncl.com/sites/default/files/prima_oceanview.jpg',
-    balcony: 'https://www.ncl.com/sites/default/files/prima_balcony.jpg',
-    suite: 'https://www.ncl.com/sites/default/files/prima_penthouse.jpg',
+    interior: 'https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=600&q=80',
+    ocean_view: 'https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?w=600&q=80',
+    balcony: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?w=600&q=80',
+    suite: 'https://images.unsplash.com/photo-1590490360182-c33d7dc94402?w=600&q=80',
   },
   'Celebrity Cruises': {
-    interior: 'https://www.celebritycruises.com/content/dam/celebrity/new-images/staterooms/inside/celebrity-stateroom-inside-hero.jpg',
-    ocean_view: 'https://www.celebritycruises.com/content/dam/celebrity/new-images/staterooms/ocean-view/celebrity-stateroom-ocean-view-hero.jpg',
-    balcony: 'https://www.celebritycruises.com/content/dam/celebrity/new-images/staterooms/veranda/celebrity-stateroom-veranda-hero.jpg',
-    suite: 'https://www.celebritycruises.com/content/dam/celebrity/new-images/staterooms/suite/celebrity-stateroom-suite-hero.jpg',
+    interior: 'https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=600&q=80',
+    ocean_view: 'https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?w=600&q=80',
+    balcony: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?w=600&q=80',
+    suite: 'https://images.unsplash.com/photo-1590490360182-c33d7dc94402?w=600&q=80',
+  },
+  'Princess Cruises': {
+    interior: 'https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=600&q=80',
+    ocean_view: 'https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?w=600&q=80',
+    balcony: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?w=600&q=80',
+    suite: 'https://images.unsplash.com/photo-1590490360182-c33d7dc94402?w=600&q=80',
+  },
+  'Holland America Line': {
+    interior: 'https://images.unsplash.com/photo-1560185007-cde436f6a4d0?w=600&q=80',
+    ocean_view: 'https://images.unsplash.com/photo-1560185007-c5ca9d2c014d?w=600&q=80',
+    balcony: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?w=600&q=80',
+    suite: 'https://images.unsplash.com/photo-1590490360182-c33d7dc94402?w=600&q=80',
   },
   'Viking Ocean Cruises': {
     interior: DEFAULT_IMAGES.interior,
@@ -90,7 +108,7 @@ const CATEGORY_MAP: Record<string, keyof CabinImageSet> = {
   'mini-suite': 'suite',
   penthouse: 'suite',
   'yacht club': 'suite',
-  // Common API codes
+  // Common API codes (two-letter)
   ia: 'interior',
   ib: 'interior',
   ic: 'interior',
@@ -142,6 +160,36 @@ const CATEGORY_MAP: Record<string, keyof CabinImageSet> = {
   rs: 'suite',
   os: 'suite',
   ps: 'suite',
+  // Single-letter + number codes (Costa, MSC, etc.)
+  s: 'suite',
+  i1: 'interior',
+  i2: 'interior',
+  i3: 'interior',
+  i4: 'interior',
+  i5: 'interior',
+  i6: 'interior',
+  e1: 'ocean_view',
+  e2: 'ocean_view',
+  e3: 'ocean_view',
+  e4: 'ocean_view',
+  ep: 'ocean_view',
+  b1: 'balcony',
+  b2: 'balcony',
+  b3: 'balcony',
+  b4: 'balcony',
+  b5: 'balcony',
+  b6: 'balcony',
+  s1: 'suite',
+  s2: 'suite',
+  s3: 'suite',
+  // Additional single-letter codes
+  i: 'interior',
+  e: 'ocean_view',
+  b: 'balcony',
+  o: 'ocean_view',
+  // Premium/specialty cabin codes
+  yc: 'suite',  // Yacht Club (MSC)
+  r: 'suite',   // Royal suite
   // Romanian
   'cabina interioara': 'interior',
   'cabina exterioara': 'ocean_view',

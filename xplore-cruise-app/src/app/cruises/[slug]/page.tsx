@@ -192,11 +192,23 @@ function CruiseDetailContent() {
       const variant = getAssignedVariant()
       setCtaVariant(variant)
       trackCtaImpression(locale, cruise.slug, variant)
+      // Set proper document title once cruise data is loaded
+      const cruiseTitle = locale === 'ro' && cruise.title_ro ? cruise.title_ro : cruise.title
+      document.title = `${cruiseTitle} | XploreCruiseTravel`
     }
   }, [cruise?.slug, locale]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Similar cruises — use featured cruises for suggestions
   const similarCruises = cruise ? getSimilarCruises(cruise, 3) : []
+
+  // Set document title during loading to avoid "Croazieră Negăsită" flash
+  useEffect(() => {
+    if (!featuredCruise && apiLoading) {
+      document.title = locale === 'ro'
+        ? 'Se încarcă croaziera... | XploreCruiseTravel'
+        : 'Loading cruise... | XploreCruiseTravel'
+    }
+  }, [apiLoading, featuredCruise, locale])
 
   // Loading state
   if (!featuredCruise && apiLoading) {
@@ -255,7 +267,7 @@ function CruiseDetailContent() {
 
   // Determine arrival/disembarkation port for one-way cruises
   const disembarkPort = (cruise as Cruise & { _disembarkation_port?: string })._disembarkation_port || ''
-  const isOneWay = disembarkPort && disembarkPort.trim().toLowerCase() !== depNorm
+  const isOneWay = !!(disembarkPort && disembarkPort.trim().toLowerCase() !== depNorm)
   const arrivalPort = isOneWay ? disembarkPort : cruise.departure_port
 
   // Deduplicate: if last port of call matches arrival/disembarkation port, skip it too
@@ -498,6 +510,7 @@ function CruiseDetailContent() {
                     departurePort={cruise.departure_port}
                     portsOfCall={cruise.ports_of_call}
                     onPortClick={handlePortClick}
+                    isOneWay={isOneWay}
                     className="mb-8"
                   />
 
