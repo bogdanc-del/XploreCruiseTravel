@@ -114,8 +114,12 @@ export function trackCruiseDetailView(locale: string, cruiseSlug: string) {
   track('cruise_detail_view', { locale, cruise_slug: cruiseSlug })
 }
 
-export function trackCtaClick(locale: string, cruiseSlug: string, ctaType: string) {
-  track('cta_click', { locale, cruise_slug: cruiseSlug, cta_type: ctaType })
+export function trackCtaClick(locale: string, cruiseSlug: string, ctaType: string, variant?: string) {
+  track('cta_click', { locale, cruise_slug: cruiseSlug, cta_type: ctaType, variant: variant || 'none' })
+}
+
+export function trackCtaImpression(locale: string, cruiseSlug: string, variant: string) {
+  track('cta_impression', { locale, cruise_slug: cruiseSlug, variant })
 }
 
 export function trackLeadSubmitSuccess(locale: string, cruiseSlug: string, source: string) {

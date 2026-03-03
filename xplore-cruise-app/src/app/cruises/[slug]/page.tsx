@@ -19,7 +19,8 @@ import RouteMapStatic from '@/components/cruise/RouteMapStatic'
 import { eurToRon } from '@/lib/supabase'
 import type { Cruise } from '@/lib/supabase'
 import { timeAgo, isPriceRecentlyChanged } from '@/lib/time-ago'
-import { trackCruiseDetailView, trackCtaClick } from '@/lib/analytics'
+import { trackCruiseDetailView, trackCtaClick, trackCtaImpression } from '@/lib/analytics'
+import { getAssignedVariant, CTA_VARIANTS, type CTAVariant } from '@/lib/ab-testing'
 
 // Phase 2 imports
 import HeroGallery from '@/components/cruise/HeroGallery'
@@ -122,6 +123,7 @@ function CruiseDetailContent() {
   const [showLeadForm, setShowLeadForm] = useState(false)
   const [selectedPort, setSelectedPort] = useState<string | null>(null)
   const [selectedDateIdx, setSelectedDateIdx] = useState(0)
+  const [ctaVariant, setCtaVariant] = useState<CTAVariant>('A')
 
   // State for API-loaded cruise
   const [apiCruise, setApiCruise] = useState<Cruise | null>(null)
@@ -159,10 +161,14 @@ function CruiseDetailContent() {
 
   const cruise = featuredCruise || apiCruise
 
-  // Track detail page view once cruise is loaded
+  // Track detail page view + assign CTA variant once cruise is loaded
   useEffect(() => {
     if (cruise) {
       trackCruiseDetailView(locale, cruise.slug)
+      // A/B test: assign and track CTA variant
+      const variant = getAssignedVariant()
+      setCtaVariant(variant)
+      trackCtaImpression(locale, cruise.slug, variant)
     }
   }, [cruise?.slug, locale]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -763,11 +769,28 @@ function CruiseDetailContent() {
                 {!syncedAgo && locale === 'ro' && <div className="mb-3" />}
                 {!syncedAgo && locale !== 'ro' && <div className="mb-3" />}
 
-                <Button onClick={() => { setShowLeadForm(true); trackCtaClick(locale, cruise.slug, 'request_offer') }} variant="primary" size="lg" className="w-full mb-3">
-                  {t('cta_request_offer')}
+                {/* A/B tested CTA buttons — variant: {ctaVariant} */}
+                <Button
+                  onClick={() => {
+                    setShowLeadForm(true)
+                    trackCtaClick(locale, cruise.slug, CTA_VARIANTS[ctaVariant].primaryKey, ctaVariant)
+                  }}
+                  variant={CTA_VARIANTS[ctaVariant].primaryStyle}
+                  size="lg"
+                  className="w-full mb-3"
+                >
+                  {t(CTA_VARIANTS[ctaVariant].primaryKey as Parameters<typeof t>[0])}
                 </Button>
-                <Button onClick={() => { setShowLeadForm(true); trackCtaClick(locale, cruise.slug, 'check_availability') }} variant="secondary" size="md" className="w-full">
-                  {t('cta_check_availability')}
+                <Button
+                  onClick={() => {
+                    setShowLeadForm(true)
+                    trackCtaClick(locale, cruise.slug, CTA_VARIANTS[ctaVariant].secondaryKey, ctaVariant)
+                  }}
+                  variant="secondary"
+                  size="md"
+                  className="w-full"
+                >
+                  {t(CTA_VARIANTS[ctaVariant].secondaryKey as Parameters<typeof t>[0])}
                 </Button>
 
                 {/* Departure info */}

@@ -25,7 +25,7 @@ const mockJson = vi.fn((body: unknown, init?: { status?: number; headers?: Recor
 
 vi.mock('next/server', () => ({
   NextRequest: MockNextRequest,
-  NextResponse: { json: (...args: unknown[]) => mockJson(...args) },
+  NextResponse: { json: (body: unknown, init?: Record<string, unknown>) => mockJson(body, init) },
 }))
 
 // Ensure Supabase is NOT configured (demo mode)
@@ -193,8 +193,7 @@ describe('/api/stats DELETE', () => {
     const req = new MockNextRequest('http://localhost:3000/api/stats?id=demo-1')
     await DELETE(req)
 
-    expect(mockJson).toHaveBeenCalledWith(
-      expect.objectContaining({ success: true }),
-    )
+    const body = mockJson.mock.calls[0][0] as { success: boolean }
+    expect(body.success).toBe(true)
   })
 })

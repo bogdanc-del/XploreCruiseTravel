@@ -29,6 +29,7 @@ const ALLOWED_EVENTS = new Set([
   'cruises_list_view',
   'cruise_detail_view',
   'cta_click',
+  'cta_impression',
   'lead_submit_success',
   'contact_submit_success',
   'guided_start',

@@ -244,6 +244,12 @@ export const translations = {
     // CTA — Lead-based
     cta_request_offer: 'Request an offer',
     cta_check_availability: 'Check availability',
+    // CTA Variant B
+    cta_get_price: 'Get personalized price',
+    cta_limited_spots: 'Limited spots — check now',
+    // CTA Variant C
+    cta_talk_expert: 'Talk to an expert',
+    cta_free_consultation: 'Free consultation — no commitment',
 
     // Lead Capture Form
     lead_form_title: 'Request an offer',
@@ -563,6 +569,12 @@ export const translations = {
     // CTA — Lead-based
     cta_request_offer: 'Solicită ofertă',
     cta_check_availability: 'Verifică disponibilitatea',
+    // CTA Variant B
+    cta_get_price: 'Obține preț personalizat',
+    cta_limited_spots: 'Locuri limitate — verifică acum',
+    // CTA Variant C
+    cta_talk_expert: 'Vorbește cu un expert',
+    cta_free_consultation: 'Consultanță gratuită — fără obligații',
 
     // Lead Capture Form
     lead_form_title: 'Solicită ofertă',
