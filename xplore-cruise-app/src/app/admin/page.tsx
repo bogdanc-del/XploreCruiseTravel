@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useLocale } from '@/i18n/context'
 import AdminReviews from '@/components/admin/AdminReviews'
+import AdminTestimonials from '@/components/admin/AdminTestimonials'
 
 // ============================================================
 // Admin Dashboard
@@ -11,7 +12,7 @@ import AdminReviews from '@/components/admin/AdminReviews'
 
 const ADMIN_PASSWORD = 'xplore2026'
 
-type Tab = 'dashboard' | 'cruises' | 'bookings' | 'messages' | 'reviews' | 'settings'
+type Tab = 'dashboard' | 'cruises' | 'bookings' | 'messages' | 'reviews' | 'testimonials' | 'settings'
 
 interface Booking {
   id: string
@@ -177,6 +178,7 @@ export default function AdminPage() {
     { key: 'bookings', label: locale === 'ro' ? 'Rezervari' : 'Bookings', badge: pendingBookings },
     { key: 'messages', label: locale === 'ro' ? 'Mesaje' : 'Messages', badge: unreadMessages },
     { key: 'reviews', label: locale === 'ro' ? 'Recenzii' : 'Reviews' },
+    { key: 'testimonials', label: locale === 'ro' ? 'Testimoniale' : 'Testimonials' },
     { key: 'cruises', label: locale === 'ro' ? 'Croaziere' : 'Cruises' },
     { key: 'settings', label: locale === 'ro' ? 'Setari' : 'Settings' },
   ]
@@ -429,6 +431,9 @@ export default function AdminPage() {
 
         {/* Reviews Tab */}
         {activeTab === 'reviews' && <AdminReviews />}
+
+        {/* Testimonials Tab */}
+        {activeTab === 'testimonials' && <AdminTestimonials />}
 
         {/* Cruises Tab */}
         {activeTab === 'cruises' && (

@@ -13,6 +13,7 @@ import GuidedEntryCard from '@/components/guided/GuidedEntryCard'
 import { useGuidedFlow } from '@/context/GuidedFlowContext'
 import ChatWidget from '@/components/chat/ChatWidget'
 import ReviewsSection from '@/components/reviews/ReviewsSection'
+import TestimonialsSection from '@/components/testimonials/TestimonialsSection'
 import { eurToRon } from '@/lib/supabase'
 import type { Cruise } from '@/lib/supabase'
 import { FEATURED_CRUISES } from '@/data/cruises-database'
@@ -290,7 +291,10 @@ export default function HomePage() {
         )
       })()}
 
-      {/* Reviews Section */}
+      {/* Testimonials Section — curated quotes from clients */}
+      <TestimonialsSection variant="homepage" limit={6} />
+
+      {/* Reviews Section — recent public reviews */}
       <ReviewsSection variant="homepage" limit={6} />
 
       {/* CTA Section */}

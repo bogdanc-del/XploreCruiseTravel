@@ -307,6 +307,10 @@ export const translations = {
     reviews_section_title: 'What Our Clients Say',
     reviews_section_subtitle: 'Real experiences from travelers who trusted us with their cruise vacations.',
 
+    // Testimonials (C2)
+    testimonials_section_title: 'Trusted by Travelers Across Romania',
+    testimonials_section_subtitle: 'Curated testimonials from clients who experienced unforgettable cruise vacations with us.',
+
     // Common
     loading: 'Loading...',
     error: 'Something went wrong',
@@ -621,6 +625,10 @@ export const translations = {
     review_error_rate_limit: 'Prea multe trimiteri. Încearcă mai târziu.',
     reviews_section_title: 'Ce spun clienții noștri',
     reviews_section_subtitle: 'Experiențe reale de la călători care ne-au acordat încrederea pentru vacanțele lor pe croazieră.',
+
+    // Testimonials (C2)
+    testimonials_section_title: 'Apreciat de călători din toată România',
+    testimonials_section_subtitle: 'Testimoniale verificate de la clienți care au trăit vacanțe de croazieră de neuitat alături de noi.',
 
     // Common
     loading: 'Se încarcă...',
