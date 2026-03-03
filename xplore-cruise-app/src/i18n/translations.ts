@@ -153,6 +153,8 @@ export const translations = {
     map_port: 'Port of call',
     map_route: 'Route',
     map_departure_label: 'Departure',
+    map_back_to_static: 'Back to image',
+    map_explore_interactive: 'Interactive map',
 
     // Beverages Tab
     detail_beverages: 'Beverages',
@@ -284,6 +286,26 @@ export const translations = {
     filter_departure_3m: 'Next 3 months',
     filter_departure_6m: 'Next 6 months',
     filter_departure_year: 'Next year',
+
+    // Reviews
+    review_page_title: 'Share Your Experience',
+    review_page_subtitle: 'Your feedback helps us improve and helps other travelers make informed decisions.',
+    review_rating_label: 'Your rating',
+    review_name_label: 'Name',
+    review_city_label: 'City',
+    review_cruise_type_label: 'Cruise type',
+    review_message_label: 'Your experience',
+    review_message_placeholder: 'Tell us about your cruise experience...',
+    review_consent_label: 'I consent to the publication of this review on the XploreCruiseTravel website.',
+    review_submit_button: 'Submit review',
+    review_success_title: 'Thank you!',
+    review_success_message: 'Your review has been submitted and will be published after moderation.',
+    review_error_rating: 'Please select a rating.',
+    review_error_message: 'Please write at least 10 characters.',
+    review_error_consent: 'You must consent to publication.',
+    review_error_rate_limit: 'Too many submissions. Please try again later.',
+    reviews_section_title: 'What Our Clients Say',
+    reviews_section_subtitle: 'Real experiences from travelers who trusted us with their cruise vacations.',
 
     // Common
     loading: 'Loading...',
@@ -446,6 +468,8 @@ export const translations = {
     map_port: 'Escală',
     map_route: 'Traseu',
     map_departure_label: 'Plecare',
+    map_back_to_static: 'Înapoi la imagine',
+    map_explore_interactive: 'Hartă interactivă',
 
     // Beverages Tab
     detail_beverages: 'Băuturi',
@@ -577,6 +601,26 @@ export const translations = {
     filter_departure_3m: 'Următoarele 3 luni',
     filter_departure_6m: 'Următoarele 6 luni',
     filter_departure_year: 'Anul viitor',
+
+    // Reviews
+    review_page_title: 'Împărtășește experiența ta',
+    review_page_subtitle: 'Feedback-ul tău ne ajută să ne îmbunătățim și ajută alți călători să ia decizii informate.',
+    review_rating_label: 'Nota ta',
+    review_name_label: 'Nume',
+    review_city_label: 'Oraș',
+    review_cruise_type_label: 'Tip croazieră',
+    review_message_label: 'Experiența ta',
+    review_message_placeholder: 'Spune-ne despre experiența ta cu croaziera...',
+    review_consent_label: 'Sunt de acord cu publicarea acestei recenzii pe site-ul XploreCruiseTravel.',
+    review_submit_button: 'Trimite recenzia',
+    review_success_title: 'Mulțumim!',
+    review_success_message: 'Recenzia ta a fost trimisă și va fi publicată după moderare.',
+    review_error_rating: 'Te rugăm selectează o notă.',
+    review_error_message: 'Te rugăm scrie cel puțin 10 caractere.',
+    review_error_consent: 'Trebuie să fii de acord cu publicarea.',
+    review_error_rate_limit: 'Prea multe trimiteri. Încearcă mai târziu.',
+    reviews_section_title: 'Ce spun clienții noștri',
+    reviews_section_subtitle: 'Experiențe reale de la călători care ne-au acordat încrederea pentru vacanțele lor pe croazieră.',
 
     // Common
     loading: 'Se încarcă...',

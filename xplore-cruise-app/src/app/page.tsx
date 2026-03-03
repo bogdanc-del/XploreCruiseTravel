@@ -12,6 +12,7 @@ import CruiseCard from '@/components/cruise/CruiseCard'
 import GuidedEntryCard from '@/components/guided/GuidedEntryCard'
 import { useGuidedFlow } from '@/context/GuidedFlowContext'
 import ChatWidget from '@/components/chat/ChatWidget'
+import ReviewsSection from '@/components/reviews/ReviewsSection'
 import { eurToRon } from '@/lib/supabase'
 import type { Cruise } from '@/lib/supabase'
 import { FEATURED_CRUISES } from '@/data/cruises-database'
@@ -288,6 +289,9 @@ export default function HomePage() {
           </section>
         )
       })()}
+
+      {/* Reviews Section */}
+      <ReviewsSection variant="homepage" limit={6} />
 
       {/* CTA Section */}
       <section className="py-20 bg-gradient-to-br from-navy-900 via-navy-800 to-navy-900 relative overflow-hidden">

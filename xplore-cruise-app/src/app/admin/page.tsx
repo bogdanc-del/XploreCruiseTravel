@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useLocale } from '@/i18n/context'
+import AdminReviews from '@/components/admin/AdminReviews'
 
 // ============================================================
 // Admin Dashboard
@@ -10,7 +11,7 @@ import { useLocale } from '@/i18n/context'
 
 const ADMIN_PASSWORD = 'xplore2026'
 
-type Tab = 'dashboard' | 'cruises' | 'bookings' | 'messages' | 'settings'
+type Tab = 'dashboard' | 'cruises' | 'bookings' | 'messages' | 'reviews' | 'settings'
 
 interface Booking {
   id: string
@@ -175,6 +176,7 @@ export default function AdminPage() {
     { key: 'dashboard', label: locale === 'ro' ? 'Panou Principal' : 'Dashboard' },
     { key: 'bookings', label: locale === 'ro' ? 'Rezervari' : 'Bookings', badge: pendingBookings },
     { key: 'messages', label: locale === 'ro' ? 'Mesaje' : 'Messages', badge: unreadMessages },
+    { key: 'reviews', label: locale === 'ro' ? 'Recenzii' : 'Reviews' },
     { key: 'cruises', label: locale === 'ro' ? 'Croaziere' : 'Cruises' },
     { key: 'settings', label: locale === 'ro' ? 'Setari' : 'Settings' },
   ]
@@ -424,6 +426,9 @@ export default function AdminPage() {
             ))}
           </div>
         )}
+
+        {/* Reviews Tab */}
+        {activeTab === 'reviews' && <AdminReviews />}
 
         {/* Cruises Tab */}
         {activeTab === 'cruises' && (

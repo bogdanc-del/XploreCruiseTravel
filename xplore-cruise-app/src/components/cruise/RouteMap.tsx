@@ -123,6 +123,79 @@ const SEA_WAYPOINTS: Record<string, [number, number][]> = {
                               [24.5, -83.5], [23.8, -85.2], [21.8, -86.2],
                               [20.0, -87.0]],
 
+  // ── Alaska (all routes far offshore in deep Pacific) ────
+  // Vancouver → Victoria (out into Juan de Fuca Strait)
+  'Vancouver->Victoria':        [[48.6, -124.0]],
+  'Victoria->Vancouver':        [[48.6, -124.0]],
+  // Vancouver → Sitka (far out into Pacific, well west of all islands)
+  'Vancouver->Sitka':           [[49.0, -125.0], [49.5, -127.0], [50.5, -130.0],
+                                  [51.5, -132.0], [52.5, -134.0], [53.5, -135.5],
+                                  [54.5, -136.5], [55.5, -136.5], [56.5, -136.5]],
+  'Sitka->Vancouver':           [[56.5, -136.5], [55.5, -136.5], [54.5, -136.5],
+                                  [53.5, -135.5], [52.5, -134.0], [51.5, -132.0],
+                                  [50.5, -130.0], [49.5, -127.0], [49.0, -125.0]],
+  // Vancouver → Ketchikan (far offshore in Pacific)
+  'Vancouver->Ketchikan':       [[49.0, -125.0], [49.5, -127.0], [50.5, -130.0],
+                                  [51.5, -132.0], [52.5, -134.0], [53.5, -135.0],
+                                  [54.5, -134.5]],
+  'Ketchikan->Vancouver':       [[54.5, -134.5], [53.5, -135.0], [52.5, -134.0],
+                                  [51.5, -132.0], [50.5, -130.0], [49.5, -127.0],
+                                  [49.0, -125.0]],
+  // Victoria → Ketchikan (out into Pacific, far west)
+  'Victoria->Ketchikan':        [[48.0, -125.5], [49.0, -127.5], [50.5, -130.0],
+                                  [51.5, -132.0], [52.5, -134.0], [53.5, -135.0],
+                                  [54.5, -134.5]],
+  'Ketchikan->Victoria':        [[54.5, -134.5], [53.5, -135.0], [52.5, -134.0],
+                                  [51.5, -132.0], [50.5, -130.0], [49.0, -127.5],
+                                  [48.0, -125.5]],
+  // Ketchikan → Juneau (swing far west into Pacific, then approach Juneau)
+  'Ketchikan->Juneau':          [[55.0, -133.5], [55.8, -135.5], [56.5, -137.0],
+                                  [57.3, -137.0], [57.8, -136.0]],
+  'Juneau->Ketchikan':          [[57.8, -136.0], [57.3, -137.0], [56.5, -137.0],
+                                  [55.8, -135.5], [55.0, -133.5]],
+  // Ketchikan → Sitka (west into Pacific)
+  'Ketchikan->Sitka':           [[55.0, -133.5], [55.8, -135.5], [56.5, -137.0]],
+  'Sitka->Ketchikan':           [[56.5, -137.0], [55.8, -135.5], [55.0, -133.5]],
+  // Juneau → Skagway (north through Lynn Canal — open water channel)
+  'Juneau->Skagway':            [[58.6, -135.2], [59.0, -135.3]],
+  'Skagway->Juneau':            [[59.0, -135.3], [58.6, -135.2]],
+  // Juneau → Glacier Bay (out west through open water)
+  'Juneau->Glacier Bay':        [[58.2, -135.5], [58.3, -136.2], [58.5, -136.5]],
+  'Glacier Bay->Juneau':        [[58.5, -136.5], [58.3, -136.2], [58.2, -135.5]],
+  // Juneau → Sitka (far west offshore around all islands)
+  'Juneau->Sitka':              [[58.0, -136.0], [57.5, -137.0], [57.0, -137.0]],
+  'Sitka->Juneau':              [[57.0, -137.0], [57.5, -137.0], [58.0, -136.0]],
+  // Juneau → Icy Strait Point (west through open water)
+  'Juneau->Icy Strait Point':   [[58.2, -135.2], [58.2, -135.5]],
+  'Icy Strait Point->Juneau':   [[58.2, -135.5], [58.2, -135.2]],
+  // Sitka → Glacier Bay (north far offshore)
+  'Sitka->Glacier Bay':         [[57.3, -137.0], [57.8, -137.0], [58.3, -136.8]],
+  'Glacier Bay->Sitka':         [[58.3, -136.8], [57.8, -137.0], [57.3, -137.0]],
+  // Glacier Bay → Skagway (east then north through Lynn Canal)
+  'Glacier Bay->Skagway':       [[58.5, -136.2], [58.3, -135.5], [58.6, -135.2],
+                                  [59.0, -135.3]],
+  'Skagway->Glacier Bay':       [[59.0, -135.3], [58.6, -135.2], [58.3, -135.5],
+                                  [58.5, -136.2]],
+  // Icy Strait Point → Sitka (west far offshore)
+  'Icy Strait Point->Sitka':    [[58.0, -136.5], [57.5, -137.0]],
+  'Sitka->Icy Strait Point':    [[57.5, -137.0], [58.0, -136.5]],
+  // Icy Strait Point → Ketchikan (south far offshore in Pacific)
+  'Icy Strait Point->Ketchikan':[[57.8, -136.5], [57.0, -137.0], [56.0, -137.0],
+                                  [55.5, -135.5], [55.0, -133.5]],
+  'Ketchikan->Icy Strait Point':[[55.0, -133.5], [55.5, -135.5], [56.0, -137.0],
+                                  [57.0, -137.0], [57.8, -136.5]],
+  // Skagway → Sitka (south Lynn Canal, then far west offshore)
+  'Skagway->Sitka':             [[59.0, -135.3], [58.6, -135.2], [58.0, -136.0],
+                                  [57.5, -137.0], [57.0, -137.0]],
+  'Sitka->Skagway':             [[57.0, -137.0], [57.5, -137.0], [58.0, -136.0],
+                                  [58.6, -135.2], [59.0, -135.3]],
+  // Skagway → Icy Strait Point (south through Lynn Canal)
+  'Skagway->Icy Strait Point':  [[59.0, -135.3], [58.6, -135.2], [58.2, -135.5]],
+  'Icy Strait Point->Skagway':  [[58.2, -135.5], [58.6, -135.2], [59.0, -135.3]],
+  // Glacier Bay → Icy Strait Point
+  'Glacier Bay->Icy Strait Point': [[58.5, -136.2], [58.2, -135.8]],
+  'Icy Strait Point->Glacier Bay': [[58.2, -135.8], [58.5, -136.2]],
+
   // ── Adriatic ───────────────────────────────────────────────
   // Venice → Dubrovnik (down the Adriatic Sea)
   'Venice->Dubrovnik':      [[44.5, 13.5], [43.5, 15.0], [43.0, 16.5]],
@@ -159,6 +232,92 @@ const SEA_WAYPOINTS: Record<string, [number, number][]> = {
 }
 
 /**
+ * Calculate bearing angle (degrees) from point A to point B.
+ * Used to orient arrow markers along the route.
+ */
+function bearing(
+  from: [number, number],
+  to: [number, number],
+): number {
+  const toRad = (d: number) => (d * Math.PI) / 180
+  const toDeg = (r: number) => (r * 180) / Math.PI
+  const dLng = toRad(to[1] - from[1])
+  const lat1 = toRad(from[0])
+  const lat2 = toRad(to[0])
+  const y = Math.sin(dLng) * Math.cos(lat2)
+  const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng)
+  return (toDeg(Math.atan2(y, x)) + 360) % 360
+}
+
+/**
+ * Compute the geographic length of a segment (sum of point-to-point distances).
+ */
+function segmentLength(seg: [number, number][]): number {
+  let len = 0
+  for (let i = 1; i < seg.length; i++) {
+    len += Math.sqrt(
+      (seg[i][0] - seg[i - 1][0]) ** 2 +
+      (seg[i][1] - seg[i - 1][1]) ** 2,
+    )
+  }
+  return len
+}
+
+/**
+ * Place an arrowhead at the midpoint of each segment, pointing in the
+ * direction of travel. Routes can intersect (cross each other) — we only
+ * avoid placing two arrowheads at nearly identical positions.
+ */
+function addPortArrows(
+  map: L.Map,
+  _ports: { lat: number; lng: number }[],
+  segmentRoutes: [number, number][][],
+): void {
+  const placed: [number, number][] = [] // track arrow positions to avoid overlap
+
+  for (let i = 0; i < segmentRoutes.length; i++) {
+    const seg = segmentRoutes[i]
+    if (seg.length < 2) continue
+
+    // Place arrow at the midpoint (50%) of the segment
+    const midIdx = Math.floor(seg.length * 0.5)
+    const nextIdx = Math.min(seg.length - 1, midIdx + 1)
+
+    let lat = seg[midIdx][0]
+    let lng = seg[midIdx][1]
+
+    // Check if another arrow already sits very close to this position
+    const tooClose = placed.some(
+      ([pLat, pLng]) => Math.abs(pLat - lat) < 0.25 && Math.abs(pLng - lng) < 0.25,
+    )
+    if (tooClose) {
+      // Shift to 35% along segment instead
+      const altIdx = Math.floor(seg.length * 0.35)
+      lat = seg[altIdx][0]
+      lng = seg[altIdx][1]
+    }
+
+    const angle = bearing(seg[midIdx], seg[nextIdx])
+
+    const arrowIcon = L.divIcon({
+      className: 'route-arrow',
+      html: `<div style="
+        width: 22px; height: 22px;
+        display: flex; align-items: center; justify-content: center;
+        transform: rotate(${angle - 90}deg);
+      "><svg width="18" height="18" viewBox="0 0 14 14" fill="none">
+        <path d="M2 1L12 7L2 13L4.5 7L2 1Z" fill="#c9982a" stroke="#a07820" stroke-width="0.6"/>
+      </svg></div>`,
+      iconSize: [22, 22],
+      iconAnchor: [11, 11],
+    })
+
+    L.marker([lat, lng], { icon: arrowIcon, interactive: false }).addTo(map)
+    placed.push([lat, lng])
+  }
+}
+
+/**
  * Smoothly interpolate between two points using simple linear steps.
  * Creates a visually smooth line without any lateral offset.
  */
@@ -181,13 +340,22 @@ function interpolate(
 /**
  * Build a smooth sea-route polyline through all ports.
  * Uses explicit sea waypoints to keep routes over water.
+ * Returns both the full route and per-segment routes (for arrow placement).
+ *
+ * When a later segment overlaps with an earlier one (e.g. outbound and
+ * return legs sharing the same Pacific coast), the overlapping portion is
+ * pushed sideways with a smooth perpendicular offset so the two paths are
+ * visually distinct. They can still intersect at a point — they just don't
+ * sit on top of each other.
  */
 function buildSeaRoute(
   ports: { name: string; lat: number; lng: number }[],
-): [number, number][] {
-  if (ports.length < 2) return ports.map(p => [p.lat, p.lng])
+): { allPoints: [number, number][]; segments: [number, number][][] } {
+  if (ports.length < 2) return { allPoints: ports.map(p => [p.lat, p.lng]), segments: [] }
 
   const allPoints: [number, number][] = []
+  const segments: [number, number][][] = []
+  const prevCloud: [number, number][] = [] // all points from completed segments
   allPoints.push([ports[0].lat, ports[0].lng])
 
   for (let i = 0; i < ports.length - 1; i++) {
@@ -204,17 +372,65 @@ function buildSeaRoute(
       [to.lat, to.lng],
     ]
 
-    // Interpolate smoothly between each pair in the chain
+    // First pass — generate raw interpolated points for this segment
+    const rawPts: [number, number][] = [[from.lat, from.lng]]
     for (let j = 0; j < chain.length - 1; j++) {
       const pts = interpolate(chain[j], chain[j + 1], 8)
-      // Skip first point to avoid duplicates
       for (let k = 1; k < pts.length; k++) {
-        allPoints.push(pts[k])
+        rawPts.push(pts[k])
       }
     }
+
+    // Second pass — offset any intermediate point that overlaps a prior segment
+    const PROXIMITY = 0.25 // degrees — points closer than this are "overlapping"
+    const OFFSET_MAX = 0.45 // max perpendicular offset in degrees (~30 km)
+    const segPoints: [number, number][] = [[from.lat, from.lng]]
+
+    for (let p = 1; p < rawPts.length; p++) {
+      let lat = rawPts[p][0]
+      let lng = rawPts[p][1]
+
+      const isEndpoint = p === rawPts.length - 1 // destination port stays fixed
+
+      if (!isEndpoint && prevCloud.length > 0) {
+        const overlaps = prevCloud.some(
+          ([pLat, pLng]) =>
+            Math.abs(pLat - lat) < PROXIMITY && Math.abs(pLng - lng) < PROXIMITY,
+        )
+
+        if (overlaps) {
+          // Local travel direction from previous to next raw point
+          const prev = rawPts[Math.max(0, p - 1)]
+          const next = rawPts[Math.min(rawPts.length - 1, p + 1)]
+          const dlat = next[0] - prev[0]
+          const dlng = next[1] - prev[1]
+          const len = Math.sqrt(dlat * dlat + dlng * dlng)
+
+          if (len > 0) {
+            // Smooth taper: offset is 0 at endpoints, max at center of segment
+            const t = p / (rawPts.length - 1)
+            const taper = Math.sin(t * Math.PI)
+            const offset = OFFSET_MAX * taper
+
+            // Push perpendicular — right side of travel direction
+            lat += (dlng / len) * offset
+            lng -= (dlat / len) * offset
+          }
+        }
+      }
+
+      const pt: [number, number] = [lat, lng]
+      allPoints.push(pt)
+      segPoints.push(pt)
+    }
+
+    // Add the raw (un-offset) points to prevCloud so future segments
+    // detect overlaps against the original path, not the offset one.
+    prevCloud.push(...rawPts)
+    segments.push(segPoints)
   }
 
-  return allPoints
+  return { allPoints, segments }
 }
 
 // ============================================================
@@ -266,10 +482,16 @@ export default function RouteMap({ departurePort, portsOfCall, className = '', o
 
     mapInstanceRef.current = map
 
-    // Use a clean, nautical-style tile layer
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
-      maxZoom: 18,
+    // ESRI Ocean Basemap — deep blue water with bathymetric depth, nautical look
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Base/MapServer/tile/{z}/{y}/{x}', {
+      attribution: '&copy; Esri, GEBCO, NOAA, National Geographic, DeLorme',
+      maxZoom: 13,
+    }).addTo(map)
+
+    // Add reference labels on top of the ocean base
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Ocean/World_Ocean_Reference/MapServer/tile/{z}/{y}/{x}', {
+      attribution: '',
+      maxZoom: 13,
     }).addTo(map)
 
     // Create custom icons
@@ -312,34 +534,26 @@ export default function RouteMap({ departurePort, portsOfCall, className = '', o
         zIndexOffset: isDeparture ? 1000 : 0,
       }).addTo(map)
 
-      // Tooltip with port name
-      const label = isDeparture ? `🚢 ${port.name} (${t('map_departure_label')})` : `${i}. ${port.name}`
-      marker.bindTooltip(label, {
-        permanent: false,
-        direction: 'top',
-        offset: [0, -14],
-        className: 'cruise-tooltip',
+      // Permanent port name label on every port
+      const portLabel = isDeparture
+        ? `🚢 ${port.name}`
+        : port.name
+      const labelDirection = isDeparture ? 'right' as const : 'top' as const
+      const labelOffset: [number, number] = isDeparture ? [14, 0] : [0, -16]
+      marker.bindTooltip(portLabel, {
+        permanent: true,
+        direction: labelDirection,
+        offset: labelOffset,
+        className: isDeparture ? 'cruise-tooltip-permanent' : 'cruise-port-label',
       })
 
       // Click handler for port markers
       if (onPortClick && !isDeparture) {
         marker.on('click', () => {
-          // Find the original port name from portsOfCall
           const originalName = portsOfCall[i - 1] || port.name
           onPortClick(originalName)
         })
-        // Pointer cursor for clickable ports
         marker.getElement()?.style.setProperty('cursor', 'pointer')
-      }
-
-      // Show tooltip on hover (permanent labels for small screens would be too cluttered)
-      if (isDeparture) {
-        marker.bindTooltip(`🚢 ${port.name}`, {
-          permanent: true,
-          direction: 'right',
-          offset: [14, 0],
-          className: 'cruise-tooltip-permanent',
-        })
       }
     })
 
@@ -347,7 +561,7 @@ export default function RouteMap({ departurePort, portsOfCall, className = '', o
     const routePorts = [...ports, ports[0]] // close the loop
 
     // Generate curved sea-route polyline
-    const seaRoute = buildSeaRoute(routePorts)
+    const { allPoints: seaRoute, segments } = buildSeaRoute(routePorts)
     const routeLatLngs: L.LatLngExpression[] = seaRoute.map(
       ([lat, lng]) => [lat, lng] as L.LatLngExpression
     )
@@ -356,20 +570,22 @@ export default function RouteMap({ departurePort, portsOfCall, className = '', o
     L.polyline(routeLatLngs, {
       color: '#0a1628',
       weight: 5,
-      opacity: 0.1,
+      opacity: 0.12,
       smoothFactor: 1.5,
     }).addTo(map)
 
-    // Draw main route polyline with dashed style
+    // Draw main route polyline — solid line (not dashed)
     const routeLine = L.polyline(routeLatLngs, {
       color: '#c9982a',
       weight: 3,
-      opacity: 0.8,
-      dashArray: '10, 6',
+      opacity: 0.9,
       lineCap: 'round',
       lineJoin: 'round',
       smoothFactor: 1.5,
     }).addTo(map)
+
+    // Add directional arrowheads near each destination port
+    addPortArrows(map, ports, segments)
 
     // Fit map to route bounds with padding
     const bounds = routeLine.getBounds()
@@ -417,7 +633,7 @@ export default function RouteMap({ departurePort, portsOfCall, className = '', o
           <span>{t('map_port')}</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <span className="w-6 border-t-2 border-dashed border-gold-400 inline-block" />
+          <span className="w-6 border-t-2 border-gold-400 inline-block" />
           <span>{t('map_route')}</span>
         </div>
       </div>
@@ -449,6 +665,25 @@ export default function RouteMap({ departurePort, portsOfCall, className = '', o
         }
         .cruise-tooltip-permanent::before {
           border-right-color: rgba(10, 22, 40, 0.85) !important;
+        }
+        .cruise-port-label {
+          background: rgba(255, 255, 255, 0.92) !important;
+          backdrop-filter: blur(4px) !important;
+          border: 1px solid rgba(10, 22, 40, 0.15) !important;
+          border-radius: 4px !important;
+          padding: 2px 6px !important;
+          font-size: 10px !important;
+          font-weight: 600 !important;
+          color: #0a1628 !important;
+          box-shadow: 0 1px 4px rgba(0,0,0,0.12) !important;
+          white-space: nowrap !important;
+        }
+        .cruise-port-label::before {
+          border-top-color: rgba(255, 255, 255, 0.92) !important;
+        }
+        .route-arrow {
+          background: none !important;
+          border: none !important;
         }
         .leaflet-container {
           font-family: var(--font-body), system-ui, sans-serif !important;

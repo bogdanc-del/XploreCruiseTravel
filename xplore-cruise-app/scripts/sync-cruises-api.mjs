@@ -228,6 +228,22 @@ async function main() {
     writeFileSync(logFile, logEntry)
   }
   logStep(`Log written to ${logFile}`)
+
+  // Generate route map images for cruises that don't have one yet
+  if (changes > 0) {
+    logStep('Generating route map images for new/updated cruises...')
+    try {
+      const { execSync } = await import('child_process')
+      execSync('node scripts/generate-route-maps.mjs', {
+        cwd: ROOT,
+        stdio: 'inherit',
+        timeout: 600_000, // 10 min max
+      })
+      logStep('Route map generation complete')
+    } catch (err) {
+      logStep(`Route map generation failed (non-fatal): ${err.message}`)
+    }
+  }
 }
 
 main().catch(err => { console.error('Sync failed:', err); process.exit(1) })

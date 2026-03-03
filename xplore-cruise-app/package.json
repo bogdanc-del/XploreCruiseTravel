@@ -9,12 +9,14 @@
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
-    "test": "npm run typecheck && npm run lint && npm run i18n-audit",
+    "test": "npm run typecheck && npm run lint && npm run i18n-audit && npm run test:unit",
+    "test:unit": "vitest run",
     "test:e2e": "playwright test",
     "test:e2e:chromium": "playwright test --project=chromium",
     "test:e2e:webkit": "playwright test --project=webkit",
     "test:a11y": "playwright test e2e/a11y.spec.ts --project=chromium",
-    "i18n-audit": "npx tsx scripts/i18n-audit.ts"
+    "i18n-audit": "npx tsx scripts/i18n-audit.ts",
+    "generate-route-maps": "node scripts/generate-route-maps.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
@@ -42,8 +44,10 @@
     "eslint": "^9.0.0",
     "eslint-config-next": "^15.3.0",
     "postcss": "^8.5.0",
+    "puppeteer": "^24.37.5",
     "tailwindcss": "^4.1.0",
     "tsx": "^4.21.0",
-    "typescript": "^5.8.0"
+    "typescript": "^5.8.0",
+    "vitest": "^4.0.18"
   }
 }

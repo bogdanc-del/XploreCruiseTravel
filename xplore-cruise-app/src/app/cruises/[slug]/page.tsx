@@ -15,10 +15,7 @@ import LeadCaptureForm from '@/components/lead/LeadCaptureForm'
 import ChatWidget from '@/components/chat/ChatWidget'
 import dynamic from 'next/dynamic'
 
-const RouteMap = dynamic(() => import('@/components/cruise/RouteMap'), {
-  ssr: false,
-  loading: () => <div className="h-[380px] bg-navy-50 rounded-2xl animate-pulse" />,
-})
+import RouteMapStatic from '@/components/cruise/RouteMapStatic'
 import { eurToRon } from '@/lib/supabase'
 import type { Cruise } from '@/lib/supabase'
 import { timeAgo, isPriceRecentlyChanged } from '@/lib/time-ago'
@@ -438,8 +435,9 @@ function CruiseDetailContent() {
               {/* Tab Content: Itinerary — enhanced with PortHighlight */}
               {activeTab === 'itinerary' && (
                 <div>
-                  {/* Route Map with clickable ports */}
-                  <RouteMap
+                  {/* Route Map — static image with interactive fallback */}
+                  <RouteMapStatic
+                    routeMapUrl={cruise.route_map_url}
                     departurePort={cruise.departure_port}
                     portsOfCall={cruise.ports_of_call}
                     onPortClick={handlePortClick}
