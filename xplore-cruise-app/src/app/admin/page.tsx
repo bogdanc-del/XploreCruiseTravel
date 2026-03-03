@@ -6,6 +6,7 @@ import { useLocale } from '@/i18n/context'
 import AdminReviews from '@/components/admin/AdminReviews'
 import AdminTestimonials from '@/components/admin/AdminTestimonials'
 import AdminStats from '@/components/admin/AdminStats'
+import AdminABTesting from '@/components/admin/AdminABTesting'
 
 // ============================================================
 // Admin Dashboard
@@ -13,7 +14,7 @@ import AdminStats from '@/components/admin/AdminStats'
 
 const ADMIN_PASSWORD = 'xplore2026'
 
-type Tab = 'dashboard' | 'cruises' | 'bookings' | 'messages' | 'reviews' | 'testimonials' | 'stats' | 'settings'
+type Tab = 'dashboard' | 'cruises' | 'bookings' | 'messages' | 'reviews' | 'testimonials' | 'stats' | 'ab-testing' | 'settings'
 
 interface Booking {
   id: string
@@ -181,6 +182,7 @@ export default function AdminPage() {
     { key: 'reviews', label: locale === 'ro' ? 'Recenzii' : 'Reviews' },
     { key: 'testimonials', label: locale === 'ro' ? 'Testimoniale' : 'Testimonials' },
     { key: 'stats', label: locale === 'ro' ? 'Statistici' : 'Stats' },
+    { key: 'ab-testing', label: 'A/B Testing' },
     { key: 'cruises', label: locale === 'ro' ? 'Croaziere' : 'Cruises' },
     { key: 'settings', label: locale === 'ro' ? 'Setari' : 'Settings' },
   ]
@@ -439,6 +441,9 @@ export default function AdminPage() {
 
         {/* Stats Tab */}
         {activeTab === 'stats' && <AdminStats />}
+
+        {/* A/B Testing Tab */}
+        {activeTab === 'ab-testing' && <AdminABTesting />}
 
         {/* Cruises Tab */}
         {activeTab === 'cruises' && (
