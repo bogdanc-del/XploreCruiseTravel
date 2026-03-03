@@ -1,11 +1,15 @@
 import type { Metadata } from 'next'
 import { Playfair_Display, Inter } from 'next/font/google'
+import Script from 'next/script'
 import '@/styles/globals.css'
 import { LocaleProvider } from '@/i18n/context'
 import { GuidedFlowProvider } from '@/context/GuidedFlowContext'
 import { ExchangeRateProvider } from '@/context/ExchangeRateContext'
 import GuidedFlowOverlay from '@/components/guided/GuidedFlowOverlay'
 import SkipToContent from '@/components/ui/SkipToContent'
+
+// Google Analytics Measurement ID
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID
 
 // ============================================================
 // Google Fonts
@@ -94,6 +98,25 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ro" className={`${playfairDisplay.variable} ${inter.variable}`}>
+      {/* Google Analytics GA4 */}
+      {GA_ID && (
+        <head>
+          <Script
+            src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
+            strategy="afterInteractive"
+          />
+          <Script id="ga4-init" strategy="afterInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', '${GA_ID}', {
+                page_path: window.location.pathname,
+              });
+            `}
+          </Script>
+        </head>
+      )}
       <body className="min-h-screen bg-white font-body text-navy-900 antialiased">
         <LocaleProvider>
           <ExchangeRateProvider>
