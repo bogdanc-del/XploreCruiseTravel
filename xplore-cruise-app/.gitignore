@@ -12,3 +12,5 @@ blob-report/
 scripts/output/
 public/data/cruises.json
 public/data/cruises-index.json
+public/data/cruises-enriched.json
+logs/
