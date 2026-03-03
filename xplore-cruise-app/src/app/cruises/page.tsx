@@ -33,6 +33,11 @@ interface ApiCruise {
   destination: string
   destination_ro: string
   destination_slug: string
+  // Grouped route fields (present when API grouped=1)
+  departure_count?: number
+  price_min?: number
+  price_max?: number
+  next_departures?: string[]
 }
 
 interface FilterMeta {
@@ -52,8 +57,13 @@ interface PaginationInfo {
   hasPrev: boolean
 }
 
-// Adapt API cruise to Cruise type for CruiseCard
-function apiToCruise(c: ApiCruise): Cruise {
+// Adapt API cruise to Cruise type for CruiseCard (supports grouped fields)
+function apiToCruise(c: ApiCruise): Cruise & {
+  departure_count?: number
+  price_min?: number
+  price_max?: number
+  next_departures?: string[]
+} {
   return {
     id: c.id,
     slug: c.slug,
@@ -83,7 +93,17 @@ function apiToCruise(c: ApiCruise): Cruise {
     destination: c.destination,
     destination_ro: c.destination_ro || c.destination,
     destination_slug: c.destination_slug,
-  } as Cruise
+    // Grouped route metadata (passed through to CruiseCard)
+    departure_count: c.departure_count,
+    price_min: c.price_min,
+    price_max: c.price_max,
+    next_departures: c.next_departures,
+  } as Cruise & {
+    departure_count?: number
+    price_min?: number
+    price_max?: number
+    next_departures?: string[]
+  }
 }
 
 // ============================================================
@@ -134,8 +154,8 @@ export default function CruisesPage() {
   const [sortBy, setSortBy] = useState('price_asc')
   const [showFilters, setShowFilters] = useState(false)
 
-  // API data
-  const [cruises, setCruises] = useState<Cruise[]>([])
+  // API data (Cruise extended with optional grouped fields)
+  const [cruises, setCruises] = useState<(Cruise & { departure_count?: number; price_min?: number; price_max?: number; next_departures?: string[] })[]>([])
   const [pagination, setPagination] = useState<PaginationInfo | null>(null)
   const [meta, setMeta] = useState<FilterMeta | null>(null)
   const [loading, setLoading] = useState(true)
@@ -175,6 +195,7 @@ export default function CruisesPage() {
     const params = new URLSearchParams()
     params.set('page', String(page))
     params.set('limit', String(ITEMS_PER_PAGE))
+    params.set('grouped', '1')
     if (searchDebounced) params.set('search', searchDebounced)
     if (selectedDestination) params.set('destination', selectedDestination)
     if (selectedType) params.set('type', selectedType)
@@ -399,7 +420,7 @@ export default function CruisesPage() {
               <span className="text-xs text-navy-500">
                 {pagination ? (
                   <>
-                    {pagination.total.toLocaleString()} {locale === 'ro' ? 'croaziere' : 'cruises'}
+                    {pagination.total.toLocaleString()} {locale === 'ro' ? 'rute unice' : 'unique routes'}
                     {pagination.totalPages > 1 && (
                       <> — {locale === 'ro' ? 'pagina' : 'page'} {pagination.page}/{pagination.totalPages}</>
                     )}

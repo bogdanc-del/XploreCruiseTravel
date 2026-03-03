@@ -5,6 +5,7 @@ import { join } from 'path'
 // ============================================================
 // Cruise Listing API — paginated, filterable, searchable
 // GET /api/cruises?page=1&limit=24&destination=caribbean&type=ocean&...
+// GET /api/cruises?grouped=1  → collapses repeated routes into single entries
 // ============================================================
 
 // Compact index format (short keys to save ~40% JSON size)
@@ -42,6 +43,15 @@ interface CruiseIndex {
   destination: string
   destination_ro: string
   destination_slug: string
+}
+
+// Grouped cruise — a representative cruise + group metadata
+interface GroupedCruise extends CruiseIndex {
+  departure_count: number
+  price_min: number
+  price_max: number
+  next_departures: string[]  // up to 5 nearest future dates
+  all_slugs: string[]        // all slugs in this group (for SEO/linking)
 }
 
 // Load & expand index once at startup (cached in module scope)
@@ -122,6 +132,67 @@ function getFilterMeta() {
   return filterMeta
 }
 
+// ============================================================
+// Route grouping — collapses repeated ship+port+nights+line+dest
+// ============================================================
+
+function groupRoutes(cruises: CruiseIndex[]): GroupedCruise[] {
+  const now = Date.now()
+  const groups = new Map<string, CruiseIndex[]>()
+
+  for (const c of cruises) {
+    // Group key: ship + departure port + nights + cruise line + destination
+    const key = `${c.ship_name}|${c.departure_port}|${c.nights}|${c.cruise_line}|${c.destination_slug}`
+    const arr = groups.get(key)
+    if (arr) arr.push(c)
+    else groups.set(key, [c])
+  }
+
+  const result: GroupedCruise[] = []
+
+  for (const members of groups.values()) {
+    // Sort group members by price to pick cheapest as representative
+    members.sort((a, b) => a.price_from - b.price_from)
+    const representative = members[0]
+
+    // Compute group metadata
+    const prices = members.map(m => m.price_from)
+    const priceMin = Math.min(...prices)
+    const priceMax = Math.max(...prices)
+
+    // Collect all departure dates, sort by date, keep future ones first
+    const allDates = members
+      .map(m => m.departure_date)
+      .filter((d): d is string => d !== null && d !== '')
+      .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
+
+    // Get up to 5 nearest future departure dates
+    const futureDates = allDates.filter(d => new Date(d).getTime() >= now)
+    const nextDepartures = futureDates.slice(0, 5)
+
+    // If no future dates, use the most recent past dates
+    const displayDates = nextDepartures.length > 0
+      ? nextDepartures
+      : allDates.slice(-5)
+
+    // Use the nearest future departure date as the representative date
+    const bestDate = futureDates[0] || allDates[0] || representative.departure_date
+
+    result.push({
+      ...representative,
+      departure_date: bestDate,
+      price_from: priceMin,
+      departure_count: members.length,
+      price_min: priceMin,
+      price_max: priceMax,
+      next_departures: displayDates,
+      all_slugs: members.map(m => m.slug),
+    })
+  }
+
+  return result
+}
+
 // Cache headers for better performance
 const CACHE_HEADERS = {
   'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
@@ -136,6 +207,7 @@ export async function GET(request: NextRequest) {
   }
 
   const cruises = loadIndex()
+  const isGrouped = searchParams.get('grouped') === '1'
 
   // Pagination
   const page = Math.max(1, parseInt(searchParams.get('page') || '1'))
@@ -175,36 +247,41 @@ export async function GET(request: NextRequest) {
     return true
   })
 
+  // Group routes if requested (BEFORE sorting so sort applies to groups)
+  let results: (CruiseIndex | GroupedCruise)[] = isGrouped
+    ? groupRoutes(filtered)
+    : filtered
+
   // Sort
   switch (sortBy) {
     case 'price_asc':
-      filtered.sort((a, b) => a.price_from - b.price_from)
+      results.sort((a, b) => a.price_from - b.price_from)
       break
     case 'price_desc':
-      filtered.sort((a, b) => b.price_from - a.price_from)
+      results.sort((a, b) => b.price_from - a.price_from)
       break
     case 'date':
-      filtered.sort((a, b) => {
+      results.sort((a, b) => {
         const da = a.departure_date ? new Date(a.departure_date).getTime() : Infinity
         const db = b.departure_date ? new Date(b.departure_date).getTime() : Infinity
         return da - db
       })
       break
     case 'nights_asc':
-      filtered.sort((a, b) => a.nights - b.nights)
+      results.sort((a, b) => a.nights - b.nights)
       break
     case 'nights_desc':
-      filtered.sort((a, b) => b.nights - a.nights)
+      results.sort((a, b) => b.nights - a.nights)
       break
     default:
-      filtered.sort((a, b) => a.price_from - b.price_from)
+      results.sort((a, b) => a.price_from - b.price_from)
   }
 
   // Paginate
-  const total = filtered.length
+  const total = results.length
   const totalPages = Math.ceil(total / limit)
   const offset = (page - 1) * limit
-  const pageData = filtered.slice(offset, offset + limit)
+  const pageData = results.slice(offset, offset + limit)
 
   return NextResponse.json({
     cruises: pageData,
@@ -216,5 +293,6 @@ export async function GET(request: NextRequest) {
       hasNext: page < totalPages,
       hasPrev: page > 1,
     },
+    grouped: isGrouped,
   }, { headers: CACHE_HEADERS })
 }

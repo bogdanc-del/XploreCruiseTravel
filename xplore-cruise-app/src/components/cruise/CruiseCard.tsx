@@ -12,11 +12,16 @@ import Button from '@/components/ui/Button'
 import { getBestImageUrl } from '@/data/ship-images'
 
 // ============================================================
-// CruiseCard
+// CruiseCard — supports both individual & grouped route display
 // ============================================================
 
 interface CruiseCardProps {
-  cruise: Cruise
+  cruise: Cruise & {
+    departure_count?: number
+    price_min?: number
+    price_max?: number
+    next_departures?: string[]
+  }
   locale: Locale
 }
 
@@ -32,6 +37,15 @@ export default function CruiseCard({ cruise, locale }: CruiseCardProps) {
       : cruise.departure_port || ''
   const nightsLabel =
     cruise.nights === 1 ? t('cruise_night', locale) : t('cruise_nights', locale)
+
+  // Grouped route metadata
+  const isGrouped = (cruise.departure_count || 0) > 1
+  const departureCount = cruise.departure_count || 1
+  const priceMin = cruise.price_min || cruise.price_from
+  const priceMax = cruise.price_max || cruise.price_from
+  const hasPriceRange = isGrouped && priceMax > priceMin
+
+  // For grouped cards, show the nearest future departure
   const departureDate = cruise.departure_date
     ? new Date(cruise.departure_date).toLocaleDateString(
         locale === 'ro' ? 'ro-RO' : 'en-GB',
@@ -39,7 +53,7 @@ export default function CruiseCard({ cruise, locale }: CruiseCardProps) {
       )
     : ''
 
-  const priceEur = cruise.price_from
+  const priceEur = priceMin
   const priceRon = eurToRon(priceEur)
 
   // Use HD image mapping — upgrades low-quality scraped thumbnails
@@ -104,6 +118,16 @@ export default function CruiseCard({ cruise, locale }: CruiseCardProps) {
             </Badge>
           </div>
         )}
+
+        {/* Departure count badge — bottom-left overlay on image */}
+        {isGrouped && (
+          <div className="absolute bottom-3 left-3 z-10">
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-navy-900/80 text-white text-xs font-semibold backdrop-blur-sm">
+              <CalendarMultiIcon />
+              {departureCount} {locale === 'ro' ? 'plecări' : 'departures'}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Content */}
@@ -147,7 +171,10 @@ export default function CruiseCard({ cruise, locale }: CruiseCardProps) {
           {departureDate && (
             <span className="flex items-center gap-1">
               <CalendarIcon />
-              {departureDate}
+              {isGrouped
+                ? (locale === 'ro' ? 'de la ' : 'from ') + departureDate
+                : departureDate
+              }
             </span>
           )}
         </div>
@@ -165,6 +192,11 @@ export default function CruiseCard({ cruise, locale }: CruiseCardProps) {
                 {t('cruise_per_person', locale)}
               </span>
             </p>
+            {hasPriceRange && (
+              <p className="text-[10px] text-navy-400">
+                {locale === 'ro' ? 'până la' : 'up to'} &euro;{priceMax.toLocaleString()}
+              </p>
+            )}
             {locale === 'ro' && (
               <p className="text-xs text-gold-600">
                 ~{priceRon.toLocaleString()} {t('cruise_lei', locale)}
@@ -229,6 +261,14 @@ function CalendarIcon() {
   return (
     <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
       <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+    </svg>
+  )
+}
+
+function CalendarMultiIcon() {
+  return (
+    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z" />
     </svg>
   )
 }
