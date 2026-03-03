@@ -1,0 +1,84 @@
+name: Daily Cruise Sync
+
+on:
+  schedule:
+    # Every day at 04:00 UTC (07:00 EET Romania)
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+    # Manual trigger via GitHub Actions UI
+
+jobs:
+  sync:
+    name: Sync cruise data from croaziere.net API
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: xplore-cruise-app
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: xplore-cruise-app/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run cruise data sync
+        run: node scripts/sync-cruises-api.mjs
+        env:
+          PRICE_API_KEY: ${{ secrets.PRICE_API_KEY }}
+          PRICE_API_URL: ${{ secrets.PRICE_API_URL || 'https://www.croaziere.net/api/v1.1/cruises' }}
+          SKIP_ROUTE_MAPS: 'true'
+
+      - name: Check for changes
+        id: changes
+        run: |
+          cd ..
+          if git diff --quiet -- xplore-cruise-app/public/data/; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No data changes detected"
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "Data changes detected:"
+            git diff --stat -- xplore-cruise-app/public/data/
+          fi
+
+      - name: Commit and push changes
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          cd ..
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add xplore-cruise-app/public/data/cruises.json \
+                  xplore-cruise-app/public/data/cruises-index.json \
+                  xplore-cruise-app/public/data/cruises-enriched.json
+          git commit -m "chore: daily cruise sync $(date -u +%Y-%m-%d)"
+          git push
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Cruise Sync Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ -f logs/sync-log.jsonl ]; then
+            LAST_LOG=$(tail -1 logs/sync-log.jsonl)
+            echo "- **Duration:** $(echo $LAST_LOG | jq -r '.duration')s" >> $GITHUB_STEP_SUMMARY
+            echo "- **Cruises processed:** $(echo $LAST_LOG | jq -r '.cruises')" >> $GITHUB_STEP_SUMMARY
+            echo "- **API responses:** $(echo $LAST_LOG | jq -r '.fetched')" >> $GITHUB_STEP_SUMMARY
+            echo "- **Changes:** $(echo $LAST_LOG | jq -c '.changes')" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No sync log found" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.changes.outputs.changed }}" == "true" ]; then
+            echo "✅ Changes committed and pushed — Vercel redeploy triggered" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "ℹ️ No data changes — no commit needed" >> $GITHUB_STEP_SUMMARY
+          fi

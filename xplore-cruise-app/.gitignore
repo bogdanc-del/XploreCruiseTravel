@@ -8,9 +8,10 @@ test-results/
 artifacts/playwright-report/
 blob-report/
 
-# Scraper output (large files)
+# Scraper output (large files, not deployed)
 scripts/output/
-public/data/cruises.json
-public/data/cruises-index.json
-public/data/cruises-enriched.json
 logs/
+
+# Note: public/data/cruises*.json files are tracked by git intentionally.
+# They are committed by the daily sync workflow and deployed to Vercel.
+# Do NOT add them to .gitignore.
