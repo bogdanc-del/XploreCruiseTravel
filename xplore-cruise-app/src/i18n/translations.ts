@@ -134,10 +134,10 @@ export const translations = {
     footer_partner: 'Licensed Cruise Consultant — CUI 36785800',
 
     // Chat
-    chat_title: 'Cruise Advisor',
+    chat_title: 'Daniela — Cruise Advisor',
     chat_subtitle: 'AI-powered cruise consultant',
     chat_placeholder: 'Ask me about cruises, destinations, prices...',
-    chat_welcome: 'Hello! I\'m your personal cruise advisor. I can help you find the perfect cruise based on your preferences. What are you looking for?',
+    chat_welcome: 'Hello! I\'m Daniela, your personal cruise advisor at XploreCruiseTravel. I can help you find the perfect cruise based on your preferences. What are you looking for?',
     chat_sending: 'Thinking...',
 
     // GDPR/Cookie
@@ -453,10 +453,10 @@ export const translations = {
     footer_partner: 'Consilier de Croaziere Autorizat — CUI 36785800',
 
     // Chat
-    chat_title: 'Consilier Croaziere',
+    chat_title: 'Daniela — Consilier Croaziere',
     chat_subtitle: 'Consultant AI pentru croaziere',
     chat_placeholder: 'Întreabă-mă despre croaziere, destinații, prețuri...',
-    chat_welcome: 'Bună! Sunt consilierul tău personal de croaziere. Te pot ajuta să găsești croaziera perfectă în funcție de preferințele tale. Ce cauți?',
+    chat_welcome: 'Bună! Sunt Daniela, consilierul tău personal de croaziere la XploreCruiseTravel. Te pot ajuta să găsești croaziera perfectă în funcție de preferințele tale. Ce cauți?',
     chat_sending: 'Se gândește...',
 
     // GDPR/Cookie

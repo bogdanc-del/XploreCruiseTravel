@@ -125,8 +125,9 @@ export default function ChatWidget() {
         <div className="fixed bottom-20 right-4 sm:bottom-24 sm:right-6 z-50 w-[380px] max-w-[calc(100vw-2rem)] h-[520px] max-h-[calc(100vh-7rem)] rounded-2xl shadow-modal overflow-hidden flex flex-col animate-fade-in-up bg-white border border-navy-100">
           {/* Header */}
           <div className="bg-gradient-to-r from-navy-900 to-navy-800 text-white px-5 py-4 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gold-500/20 flex items-center justify-center">
-              <span className="text-gold-400 text-lg">⚓</span>
+            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gold-400 flex-shrink-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/daniela-ceausu.jpg" alt="Daniela" className="w-full h-full object-cover object-top" />
             </div>
             <div className="flex-1">
               <h3 className="font-semibold text-sm">{t('chat_title')}</h3>

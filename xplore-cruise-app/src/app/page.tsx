@@ -327,6 +327,24 @@ export default function HomePage() {
               📞 +40 749 558 572
             </Button>
           </div>
+
+          {/* Consultant photo + name */}
+          <div className="mt-10 flex items-center justify-center gap-3">
+            <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-gold-400 flex-shrink-0">
+              <Image
+                src="/images/daniela-ceausu.jpg"
+                alt="Ceausu Daniela Antonina"
+                width={56}
+                height={56}
+                className="w-full h-full object-cover object-top"
+                loading="lazy"
+              />
+            </div>
+            <div className="text-left">
+              <p className="text-sm font-semibold text-white">Ceausu Daniela Antonina</p>
+              <p className="text-xs text-gold-400">CEO & {locale === 'ro' ? 'Consultant Croaziere' : 'Cruise Consultant'}</p>
+            </div>
+          </div>
         </Container>
       </section>
 
