@@ -28,6 +28,8 @@ import PortHighlight from '@/components/cruise/PortHighlight'
 import PortDrawer from '@/components/cruise/PortDrawer'
 import BeveragePackageTable from '@/components/cruise/BeveragePackageTable'
 import CruiseLineTerms from '@/components/cruise/CruiseLineTerms'
+import CabinSelector from '@/components/cruise/CabinSelector'
+import type { SelectedCabin } from '@/components/cruise/CabinSelector'
 import { CRUISE_LINE_TERMS } from '@/data/cruise-line-terms'
 import { getCruiseBySlugLocal, getSimilarCruises, FEATURED_CRUISES } from '@/data/cruises-database'
 import { getBestImageUrl } from '@/data/ship-images'
@@ -36,7 +38,7 @@ import { getBestImageUrl } from '@/data/ship-images'
 // Tab types
 // ============================================================
 
-type TabKey = 'overview' | 'itinerary' | 'included' | 'beverages' | 'cancellation' | 'terms'
+type TabKey = 'overview' | 'itinerary' | 'cabins' | 'included' | 'beverages' | 'cancellation' | 'terms'
 
 // ============================================================
 // Cruise Detail Page
@@ -110,7 +112,25 @@ function apiToCruise(data: Record<string, unknown>): Cruise {
     _cabin_types: (data.cabin_types || []) as { name: string; price_from: number }[],
     _disembarkation_port: (data.disembarkation_port as string) || '',
     _date_prices: (data.date_prices || []) as { date: string; price_from: number; cabin_count: number }[],
-  } as Cruise & { _itinerary: typeof itinerary; _cabin_types: { name: string; price_from: number }[]; _disembarkation_port: string; _date_prices: { date: string; price_from: number; cabin_count: number }[] }
+    // Promo fields
+    _is_promo: data._is_promo === true,
+    _is_bestdeal: data._is_bestdeal === true,
+    _promo_price: data._promo_price ? Number(data._promo_price) : null,
+    // Rooms (for cabin selector)
+    _rooms: (data._rooms || []) as { name: string; category: string; date: string; price: number }[],
+    // Enriched itinerary with arrival/departure times
+    _itinerary_enriched: (data._itinerary_enriched || []) as { id: string | number; name: string; day: number; from_hour: string; till_hour: string }[],
+  } as Cruise & {
+    _itinerary: typeof itinerary
+    _cabin_types: { name: string; price_from: number }[]
+    _disembarkation_port: string
+    _date_prices: { date: string; price_from: number; cabin_count: number }[]
+    _is_promo: boolean
+    _is_bestdeal: boolean
+    _promo_price: number | null
+    _rooms: { name: string; category: string; date: string; price: number }[]
+    _itinerary_enriched: { id: string | number; name: string; day: number; from_hour: string; till_hour: string }[]
+  }
 }
 
 function CruiseDetailContent() {
@@ -126,6 +146,7 @@ function CruiseDetailContent() {
   const [selectedPort, setSelectedPort] = useState<string | null>(null)
   const [selectedDateIdx, setSelectedDateIdx] = useState(0)
   const [ctaVariant, setCtaVariant] = useState<CTAVariant>('A')
+  const [selectedCabin, setSelectedCabin] = useState<SelectedCabin | null>(null)
 
   // State for API-loaded cruise
   const [apiCruise, setApiCruise] = useState<Cruise | null>(null)
@@ -293,9 +314,22 @@ function CruiseDetailContent() {
   // Build tabs — only show Beverages/Terms if data exists for this cruise line
   const cruiseLineTerms = cruise.cruise_line ? CRUISE_LINE_TERMS[cruise.cruise_line] : undefined
 
+  // Extract enriched data from cruise
+  const cruiseExt = cruise as Cruise & {
+    _is_promo?: boolean; _is_bestdeal?: boolean; _promo_price?: number | null
+    _rooms?: { name: string; category: string; date: string; price: number }[]
+    _itinerary_enriched?: { id: string | number; name: string; day: number; from_hour: string; till_hour: string }[]
+  }
+  const isPromo = cruiseExt._is_promo || false
+  const isBestDeal = cruiseExt._is_bestdeal || false
+  const promoPrice = cruiseExt._promo_price || null
+  const rooms = cruiseExt._rooms || []
+  const itineraryEnriched = cruiseExt._itinerary_enriched || []
+
   const tabs: { key: TabKey; label: string }[] = [
     { key: 'overview', label: t('detail_overview') },
     { key: 'itinerary', label: t('detail_itinerary') },
+    { key: 'cabins', label: t('cabin_select_title' as 'detail_cabins') },
     { key: 'included', label: t('detail_included') },
     { key: 'beverages', label: t('detail_beverages') },
     { key: 'cancellation', label: t('detail_cancellation') },
@@ -493,15 +527,27 @@ function CruiseDetailContent() {
                         </div>
                       </div>
 
-                      {/* Ports — interactive PortHighlight components */}
-                      {ports.map((port, i) => (
-                        <PortHighlight
-                          key={i}
-                          portName={portsOriginal[i] || port}
-                          dayNumber={skipFirst ? i + 2 : i + 2}
-                          onClick={handlePortClick}
-                        />
-                      ))}
+                      {/* Ports — interactive PortHighlight components with enriched times */}
+                      {ports.map((port, i) => {
+                        // Try to find matching enriched itinerary entry for arrival/departure times
+                        const portOriginal = portsOriginal[i] || port
+                        const enrichedEntry = itineraryEnriched.find(
+                          ie => ie.name && (
+                            ie.name.toLowerCase().includes(portOriginal.toLowerCase()) ||
+                            portOriginal.toLowerCase().includes(ie.name.toLowerCase())
+                          )
+                        )
+                        return (
+                          <PortHighlight
+                            key={i}
+                            portName={portOriginal}
+                            dayNumber={skipFirst ? i + 2 : i + 2}
+                            arrivalTime={enrichedEntry?.from_hour || null}
+                            departureTime={enrichedEntry?.till_hour || null}
+                            onClick={handlePortClick}
+                          />
+                        )
+                      })}
 
                       {/* Arrival / Return */}
                       <div className="relative flex items-start gap-5">
@@ -519,6 +565,47 @@ function CruiseDetailContent() {
                       </div>
                     </div>
                   </div>
+                </div>
+              )}
+
+              {/* Tab Content: Cabins */}
+              {activeTab === 'cabins' && (
+                <div className="space-y-6">
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="w-8 h-8 rounded-full bg-navy-100 flex items-center justify-center">
+                      <svg className="w-4 h-4 text-navy-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                      </svg>
+                    </span>
+                    <div>
+                      <h3 className="text-lg font-bold text-navy-900 font-[family-name:var(--font-heading)]">
+                        {t('cabin_select_title' as 'detail_cabins')}
+                      </h3>
+                      {cruise.cruise_line && (
+                        <p className="text-xs text-navy-400">{cruise.cruise_line}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <CabinSelector
+                    rooms={rooms}
+                    selectedDate={selectedDate}
+                    cruiseLine={cruise.cruise_line || ''}
+                    locale={locale}
+                    onSelect={setSelectedCabin}
+                  />
+
+                  {/* Show selected cabin info */}
+                  {selectedCabin && (
+                    <div className="mt-4 p-4 rounded-lg bg-gold-50 border border-gold-200">
+                      <p className="text-xs text-gold-600 font-medium uppercase tracking-wider mb-1">
+                        {t('cabin_selected' as 'loading')}
+                      </p>
+                      <p className="text-sm font-semibold text-navy-900">
+                        {selectedCabin.name || selectedCabin.category} — &euro;{selectedCabin.price.toLocaleString()}{t('cruise_per_person')}
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -735,7 +822,18 @@ function CruiseDetailContent() {
             {/* Sidebar (30%) */}
             <div className="space-y-6">
               {/* Price Card */}
-              <div className="rounded-xl border border-navy-200 bg-white shadow-lg p-6 sticky top-24">
+              <div className={`rounded-xl border ${isPromo || isBestDeal ? 'border-red-300 ring-1 ring-red-200' : 'border-navy-200'} bg-white shadow-lg p-6 sticky top-24`}>
+                {/* Promo badge */}
+                {isPromo && (
+                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-white bg-red-600 px-3 py-1 rounded-full mb-3">
+                    🔥 {t('promo_badge' as 'cruise_featured')}
+                  </span>
+                )}
+                {isBestDeal && !isPromo && (
+                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-white bg-amber-500 px-3 py-1 rounded-full mb-3">
+                    ⭐ {t('bestdeal_badge' as 'cruise_featured')}
+                  </span>
+                )}
                 {/* Urgency badge */}
                 {syncedAgo?.isToday && (
                   <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full mb-2">
@@ -761,12 +859,30 @@ function CruiseDetailContent() {
                     ? (locale === 'ro' ? 'Preț pentru data selectată' : 'Price for selected date')
                     : t('cruise_from')}
                 </p>
-                <div className="flex items-baseline gap-2 mb-1">
-                  <span className="text-3xl font-bold text-navy-900 tabular-nums transition-all duration-300">
-                    &euro;{priceEur.toLocaleString()}
-                  </span>
-                  <span className="text-sm text-navy-500">{t('cruise_per_person')}</span>
-                </div>
+                {/* Promo: strikethrough original + promo price */}
+                {promoPrice && promoPrice < priceEur ? (
+                  <>
+                    <p className="text-sm text-navy-400 line-through mb-0.5">
+                      &euro;{priceEur.toLocaleString()}
+                    </p>
+                    <div className="flex items-baseline gap-2 mb-1">
+                      <span className="text-3xl font-bold text-red-600 tabular-nums transition-all duration-300">
+                        &euro;{promoPrice.toLocaleString()}
+                      </span>
+                      <span className="text-sm text-navy-500">{t('cruise_per_person')}</span>
+                    </div>
+                    <p className="text-xs text-emerald-600 font-medium mb-1">
+                      {t('promo_save' as 'cruise_from')} &euro;{(priceEur - promoPrice).toLocaleString()} (-{Math.round(((priceEur - promoPrice) / priceEur) * 100)}%)
+                    </p>
+                  </>
+                ) : (
+                  <div className="flex items-baseline gap-2 mb-1">
+                    <span className="text-3xl font-bold text-navy-900 tabular-nums transition-all duration-300">
+                      &euro;{priceEur.toLocaleString()}
+                    </span>
+                    <span className="text-sm text-navy-500">{t('cruise_per_person')}</span>
+                  </div>
+                )}
 
                 {/* Show base price reference when viewing a date-specific price */}
                 {priceIsForSelectedDate && priceEur !== basePriceEur && (
@@ -920,7 +1036,14 @@ function CruiseDetailContent() {
         onClose={() => setShowLeadForm(false)}
         cruiseTitle={title}
         cruiseSlug={cruise.slug}
-        cruisePrice={priceEur}
+        cruisePrice={promoPrice && promoPrice < priceEur ? promoPrice : priceEur}
+        selectedCabin={selectedCabin ? {
+          name: selectedCabin.name,
+          category: selectedCabin.category,
+          normalizedCategory: selectedCabin.normalizedCategory,
+          price: selectedCabin.price,
+          date: selectedCabin.date,
+        } : null}
         source="detail"
       />
       <ChatWidget />

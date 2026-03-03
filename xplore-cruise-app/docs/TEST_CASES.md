@@ -415,6 +415,55 @@
 | 2 | Vercel env var | NEXT_PUBLIC_GA_ID set to G-HR3D09PT3J | PASS |
 | 3 | Admin status | Google Analytics shows "Connected" on admin dashboard | PASS |
 
+### 2.21 Promo Highlighting (`promo-highlighting.spec.ts`) — 8 tests (planned)
+
+| # | Describe | Test Case | Status |
+|---|----------|-----------|--------|
+| 1 | CruiseCard promo | promo badge shows on cards with is_promo=true | MANUAL |
+| 2 | CruiseCard promo | bestdeal badge shows on cards with is_bestdeal=true | MANUAL |
+| 3 | CruiseCard promo | promo price shows with strikethrough on original price | MANUAL |
+| 4 | Detail page promo | sidebar shows promo badge when cruise has is_promo=true | MANUAL |
+| 5 | Detail page promo | sidebar shows strikethrough + promo price + savings percentage | MANUAL |
+| 6 | Listing API | ?promo=1 filter returns only promo/bestdeal cruises | MANUAL |
+| 7 | Listing API | promo fields (is_promo, is_bestdeal, promo_price) included in response | MANUAL |
+| 8 | Detail API | _is_promo, _is_bestdeal, _promo_price returned in detail response | MANUAL |
+
+### 2.22 Cabin Selector (`cabin-selector.spec.ts`) — 10 tests (planned)
+
+| # | Describe | Test Case | Status |
+|---|----------|-----------|--------|
+| 1 | CabinSelector | shows "select departure date" message when no date selected | MANUAL |
+| 2 | CabinSelector | shows "no data" message when no rooms available | MANUAL |
+| 3 | CabinSelector | displays cabin categories grouped correctly (Interior, Ocean View, Balcony, Suite) | MANUAL |
+| 4 | CabinSelector | shows per-cruise-line cabin images | MANUAL |
+| 5 | CabinSelector | clicking a cabin card highlights it with gold border | MANUAL |
+| 6 | CabinSelector | selected cabin info shows below selector | MANUAL |
+| 7 | CabinSelector | cabin selection included in lead form submission | MANUAL |
+| 8 | Detail API | _rooms array returned with room data | MANUAL |
+| 9 | cabin-images.ts | normalizeCabinCategory maps API codes correctly | MANUAL |
+| 10 | cabin-images.ts | getCabinImage returns correct image for cruise line + category | MANUAL |
+
+### 2.23 Super Oferte Homepage Section (`super-offers.spec.ts`) — 5 tests (planned)
+
+| # | Describe | Test Case | Status |
+|---|----------|-----------|--------|
+| 1 | SuperOffersSection | section hidden when no promo cruises exist | MANUAL |
+| 2 | SuperOffersSection | section renders when promo cruises available | MANUAL |
+| 3 | SuperOffersSection | shows up to 6 promo cruise cards | MANUAL |
+| 4 | SuperOffersSection | "See all deals" CTA links to /cruises?promo=1 | MANUAL |
+| 5 | SuperOffersSection | section appears above Featured Cruises on homepage | MANUAL |
+
+### 2.24 Enriched Itinerary Times (`itinerary-times.spec.ts`) — 6 tests (planned)
+
+| # | Describe | Test Case | Status |
+|---|----------|-----------|--------|
+| 1 | Detail API | _itinerary_enriched returned with from_hour/till_hour | MANUAL |
+| 2 | PortHighlight | shows arrival time when from_hour provided | MANUAL |
+| 3 | PortHighlight | shows departure time when till_hour provided | MANUAL |
+| 4 | PortHighlight | embarkation port shows only departure time | MANUAL |
+| 5 | PortHighlight | disembarkation port shows only arrival time | MANUAL |
+| 6 | Itinerary tab | enriched itinerary data overrides base itinerary | MANUAL |
+
 ---
 
 ## 3. Test Summary
@@ -423,9 +472,9 @@
 |----------|-------|-------|
 | Unit Tests (Vitest) | 8 | 106 |
 | E2E Tests (Playwright) | 9 | 65 |
-| Manual/Planned Tests | 6 | 39 |
+| Manual/Planned Tests | 10 | 68 |
 | Integration Config Tests (verified) | 5 | 29 |
-| **Total** | **28** | **239** |
+| **Total** | **32** | **268** |
 
 ### Coverage by Feature
 
@@ -449,6 +498,10 @@
 | Admin Integrations | — | — | 5 | — | 5 |
 | Data Sync Automation | — | — | 4 | — | 4 |
 | Image Fallback | — | — | 3 | — | 3 |
+| Promo Highlighting | — | — | 8 | — | 8 |
+| Cabin Selector | — | — | 10 | — | 10 |
+| Super Oferte Section | — | — | 5 | — | 5 |
+| Enriched Itinerary | — | — | 6 | — | 6 |
 | Production Config (Integrations) | — | — | — | 12 | 12 |
 | Supabase Setup | — | — | — | 5 | 5 |
 | Claude AI Setup | — | — | — | 4 | 4 |
@@ -516,3 +569,4 @@ npx vitest run __tests__/bnr-exchange-rate.test.ts
 | 2026-03-03 | Initial document creation | 172 tests cataloged (107 unit + 65 E2E) |
 | 2026-03-03 | Added manual test cases for new features | +39 manual tests: night filters (7), per-date pricing (12), email (8), admin status (5), sync (4), images (3) |
 | 2026-03-03 | Added verified integration configuration tests | +29 integration tests: production config (12), Supabase setup (5), Claude AI setup (4), Email SMTP setup (5), GA4 setup (3) |
+| 2026-03-04 | Added enriched data features: promo, cabins, itinerary times, super oferte | +29 manual tests: promo highlighting (8), cabin selector (10), super oferte (5), itinerary times (6) |

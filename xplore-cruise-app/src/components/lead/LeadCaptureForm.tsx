@@ -19,6 +19,14 @@ export interface LeadFormGuidedContext {
   preferredDestination: string | null
 }
 
+export interface LeadFormCabinContext {
+  name: string
+  category: string
+  normalizedCategory: string
+  price: number
+  date: string
+}
+
 interface LeadCaptureFormProps {
   isOpen: boolean
   onClose: () => void
@@ -26,6 +34,7 @@ interface LeadCaptureFormProps {
   cruiseSlug?: string
   cruisePrice?: number
   guidedContext?: LeadFormGuidedContext | null
+  selectedCabin?: LeadFormCabinContext | null
   source?: 'detail' | 'guided_result' | 'listing'
 }
 
@@ -44,7 +53,8 @@ interface LeadFormData {
 function buildPrefillMessage(
   ctx: LeadFormGuidedContext | null | undefined,
   cruiseTitle: string | undefined,
-  locale: 'en' | 'ro'
+  locale: 'en' | 'ro',
+  cabin?: LeadFormCabinContext | null
 ): string {
   if (!ctx || ctx.travelParty === null) return ''
 
@@ -93,6 +103,15 @@ function buildPrefillMessage(
     if (ctx.travelWindow) parts.push(`Timing: ${timingMap[ctx.travelWindow]?.en || ctx.travelWindow}.`)
   }
 
+  // Append cabin preference if selected
+  if (cabin) {
+    if (locale === 'ro') {
+      parts.push(`Cabina preferată: ${cabin.name || cabin.category} — €${cabin.price.toLocaleString()}/persoană.`)
+    } else {
+      parts.push(`Preferred cabin: ${cabin.name || cabin.category} — €${cabin.price.toLocaleString()}/person.`)
+    }
+  }
+
   return parts.join(' ')
 }
 
@@ -107,6 +126,7 @@ export default function LeadCaptureForm({
   cruiseSlug,
   cruisePrice,
   guidedContext,
+  selectedCabin,
   source = 'detail',
 }: LeadCaptureFormProps) {
   const t = useT()
@@ -125,7 +145,7 @@ export default function LeadCaptureForm({
   // Prefill message from guided context on mount
   useEffect(() => {
     if (isOpen) {
-      const prefill = buildPrefillMessage(guidedContext, cruiseTitle, locale)
+      const prefill = buildPrefillMessage(guidedContext, cruiseTitle, locale, selectedCabin)
       setFormData({
         name: '',
         email: '',
@@ -139,7 +159,7 @@ export default function LeadCaptureForm({
 
       trackLeadFormOpen(source, !!guidedContext?.travelParty, cruiseSlug || '')
     }
-  }, [isOpen, guidedContext, cruiseTitle, locale, source, cruiseSlug])
+  }, [isOpen, guidedContext, cruiseTitle, locale, source, cruiseSlug, selectedCabin])
 
   // Lock body scroll
   useEffect(() => {
@@ -225,6 +245,7 @@ export default function LeadCaptureForm({
           cruiseTitle: cruiseTitle || null,
           cruisePrice: cruisePrice || null,
           guidedContext: guidedContext || null,
+          selectedCabin: selectedCabin || null,
           source,
         }),
       })

@@ -22,6 +22,10 @@ interface CruiseCardProps {
     price_min?: number
     price_max?: number
     next_departures?: string[]
+    // Promo fields from index
+    is_promo?: boolean
+    is_bestdeal?: boolean
+    promo_price?: number | null
   }
   locale: Locale
 }
@@ -112,12 +116,22 @@ export default function CruiseCard({ cruise, locale }: CruiseCardProps) {
         {/* Hover overlay gradient */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy-900/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-        {/* Featured badge */}
-        {cruise.featured && (
-          <div className="absolute top-3 left-3 z-10">
+        {/* Featured + Promo badges */}
+        <div className="absolute top-3 left-3 z-10 flex flex-col gap-1">
+          {cruise.featured && (
             <Badge variant="gold">{t('cruise_featured', locale)}</Badge>
-          </div>
-        )}
+          )}
+          {cruise.is_promo && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-600/90 text-white text-[10px] font-semibold backdrop-blur-sm">
+              🔥 {t('promo_badge' as 'cruise_featured', locale)}
+            </span>
+          )}
+          {cruise.is_bestdeal && !cruise.is_promo && (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/90 text-white text-[10px] font-semibold backdrop-blur-sm">
+              ⭐ {t('bestdeal_badge' as 'cruise_featured', locale)}
+            </span>
+          )}
+        </div>
 
         {/* Cruise type badge */}
         {cruise.cruise_type && (
@@ -217,14 +231,29 @@ export default function CruiseCard({ cruise, locale }: CruiseCardProps) {
         <div className="flex items-end justify-between gap-3 border-t border-navy-100 pt-4">
           <div>
             <p className="text-xs text-navy-400">{t('cruise_from', locale)}</p>
-            <p className="text-xl font-bold text-navy-900">
-              &euro;{priceEur.toLocaleString()}
-              <span className="text-xs font-normal text-navy-400">
-                {t('cruise_per_person', locale)}
-              </span>
-            </p>
+            {/* Promo price display — strikethrough original + promo in red */}
+            {cruise.promo_price && cruise.promo_price < priceEur ? (
+              <>
+                <p className="text-sm text-navy-400 line-through">
+                  &euro;{priceEur.toLocaleString()}
+                </p>
+                <p className="text-xl font-bold text-red-600">
+                  &euro;{cruise.promo_price.toLocaleString()}
+                  <span className="text-xs font-normal text-navy-400">
+                    {t('cruise_per_person', locale)}
+                  </span>
+                </p>
+              </>
+            ) : (
+              <p className="text-xl font-bold text-navy-900">
+                &euro;{priceEur.toLocaleString()}
+                <span className="text-xs font-normal text-navy-400">
+                  {t('cruise_per_person', locale)}
+                </span>
+              </p>
+            )}
             {/* Previous price (strikethrough) when price changed */}
-            {priceChanged && previousPrice && previousPrice !== cruise.price_from && (
+            {!cruise.promo_price && priceChanged && previousPrice && previousPrice !== cruise.price_from && (
               <p className="text-[10px] text-navy-400 line-through">
                 {t('price_was', locale)} &euro;{previousPrice.toLocaleString()}
               </p>

@@ -28,6 +28,10 @@ interface CompactCruise {
   pp?: number | null   // previous_price_from
   pca?: string | null  // price_changed_at
   lsa?: string | null  // last_synced_at
+  // Promo flags (optional — added by sync from enriched data)
+  ip?: boolean         // is_promo
+  ib?: boolean         // is_bestdeal
+  ppr?: number | null  // promo_price
 }
 
 // Expanded format returned to clients
@@ -51,6 +55,10 @@ interface CruiseIndex {
   previous_price_from?: number | null
   price_changed_at?: string | null
   last_synced_at?: string | null
+  // Promo flags
+  is_promo?: boolean
+  is_bestdeal?: boolean
+  promo_price?: number | null
 }
 
 // Grouped cruise — a representative cruise + group metadata
@@ -92,6 +100,9 @@ function expand(c: CompactCruise): CruiseIndex {
     previous_price_from: c.pp || null,
     price_changed_at: c.pca || null,
     last_synced_at: c.lsa || null,
+    is_promo: c.ip || false,
+    is_bestdeal: c.ib || false,
+    promo_price: c.ppr || null,
   }
 }
 
@@ -235,6 +246,7 @@ export async function GET(request: NextRequest) {
   const maxNights = parseInt(searchParams.get('maxNights') || '0') || 0
   const departureWindow = searchParams.get('departure') || ''
   const sortBy = searchParams.get('sort') || 'featured'
+  const promoOnly = searchParams.get('promo') === '1'
 
   // Compute departure date bounds
   let departureMaxDate: number | null = null
@@ -267,6 +279,8 @@ export async function GET(request: NextRequest) {
     if (minNights > 0 && c.nights < minNights) return false
     if (maxNights > 0 && c.nights > maxNights) return false
     if (c.price_from <= 0) return false
+    // Promo filter
+    if (promoOnly && !c.is_promo && !c.is_bestdeal) return false
     // Departure date filter
     if (departureMaxDate && c.departure_date) {
       const depTime = new Date(c.departure_date).getTime()

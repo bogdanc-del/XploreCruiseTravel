@@ -98,6 +98,25 @@ xplore-cruise-app/
 - Paginated API (24/page) with sorting options
 - Duplicate departure collapsing
 
+### Promo & Best Deal Highlighting
+- Automatic promo/best deal badges on CruiseCard and detail page
+- Strikethrough original price with promo price display
+- Savings percentage shown in sidebar
+- "Super Oferte" / "Hot Deals" homepage section (auto-hidden when no promos)
+- Promo filter: `/cruises?promo=1`
+
+### Cabin Selector
+- Browse available cabin types (Interior, Ocean View, Balcony, Suite)
+- Per-cruise-line cabin images from official sources
+- Price per person per cabin category per departure date
+- Selected cabin preference included in lead form submission
+- Category normalization from 80+ API category codes
+
+### Enriched Itinerary
+- Arrival and departure times shown per port (from API enriched data)
+- Visual timeline with ⚓ Arr / 🚢 Dep indicators
+- Enriched data synced daily from croaziere.net API
+
 ### Guided Recommendations
 - 5-step wizard: travel party, experience, priority, timing, preferences
 - Rule-based scoring engine (25+ rules)

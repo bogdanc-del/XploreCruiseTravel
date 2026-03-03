@@ -93,6 +93,7 @@ export const FEATURED_CRUISES: Cruise[] = [
   fc({ id: 'feat-004', slug: 'viking-dunarea-8-nopti-budapesta', tier: 'river',
     title: 'Viking Dunărea — 8 Nopți Budapesta–Regensburg', title_ro: 'Viking Dunărea — 8 Nopți Budapesta–Regensburg',
     cruise_type: 'river', nights: 8, price_from: 1899, departure_port: 'Budapest', departure_port_ro: 'Budapesta', departure_date: '2026-07-05',
+    disembarkation_port: 'Regensburg', disembarkation_port_ro: 'Regensburg',
     ports_of_call: ['Budapest', 'Bratislava', 'Vienna', 'Dürnstein', 'Linz', 'Passau', 'Regensburg'],
     ports_of_call_ro: ['Budapesta', 'Bratislava', 'Viena', 'Dürnstein', 'Linz', 'Passau', 'Regensburg'],
     image_url: 'https://images.unsplash.com/photo-1509023464722-18d996393ca8?w=800&q=80',

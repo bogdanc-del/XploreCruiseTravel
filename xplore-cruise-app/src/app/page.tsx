@@ -14,6 +14,7 @@ import { useGuidedFlow } from '@/context/GuidedFlowContext'
 import ChatWidget from '@/components/chat/ChatWidget'
 import ReviewsSection from '@/components/reviews/ReviewsSection'
 import TestimonialsSection from '@/components/testimonials/TestimonialsSection'
+import SuperOffersSection from '@/components/cruise/SuperOffersSection'
 import type { Cruise } from '@/lib/supabase'
 import { FEATURED_CRUISES } from '@/data/cruises-database'
 
@@ -230,6 +231,9 @@ export default function HomePage() {
           </div>
         </Container>
       </section>
+
+      {/* Super Oferte — only shows if promo cruises exist */}
+      <SuperOffersSection locale={locale} />
 
       {/* Featured Cruises */}
       <section className="py-20 bg-white">

@@ -46,6 +46,8 @@ export interface Cruise {
   departure_port: string
   departure_port_ro?: string
   departure_port_country?: string
+  disembarkation_port?: string
+  disembarkation_port_ro?: string
   departure_date: string
   departure_dates?: string[]
   return_date?: string

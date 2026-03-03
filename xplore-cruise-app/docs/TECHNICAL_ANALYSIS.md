@@ -96,6 +96,9 @@ interface CruiseIndex {
   img: string  // image URL
   it: object[] // itinerary
   f: boolean   // featured
+  ip: boolean  // is_promo
+  ib: boolean  // is_bestdeal
+  ppr: number  // promo_price
 }
 ```
 

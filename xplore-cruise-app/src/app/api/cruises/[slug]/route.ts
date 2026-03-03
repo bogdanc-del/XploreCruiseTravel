@@ -97,6 +97,19 @@ export async function GET(
     ? cruise.gallery_urls
     : enrichedEntry?.gallery || []
 
+  // Promo fields from enriched data
+  const _is_promo = enrichedEntry?.is_promo === true
+  const _is_bestdeal = enrichedEntry?.is_bestdeal === true
+  const _promo_price = enrichedEntry?.promo_price ? Number(enrichedEntry.promo_price) : null
+
+  // Rooms array from enriched data (for cabin selector)
+  const _rooms = (enrichedEntry?.rooms || []) as RoomEntry[]
+
+  // Enriched itinerary with arrival/departure times (prefer over base)
+  const _itinerary_enriched = (enrichedEntry?.itinerary || []) as {
+    id: string | number; name: string; day: number; from_hour: string; till_hour: string
+  }[]
+
   // Add back constant fields for client compatibility
   return NextResponse.json(
     {
@@ -105,6 +118,11 @@ export async function GET(
       active: true,
       gallery_urls: gallery,
       date_prices,
+      _is_promo,
+      _is_bestdeal,
+      _promo_price,
+      _rooms,
+      _itinerary_enriched,
     },
     {
       headers: {

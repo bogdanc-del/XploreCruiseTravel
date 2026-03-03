@@ -317,6 +317,26 @@ export const translations = {
     testimonials_section_title: 'Trusted by Travelers Across Romania',
     testimonials_section_subtitle: 'Curated testimonials from clients who experienced unforgettable cruise vacations with us.',
 
+    // Promo & Super Offers
+    promo_badge: 'Promo',
+    bestdeal_badge: 'Best Deal',
+    promo_original_price: 'Original price',
+    promo_save: 'You save',
+    super_offers_title: 'Hot Deals',
+    super_offers_subtitle: 'Special promotions and deals available now',
+    super_offers_see_all: 'See all deals',
+
+    // Cabin Selector
+    cabin_select_title: 'Cabins',
+    cabin_select_subtitle: 'Prices per person, based on departure date',
+    cabin_type_interior: 'Interior',
+    cabin_type_ocean_view: 'Ocean View',
+    cabin_type_balcony: 'Balcony',
+    cabin_type_suite: 'Suite',
+    cabin_no_date: 'Select a departure date to see cabin options',
+    cabin_no_data: 'Cabin details not available. Contact us for pricing.',
+    cabin_selected: 'Selected cabin',
+
     // Common
     loading: 'Loading...',
     error: 'Something went wrong',
@@ -641,6 +661,26 @@ export const translations = {
     // Testimonials (C2)
     testimonials_section_title: 'Apreciat de călători din toată România',
     testimonials_section_subtitle: 'Testimoniale verificate de la clienți care au trăit vacanțe de croazieră de neuitat alături de noi.',
+
+    // Promo & Super Offers
+    promo_badge: 'Promoție',
+    bestdeal_badge: 'Super Ofertă',
+    promo_original_price: 'Preț inițial',
+    promo_save: 'Economisești',
+    super_offers_title: 'Super Oferte',
+    super_offers_subtitle: 'Promoții și oferte speciale disponibile acum',
+    super_offers_see_all: 'Vezi toate ofertele',
+
+    // Cabin Selector
+    cabin_select_title: 'Cabine',
+    cabin_select_subtitle: 'Prețuri pe persoană, în funcție de data plecării',
+    cabin_type_interior: 'Interior',
+    cabin_type_ocean_view: 'Exterior',
+    cabin_type_balcony: 'Balcon',
+    cabin_type_suite: 'Suită',
+    cabin_no_date: 'Selectează o dată de plecare pentru a vedea opțiunile de cabine',
+    cabin_no_data: 'Detaliile cabinelor nu sunt disponibile. Contactați-ne pentru prețuri.',
+    cabin_selected: 'Cabina selectată',
 
     // Common
     loading: 'Se încarcă...',

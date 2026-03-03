@@ -249,6 +249,28 @@ Three CTA variants are being tested:
 
 **ROI:** Data-driven decisions > guesswork. A/B testing enables continuous improvement.
 
+### 6.6 Promo Highlighting & Super Oferte
+
+| Business Need | Solution |
+|--------------|---------|
+| Time-sensitive deals need visibility | Automatic promo badges + strikethrough pricing |
+| Drive urgency | "Super Oferte" homepage section with Hot Deals |
+| Show savings value | Savings percentage + euro amount displayed |
+| Filter deal-seekers | `/cruises?promo=1` filter for promo-only browsing |
+
+**ROI:** Promo visibility drives urgency → higher conversion on time-limited offers
+
+### 6.7 Cabin Selection
+
+| Business Need | Solution |
+|--------------|---------|
+| Customers want to compare cabin types | Visual cabin selector with per-line images |
+| Per-date pricing transparency | Cabin prices shown per departure date |
+| Pre-qualification | Selected cabin included in lead form for consultant |
+| Reduce back-and-forth | Consultant knows cabin preference before first call |
+
+**ROI:** Pre-selected cabin preference = faster consultant follow-up = higher close rate
+
 ---
 
 ## 7. Risk Analysis
@@ -337,6 +359,11 @@ At average cruise commission of 200-500 EUR per sale:
 - [x] Analytics pipeline (GA4 + custom events)
 - [x] Dynamic EUR/RON exchange rate (BNR, daily)
 - [x] Cruise data API sync (croaziere.net, replaces scraping)
+- [x] Promo/Best Deal highlighting (badges, strikethrough pricing, savings %)
+- [x] Cabin selector with per-cruise-line images and per-date pricing
+- [x] Enriched itinerary with arrival/departure times per port
+- [x] "Super Oferte" / "Hot Deals" homepage section
+- [x] Enriched data pipeline (rooms, gallery, promo flags from API)
 
 ### Planned (Phase 2)
 - [x] Email notifications on new leads (SMTP integration)

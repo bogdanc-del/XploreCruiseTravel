@@ -210,6 +210,10 @@ async function main() {
       d: c.destination || '',
       dr: c.destination_ro || c.destination || '',
       ds: c.destination_slug || '',
+      // Promo fields (from enriched data)
+      ...(enrichedData[String(c.source_id || c.id)]?.is_promo ? { ip: true } : {}),
+      ...(enrichedData[String(c.source_id || c.id)]?.is_bestdeal ? { ib: true } : {}),
+      ...(enrichedData[String(c.source_id || c.id)]?.promo_price ? { ppr: enrichedData[String(c.source_id || c.id)].promo_price } : {}),
     }))
   writeFileSync(indexPath, JSON.stringify(index))
   const indexSize = (readFileSync(indexPath).length / 1024 / 1024).toFixed(1)
