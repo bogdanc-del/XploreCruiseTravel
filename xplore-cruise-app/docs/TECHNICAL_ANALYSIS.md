@@ -514,10 +514,39 @@ PRICE_API_URL=https://www.croaziere.net/api/v1.1/cruises
 PRICE_API_KEY=<your-api-key>
 SYNC_SECRET=<your-sync-secret>
 
+# Email Notifications (SMTP)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=<your-email@gmail.com>
+SMTP_PASS=<gmail-app-password>
+NOTIFICATION_EMAIL=xplorecruisetravel@gmail.com
+
 # Optional
 NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
 NEXT_PUBLIC_SITE_URL=https://xplorecruisetravel.com
 ```
+
+### 9.2.1 Production Credentials Reference
+
+> **IMPORTANT:** Never commit actual secrets to git. All values below are stored
+> exclusively in Vercel Environment Variables (Project Settings → Environment Variables).
+
+| Variable | Source | Account / Console | Notes |
+|----------|--------|-------------------|-------|
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase | [supabase.com/dashboard](https://supabase.com/dashboard) → Project: **xplore-cruise-travel** (org: XploreCruiseTravel, Free plan) | `https://fiwmrbthsgoosfvmgojt.supabase.co` |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase | Settings → API Keys → Legacy anon key | JWT token (208 chars), starts with `eyJhbGciOi...` |
+| `ANTHROPIC_API_KEY` | Anthropic | [platform.claude.com](https://platform.claude.com) → API Keys → key: **xplore-cruise-travel** (Bogdan's Individual Org, Evaluation plan) | Starts with `sk-ant-api03-...`. **Requires purchased credits** to function — Evaluation plan has no free credits. |
+| `NEXT_PUBLIC_GA_ID` | Google Analytics | [analytics.google.com](https://analytics.google.com) → Property: XploreCruiseTravel (GA4) | `G-HR3D09PT3J` |
+| `SMTP_HOST` | Gmail | — | `smtp.gmail.com` |
+| `SMTP_PORT` | Gmail | — | `587` (TLS) |
+| `SMTP_USER` | Gmail | xplorecruisetravel@gmail.com | Same as notification recipient |
+| `SMTP_PASS` | Google | [myaccount.google.com](https://myaccount.google.com) → Security → App passwords → "XploreCruiseTravel SMTP" | 16-char app password (format: `xxxx xxxx xxxx xxxx`) |
+| `NOTIFICATION_EMAIL` | Config | — | `xplorecruisetravel@gmail.com` |
+| `NEXT_PUBLIC_SITE_URL` | Config | — | `https://xplorecruisetravel.com` |
+
+**Vercel Project:** [vercel.com/bogdanc-dels-projects/xplore-cruise-travel](https://vercel.com/bogdanc-dels-projects/xplore-cruise-travel)
+**Production Domain:** xplorecruisetravel.com
+**Admin Dashboard:** xplorecruisetravel.com/admin (password: `xplore2026`)
 
 ### 9.3 CI/CD Pipeline
 

@@ -85,9 +85,25 @@ Our team can provide personalized cruise information!`
 
   } catch (error) {
     console.error('Chat API error:', error)
-    return NextResponse.json(
-      { reply: 'Sorry, something went wrong. Please try again or contact us directly at xplorecruisetravel@gmail.com' },
-      { status: 500 }
-    )
+
+    // Return a friendly fallback response (200 OK) so the chat widget
+    // shows a helpful message instead of a generic connection error.
+    const { locale: errLocale } = await request.clone().json().catch(() => ({ locale: 'ro' }))
+
+    const errorRo = `Ne cerem scuze, serviciul de chat intampina dificultati temporare. Va rugam sa ne contactati direct:
+📧 Email: xplorecruisetravel@gmail.com
+📞 Telefon: +40 749 558 572
+
+Un consultant va va raspunde in cel mai scurt timp!`
+
+    const errorEn = `We apologize, the chat service is experiencing temporary difficulties. Please contact us directly:
+📧 Email: xplorecruisetravel@gmail.com
+📞 Phone: +40 749 558 572
+
+A consultant will respond to you shortly!`
+
+    return NextResponse.json({
+      reply: errLocale === 'en' ? errorEn : errorRo
+    })
   }
 }

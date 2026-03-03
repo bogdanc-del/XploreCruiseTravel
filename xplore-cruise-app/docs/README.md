@@ -114,6 +114,8 @@ xplore-cruise-app/
 - Claude-powered cruise consultant ("Daniela")
 - Bilingual (EN/RO)
 - Context-aware recommendations
+- Graceful fallback with contact details when API unavailable
+- **Note:** Requires purchased Anthropic API credits (Evaluation plan has no free credits)
 
 ### Reviews & Testimonials
 - QR-code driven review collection
@@ -239,7 +241,10 @@ npm run test:e2e:webkit
 | `reviews-validation.test.ts` | 1 | 14 | Zod schema validation |
 | `testimonials-relevance.test.ts` | 1 | 10 | Tag-based scoring algorithm |
 | `bnr-exchange-rate.test.ts` | 1 | 30 | BNR XML parsing, rate caching, conversion |
-| **Total** | **8** | **106** | |
+| **Total (unit)** | **8** | **106** | |
+
+**Full test inventory:** 239 tests total (106 unit + 65 E2E + 39 manual + 29 verified integration config).
+See [TEST_CASES.md](./TEST_CASES.md) for the complete catalog.
 
 ---
 

@@ -361,6 +361,60 @@
 | 2 | Ship images | getBestImageUrl returns ship-specific image when available | MANUAL |
 | 3 | CruiseCard | broken images show gradient fallback placeholder (not broken icon) | MANUAL |
 
+### 2.16 Production Integration Configuration — 12 tests (verified 2026-03-03)
+
+| # | Describe | Test Case | Status |
+|---|----------|-----------|--------|
+| 1 | Vercel env vars | NEXT_PUBLIC_SUPABASE_URL is set to real Supabase project URL (not placeholder) | PASS |
+| 2 | Vercel env vars | NEXT_PUBLIC_SUPABASE_ANON_KEY is set to real 208-char JWT key | PASS |
+| 3 | Vercel env vars | ANTHROPIC_API_KEY is set (starts with sk-ant-api03-) | PASS |
+| 4 | Vercel env vars | NEXT_PUBLIC_GA_ID is set to G-HR3D09PT3J | PASS |
+| 5 | Vercel env vars | SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS are all configured | PASS |
+| 6 | Vercel env vars | NOTIFICATION_EMAIL is set to xplorecruisetravel@gmail.com | PASS |
+| 7 | Admin /Setari | Supabase integration shows "Connected" (green) | PASS |
+| 8 | Admin /Setari | Claude AI integration shows "Connected" (green) | PASS |
+| 9 | Admin /Setari | Email (SMTP) integration shows "Connected" (green) | PASS |
+| 10 | Admin /Setari | Google Analytics integration shows "Connected" (green) | PASS |
+| 11 | Vercel deploy | Production deployment completes successfully with all env vars | PASS |
+| 12 | Admin /Setari | All 4 integrations show "Connected" simultaneously on Settings page | PASS |
+
+### 2.17 Supabase Project Setup — 5 tests (verified 2026-03-03)
+
+| # | Describe | Test Case | Status |
+|---|----------|-----------|--------|
+| 1 | Supabase org | Organization "XploreCruiseTravel" created on Free plan | PASS |
+| 2 | Supabase project | Project "xplore-cruise-travel" created (EU region, NANO tier) | PASS |
+| 3 | Supabase API | Project URL resolves: https://fiwmrbthsgoosfvmgojt.supabase.co | PASS |
+| 4 | Supabase keys | Legacy anon key is valid JWT format (208 chars) | PASS |
+| 5 | Supabase dashboard | Project accessible via Supabase dashboard | PASS |
+
+### 2.18 Claude AI API Setup — 4 tests (verified 2026-03-03)
+
+| # | Describe | Test Case | Status |
+|---|----------|-----------|--------|
+| 1 | Anthropic account | Individual account created (Bogdan's Individual Org) | PASS |
+| 2 | Anthropic API key | Key "xplore-cruise-travel" created in Default workspace | PASS |
+| 3 | Anthropic plan | Account shows "Evaluation access" plan | PASS |
+| 4 | Chat API fallback | /api/chat returns friendly fallback message (not 500 error) when API credits unavailable | PASS |
+
+### 2.19 Email SMTP Setup — 5 tests (verified 2026-03-03)
+
+| # | Describe | Test Case | Status |
+|---|----------|-----------|--------|
+| 1 | Google account | 2-Step Verification enabled on xplorecruisetravel@gmail.com | PASS |
+| 2 | App password | App password "XploreCruiseTravel SMTP" generated (16 chars) | PASS |
+| 3 | SMTP config | SMTP_HOST=smtp.gmail.com, SMTP_PORT=587 configured on Vercel | PASS |
+| 4 | SMTP auth | SMTP_USER and SMTP_PASS set with valid Gmail App Password | PASS |
+| 5 | Admin status | Email (SMTP) shows "Connected" on admin dashboard | PASS |
+
+### 2.20 Google Analytics GA4 Setup — 3 tests (verified 2026-03-03)
+
+| # | Describe | Test Case | Status |
+|---|----------|-----------|--------|
+| 1 | GA4 property | XploreCruiseTravel property created with Measurement ID G-HR3D09PT3J | PASS |
+| 2 | Vercel env var | NEXT_PUBLIC_GA_ID set to G-HR3D09PT3J | PASS |
+| 3 | Admin status | Google Analytics shows "Connected" on admin dashboard | PASS |
+
 ---
 
 ## 3. Test Summary
@@ -370,30 +424,36 @@
 | Unit Tests (Vitest) | 8 | 106 |
 | E2E Tests (Playwright) | 9 | 65 |
 | Manual/Planned Tests | 6 | 39 |
-| **Total** | **23** | **210** |
+| Integration Config Tests (verified) | 5 | 29 |
+| **Total** | **28** | **239** |
 
 ### Coverage by Feature
 
-| Feature | Unit | E2E | Manual | Total |
-|---------|------|-----|--------|-------|
-| A/B Testing | 26 | — | — | 26 |
-| Reviews | 19 | 12 | — | 31 |
-| Testimonials | 19 | 9 | — | 28 |
-| Stats (Trust Metrics) | 13 | — | — | 13 |
-| BNR Exchange Rate | 30 | — | — | 30 |
-| Contact/Lead Form | — | 4 | — | 4 |
-| Lead Capture Modal | — | 7 | — | 7 |
-| Routes & Navigation | — | 9 | — | 9 |
-| Links Validation | — | 5 | — | 5 |
-| Responsive Design | — | 6 | — | 6 |
-| Accessibility (a11y) | — | 8 | — | 8 |
-| Internationalization | — | 5 | — | 5 |
-| Night Range Filters | — | — | 7 | 7 |
-| Per-Date Pricing | — | — | 12 | 12 |
-| Email Notifications | — | — | 8 | 8 |
-| Admin Integrations | — | — | 5 | 5 |
-| Data Sync Automation | — | — | 4 | 4 |
-| Image Fallback | — | — | 3 | 3 |
+| Feature | Unit | E2E | Manual | Verified | Total |
+|---------|------|-----|--------|----------|-------|
+| A/B Testing | 26 | — | — | — | 26 |
+| Reviews | 19 | 12 | — | — | 31 |
+| Testimonials | 19 | 9 | — | — | 28 |
+| Stats (Trust Metrics) | 13 | — | — | — | 13 |
+| BNR Exchange Rate | 30 | — | — | — | 30 |
+| Contact/Lead Form | — | 4 | — | — | 4 |
+| Lead Capture Modal | — | 7 | — | — | 7 |
+| Routes & Navigation | — | 9 | — | — | 9 |
+| Links Validation | — | 5 | — | — | 5 |
+| Responsive Design | — | 6 | — | — | 6 |
+| Accessibility (a11y) | — | 8 | — | — | 8 |
+| Internationalization | — | 5 | — | — | 5 |
+| Night Range Filters | — | — | 7 | — | 7 |
+| Per-Date Pricing | — | — | 12 | — | 12 |
+| Email Notifications | — | — | 8 | — | 8 |
+| Admin Integrations | — | — | 5 | — | 5 |
+| Data Sync Automation | — | — | 4 | — | 4 |
+| Image Fallback | — | — | 3 | — | 3 |
+| Production Config (Integrations) | — | — | — | 12 | 12 |
+| Supabase Setup | — | — | — | 5 | 5 |
+| Claude AI Setup | — | — | — | 4 | 4 |
+| Email SMTP Setup | — | — | — | 5 | 5 |
+| Google Analytics Setup | — | — | — | 3 | 3 |
 
 ---
 
@@ -455,3 +515,4 @@ npx vitest run __tests__/bnr-exchange-rate.test.ts
 |------|--------|-------------|
 | 2026-03-03 | Initial document creation | 172 tests cataloged (107 unit + 65 E2E) |
 | 2026-03-03 | Added manual test cases for new features | +39 manual tests: night filters (7), per-date pricing (12), email (8), admin status (5), sync (4), images (3) |
+| 2026-03-03 | Added verified integration configuration tests | +29 integration tests: production config (12), Supabase setup (5), Claude AI setup (4), Email SMTP setup (5), GA4 setup (3) |
