@@ -23,7 +23,7 @@ export const CRUISE_LINE_IMAGES: Record<string, string> = {
   // --- Premium ---
   'Celebrity Cruises':          'https://images.unsplash.com/photo-1527631746610-bca00a040d60?w=800&q=80',
   'Princess Cruises':           'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&q=80',
-  'Holland America Line':       'https://images.unsplash.com/photo-1499793983394-e58fc2fce9c2?w=800&q=80',
+  'Holland America Line':       'https://images.unsplash.com/photo-1580541631950-7282082b53ce?w=800&q=80',
   'Cunard Line':                'https://images.unsplash.com/photo-1530841377377-3ff06c0ca713?w=800&q=80',
   'P&O Cruises':                'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=800&q=80',
   'Azamara Club Cruises':       'https://images.unsplash.com/photo-1533105079780-92b9be482077?w=800&q=80',
@@ -70,7 +70,7 @@ export const SHIP_IMAGES: Record<string, string> = {
   'MSC Splendida':        'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&q=80',
   'MSC Magnifica':        'https://images.unsplash.com/photo-1530841377377-3ff06c0ca713?w=800&q=80',
   'MSC Preziosa':         'https://images.unsplash.com/photo-1559599746-8823b38544c6?w=800&q=80',
-  'MSC Divina':           'https://images.unsplash.com/photo-1499793983394-e58fc2fce9c2?w=800&q=80',
+  'MSC Divina':           'https://images.unsplash.com/photo-1580541631950-7282082b53ce?w=800&q=80',
   'MSC Opera':            'https://images.unsplash.com/photo-1500259571355-332da5cb07aa?w=800&q=80',
   'MSC Sinfonia':         'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=800&q=80',
   'MSC Musica':           'https://images.unsplash.com/photo-1502003148287-a82ef80a6abc?w=800&q=80',
@@ -125,12 +125,12 @@ export const SHIP_IMAGES: Record<string, string> = {
   'Sapphire Princess':    'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=800&q=80',
   'Royal Princess':       'https://images.unsplash.com/photo-1559599746-8823b38544c6?w=800&q=80',
   'Crown Princess':       'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=800&q=80',
-  'Emerald Princess':     'https://images.unsplash.com/photo-1499793983394-e58fc2fce9c2?w=800&q=80',
+  'Emerald Princess':     'https://images.unsplash.com/photo-1580541631950-7282082b53ce?w=800&q=80',
   'Ruby Princess':        'https://images.unsplash.com/photo-1548574505-5e239809ee19?w=800&q=80',
   'Caribbean Princess':   'https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=800&q=80',
 
   // ── Holland America Line ─────────────────────────────────
-  'Nieuw Statendam':      'https://images.unsplash.com/photo-1499793983394-e58fc2fce9c2?w=800&q=80',
+  'Nieuw Statendam':      'https://images.unsplash.com/photo-1580541631950-7282082b53ce?w=800&q=80',
   'Rotterdam':            'https://images.unsplash.com/photo-1530841377377-3ff06c0ca713?w=800&q=80',
   'Zuiderdam':            'https://images.unsplash.com/photo-1515005318787-cc68052b38f3?w=800&q=80',
   'Oosterdam':            'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&q=80',
@@ -141,7 +141,7 @@ export const SHIP_IMAGES: Record<string, string> = {
   'Queen Elizabeth':       'https://images.unsplash.com/photo-1530841377377-3ff06c0ca713?w=800&q=80',
   'Queen Mary 2':          'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=800&q=80',
   'Queen Anne':            'https://images.unsplash.com/photo-1559599238-308793637427?w=800&q=80',
-  'Queen Victoria':        'https://images.unsplash.com/photo-1499793983394-e58fc2fce9c2?w=800&q=80',
+  'Queen Victoria':        'https://images.unsplash.com/photo-1580541631950-7282082b53ce?w=800&q=80',
 
   // ── Luxury ───────────────────────────────────────────────
   'Silver Moon':           'https://images.unsplash.com/photo-1534430480872-3498386e7856?w=800&q=80',

@@ -58,7 +58,7 @@ export const FEATURED_CRUISES: Cruise[] = [
     ports_of_call: ['Barcelona', 'Marseille', 'Genoa', 'Naples', 'Palermo', 'Valletta', 'Barcelona'],
     ports_of_call_ro: ['Barcelona', 'Marsilia', 'Genova', 'Napoli', 'Palermo', 'Valletta', 'Barcelona'],
     image_url: 'https://images.unsplash.com/photo-1548574505-5e239809ee19?w=800&q=80',
-    gallery_urls: ['https://images.unsplash.com/photo-1499793983394-e58fc2fce9c2?w=800&q=80', 'https://images.unsplash.com/photo-1530841377377-3ff06c0ca713?w=800&q=80', 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=800&q=80'],
+    gallery_urls: ['https://images.unsplash.com/photo-1580541631950-7282082b53ce?w=800&q=80', 'https://images.unsplash.com/photo-1530841377377-3ff06c0ca713?w=800&q=80', 'https://images.unsplash.com/photo-1516483638261-f4dbaf036963?w=800&q=80'],
     description: 'Discover the best of the Western Mediterranean aboard MSC World Europa. Visit iconic ports from Barcelona to Malta.',
     description_ro: 'Descoperă cele mai frumoase destinații din Mediterana de Vest la bordul MSC World Europa.',
     tags: ['best-seller', 'families', 'mediterranean'], cruise_line: 'MSC Cruises', cruise_line_category: 'contemporary', ship_name: 'MSC World Europa',

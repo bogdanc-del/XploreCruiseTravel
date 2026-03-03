@@ -434,6 +434,12 @@ RON prices are **approximate** and for reference only. The final price in any cu
 - The admin password is: `xplore2026`
 - This is hardcoded and not configurable via UI
 
+**Cruise prices seem outdated**
+- Cruise data is synced automatically every day at 07:00 Romanian time (04:00 UTC)
+- The sync is handled by GitHub Actions — no manual action needed
+- Check the `logs/sync-log.jsonl` file for the last sync timestamp
+- To trigger a manual sync: go to GitHub → Actions → "Daily Cruise Sync" → Run workflow
+
 ### Getting Help
 - **Email:** xplorecruisetravel@gmail.com
 - **Phone:** +40 749 558 572

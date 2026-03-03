@@ -1,9 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { ReviewSubmitSchema } from '@/lib/reviews-validation'
+import { notifyNewReview } from '@/lib/email'
 
 // ============================================================
 // POST /api/reviews — Public review submission
 // GET  /api/reviews — Public approved reviews
+//
+// New reviews trigger an email notification to
+// xplorecruisetravel@gmail.com with review details and
+// a link to the admin dashboard for moderation.
 // ============================================================
 
 // Rate limiter: max 5 submissions per IP per hour
@@ -78,6 +83,15 @@ export async function POST(request: NextRequest) {
         console.error('[REVIEWS] Supabase insert error:', dbError.message)
       }
     }
+
+    // Email notification to xplorecruisetravel@gmail.com
+    notifyNewReview({
+      name: reviewData.name || 'Anonim',
+      rating: reviewData.rating,
+      message: reviewData.message,
+      city: reviewData.city || undefined,
+      cruiseType: reviewData.cruise_type || undefined,
+    }).catch(() => {}) // Fire-and-forget, never blocks response
 
     // Log for dev
     console.log(`[REVIEW] New review (${source}): rating=${reviewData.rating}`, {

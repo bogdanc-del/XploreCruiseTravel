@@ -141,13 +141,13 @@ export default function CruisesPage() {
     return () => observer.disconnect()
   }, [])
 
-  // Night range presets
+  // Night range presets (multi-selectable)
   const NIGHT_RANGES = [
-    { label: { en: '1-3 nights', ro: '1-3 nopți' }, min: '1', max: '3' },
-    { label: { en: '4-7 nights', ro: '4-7 nopți' }, min: '4', max: '7' },
-    { label: { en: '8-14 nights', ro: '8-14 nopți' }, min: '8', max: '14' },
-    { label: { en: '15-21 nights', ro: '15-21 nopți' }, min: '15', max: '21' },
-    { label: { en: '22+ nights', ro: '22+ nopți' }, min: '22', max: '' },
+    { label: { en: '1-3 nights', ro: '1-3 nopți' }, min: 1, max: 3 },
+    { label: { en: '4-7 nights', ro: '4-7 nopți' }, min: 4, max: 7 },
+    { label: { en: '8-14 nights', ro: '8-14 nopți' }, min: 8, max: 14 },
+    { label: { en: '15-21 nights', ro: '15-21 nopți' }, min: 15, max: 21 },
+    { label: { en: '22+ nights', ro: '22+ nopți' }, min: 22, max: 0 },
   ]
 
   // Filter state
@@ -158,11 +158,28 @@ export default function CruisesPage() {
   const [selectedLine, setSelectedLine] = useState('')
   const [minPrice, setMinPrice] = useState('')
   const [maxPrice, setMaxPrice] = useState('')
-  const [minNights, setMinNights] = useState('')
-  const [maxNights, setMaxNights] = useState('')
+  const [selectedNightRanges, setSelectedNightRanges] = useState<Set<number>>(new Set())
   const [selectedDeparture, setSelectedDeparture] = useState('')
   const [sortBy, setSortBy] = useState('price_asc')
   const [showFilters, setShowFilters] = useState(false)
+
+  // Compute effective minNights/maxNights from multi-selected ranges
+  const { minNights, maxNights } = (() => {
+    if (selectedNightRanges.size === 0) return { minNights: '', maxNights: '' }
+    let composedMin = Infinity
+    let composedMax = 0
+    let hasOpenEnd = false
+    for (const idx of selectedNightRanges) {
+      const range = NIGHT_RANGES[idx]
+      if (range.min < composedMin) composedMin = range.min
+      if (range.max === 0) hasOpenEnd = true  // 22+ has no upper limit
+      else if (range.max > composedMax) composedMax = range.max
+    }
+    return {
+      minNights: String(composedMin),
+      maxNights: hasOpenEnd ? '' : String(composedMax),
+    }
+  })()
 
   // API data (Cruise extended with optional grouped fields)
   const [cruises, setCruises] = useState<(Cruise & { departure_count?: number; price_min?: number; price_max?: number; next_departures?: string[] })[]>([])
@@ -183,7 +200,8 @@ export default function CruisesPage() {
   }, [search])
 
   // Reset to page 1 when filters change
-  useEffect(() => { setPage(1) }, [selectedDestination, selectedType, selectedLine, selectedDeparture, minPrice, maxPrice, minNights, maxNights, sortBy])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { setPage(1) }, [selectedDestination, selectedType, selectedLine, selectedDeparture, minPrice, maxPrice, minNights, maxNights, sortBy, selectedNightRanges.size])
 
   // Track page view on initial render
   useEffect(() => {
@@ -235,6 +253,7 @@ export default function CruisesPage() {
     } finally {
       setLoading(false)
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, searchDebounced, selectedDestination, selectedType, selectedLine, selectedDeparture, minPrice, maxPrice, minNights, maxNights, sortBy])
 
   useEffect(() => { fetchCruises() }, [fetchCruises])
@@ -247,14 +266,13 @@ export default function CruisesPage() {
     setSelectedLine('')
     setMinPrice('')
     setMaxPrice('')
-    setMinNights('')
-    setMaxNights('')
+    setSelectedNightRanges(new Set())
     setSelectedDeparture('')
     setSortBy('price_asc')
     setPage(1)
   }
 
-  const hasActiveFilters = search || selectedDestination || selectedType || selectedLine || selectedDeparture || minPrice || maxPrice || minNights || maxNights
+  const hasActiveFilters = search || selectedDestination || selectedType || selectedLine || selectedDeparture || minPrice || maxPrice || selectedNightRanges.size > 0
 
   // Cruise type display names
   const typeNames: Record<string, { en: string; ro: string }> = {
@@ -414,23 +432,32 @@ export default function CruisesPage() {
                 />
               </div>
 
-              {/* Nights Range — quick-select buttons */}
+              {/* Nights Range — multi-select buttons (pick multiple ranges) */}
               <div className="flex flex-col gap-1.5 lg:col-span-2">
-                <label className="text-xs text-navy-500 whitespace-nowrap">{t('filter_nights')}:</label>
+                <label className="text-xs text-navy-500 whitespace-nowrap">
+                  {t('filter_nights')}:
+                  {selectedNightRanges.size > 1 && (
+                    <span className="ml-1 text-gold-600 font-medium">
+                      ({minNights}{maxNights ? `-${maxNights}` : '+'} {locale === 'ro' ? 'nopți' : 'nights'})
+                    </span>
+                  )}
+                </label>
                 <div className="flex flex-wrap gap-1.5">
-                  {NIGHT_RANGES.map(range => {
-                    const isActive = minNights === range.min && maxNights === range.max
+                  {NIGHT_RANGES.map((range, idx) => {
+                    const isActive = selectedNightRanges.has(idx)
                     return (
                       <button
                         key={range.min + '-' + range.max}
                         onClick={() => {
-                          if (isActive) {
-                            setMinNights('')
-                            setMaxNights('')
-                          } else {
-                            setMinNights(range.min)
-                            setMaxNights(range.max)
-                          }
+                          setSelectedNightRanges(prev => {
+                            const next = new Set(prev)
+                            if (next.has(idx)) {
+                              next.delete(idx)
+                            } else {
+                              next.add(idx)
+                            }
+                            return next
+                          })
                         }}
                         className={`px-3 py-1.5 rounded-full text-xs font-medium border transition-all ${
                           isActive

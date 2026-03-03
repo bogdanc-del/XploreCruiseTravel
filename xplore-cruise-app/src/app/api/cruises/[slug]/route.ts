@@ -5,10 +5,16 @@ import { join } from 'path'
 // ============================================================
 // Cruise Detail API — look up full cruise data by slug
 // GET /api/cruises/[slug]
+//
+// Merges base cruise data (cruises.json) with enriched data
+// (cruises-enriched.json) to include per-departure-date room
+// pricing. This allows the detail page to show accurate prices
+// when users select different departure dates.
 // ============================================================
 
 // Lazy-loaded full cruise database (cached in module scope)
 let cruisesMap: Map<string, Record<string, unknown>> | null = null
+let enrichedMap: Record<string, Record<string, unknown>> | null = null
 
 function loadCruisesMap(): Map<string, Record<string, unknown>> {
   if (cruisesMap) return cruisesMap
@@ -26,6 +32,40 @@ function loadCruisesMap(): Map<string, Record<string, unknown>> {
   }
 }
 
+function loadEnrichedMap(): Record<string, Record<string, unknown>> {
+  if (enrichedMap) return enrichedMap
+  try {
+    const filePath = join(process.cwd(), 'public', 'data', 'cruises-enriched.json')
+    enrichedMap = JSON.parse(readFileSync(filePath, 'utf8'))
+    return enrichedMap!
+  } catch {
+    console.error('Failed to load cruises-enriched.json')
+    enrichedMap = {}
+    return enrichedMap
+  }
+}
+
+// Compute per-date minimum prices from room data
+interface RoomEntry { name: string; category: string; date: string; price: number }
+interface DatePrice { date: string; price_from: number; cabin_count: number }
+
+function computeDatePrices(rooms: RoomEntry[]): DatePrice[] {
+  const byDate = new Map<string, { min: number; count: number }>()
+  for (const r of rooms) {
+    if (!r.date || !r.price || r.price <= 0) continue
+    const existing = byDate.get(r.date)
+    if (!existing) {
+      byDate.set(r.date, { min: r.price, count: 1 })
+    } else {
+      if (r.price < existing.min) existing.min = r.price
+      existing.count++
+    }
+  }
+  return Array.from(byDate.entries())
+    .map(([date, { min, count }]) => ({ date, price_from: min, cabin_count: count }))
+    .sort((a, b) => a.date.localeCompare(b.date))
+}
+
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
@@ -41,9 +81,31 @@ export async function GET(
     )
   }
 
+  // Look up enriched data (rooms with per-date pricing)
+  const enriched = loadEnrichedMap()
+  const sourceId = String(cruise.id || '')
+  const enrichedEntry = enriched[sourceId]
+
+  // Compute per-date minimum prices
+  let date_prices: DatePrice[] = []
+  if (enrichedEntry?.rooms) {
+    date_prices = computeDatePrices(enrichedEntry.rooms as RoomEntry[])
+  }
+
+  // Merge enriched gallery if available and base has no gallery
+  const gallery = (cruise.gallery_urls as string[])?.length
+    ? cruise.gallery_urls
+    : enrichedEntry?.gallery || []
+
   // Add back constant fields for client compatibility
   return NextResponse.json(
-    { ...cruise, currency: 'EUR', active: true },
+    {
+      ...cruise,
+      currency: 'EUR',
+      active: true,
+      gallery_urls: gallery,
+      date_prices,
+    },
     {
       headers: {
         'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',

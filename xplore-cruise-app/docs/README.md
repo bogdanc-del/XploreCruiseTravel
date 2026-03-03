@@ -55,7 +55,7 @@ xplore-cruise-app/
 │   │   ├── admin/              # Admin dashboard
 │   │   ├── review/             # QR review submission
 │   │   ├── contact/            # Contact page
-│   │   └── api/                # 11 API routes
+│   │   └── api/                # 12 API routes
 │   │       ├── cruises/        # Cruise listing & detail
 │   │       ├── reviews/        # Review CRUD
 │   │       ├── testimonials/   # Testimonial CRUD
@@ -132,6 +132,20 @@ xplore-cruise-app/
 - React Context provides rate to all client components
 - Cached: 4h server-side, 1h on CDN
 
+### Automated Data Sync
+- **Cruise data:** GitHub Actions workflow runs daily at 04:00 UTC (07:00 EET)
+- Fetches prices, images, departure dates from croaziere.net API
+- Auto-commits updated JSON files → triggers Vercel redeploy
+- Can also be triggered manually via GitHub Actions UI
+- **Exchange rate:** Auto-fetched on demand from BNR, cached server-side
+
+### Email Notifications
+- Auto-sends on new leads, contact form submissions, and review submissions
+- SMTP via Nodemailer (default: Gmail)
+- Branded HTML email templates (Cerere Noua de Oferta, Mesaj Contact, Recenzie Noua)
+- Fire-and-forget pattern — never blocks form submission
+- Graceful fallback to console logging when SMTP not configured
+
 ### Analytics
 - Privacy-safe (PII fields stripped automatically)
 - Dual channel: GA4 + custom /api/events
@@ -154,6 +168,13 @@ ANTHROPIC_API_KEY=sk-ant-...
 PRICE_API_URL=https://www.croaziere.net/api/v1.1/cruises
 PRICE_API_KEY=<api-key>
 SYNC_SECRET=<sync-secret>
+
+# Email Notifications (optional — falls back to console logging)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=your-gmail-app-password
+NOTIFICATION_EMAIL=xplorecruisetravel@gmail.com
 
 # Analytics (optional)
 NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
@@ -289,7 +310,29 @@ npm run test:e2e               # Playwright E2E
 npm run test:a11y              # Accessibility tests
 npm run i18n-audit             # i18n key coverage check
 npm run generate-route-maps    # Generate route map images
+npm run sync:cruises           # Manual cruise data sync from API
 ```
+
+---
+
+## Automation (GitHub Actions)
+
+### Daily Cruise Sync
+
+**File:** `.github/workflows/sync-cruises.yml`
+
+| Property | Value |
+|----------|-------|
+| Schedule | Daily at 04:00 UTC (07:00 EET Romania) |
+| Trigger | Automatic + manual via workflow_dispatch |
+| Action | Runs sync script → commits data changes → Vercel redeploys |
+| Duration | ~2-5 minutes (8,400+ cruises in batches of 50) |
+
+**Required GitHub Secrets:**
+- `PRICE_API_KEY` — croaziere.net API key
+- `PRICE_API_URL` — (optional) API base URL
+
+**Manual trigger:** GitHub → Actions → "Daily Cruise Sync" → Run workflow
 
 ---
 

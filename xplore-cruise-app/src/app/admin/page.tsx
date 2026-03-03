@@ -89,6 +89,17 @@ export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<Tab>('dashboard')
   const [bookings, setBookings] = useState<Booking[]>(demoBookings)
   const [messages, setMessages] = useState<ContactMessage[]>(demoMessages)
+  const [integrations, setIntegrations] = useState<{ supabase: boolean; claude: boolean; email: boolean; analytics: boolean }>({
+    supabase: false, claude: false, email: false, analytics: false,
+  })
+
+  // Fetch live integration status
+  useEffect(() => {
+    fetch('/api/admin/status')
+      .then(r => r.json())
+      .then(data => { if (data.integrations) setIntegrations(data.integrations) })
+      .catch(() => {})
+  }, [])
 
   // Check localStorage for session
   useEffect(() => {
@@ -504,18 +515,23 @@ export default function AdminPage() {
                 <div className="space-y-3">
                   <IntegrationRow
                     label="Supabase"
-                    status={false}
+                    status={integrations.supabase}
                     description={locale === 'ro' ? 'Baza de date PostgreSQL' : 'PostgreSQL database'}
                   />
                   <IntegrationRow
                     label="Claude AI"
-                    status={false}
+                    status={integrations.claude}
                     description={locale === 'ro' ? 'Chatbot consilier croaziere' : 'Cruise advisor chatbot'}
                   />
                   <IntegrationRow
                     label="Email (SMTP)"
-                    status={false}
+                    status={integrations.email}
                     description={locale === 'ro' ? 'Notificari email' : 'Email notifications'}
+                  />
+                  <IntegrationRow
+                    label="Google Analytics"
+                    status={integrations.analytics}
+                    description={locale === 'ro' ? 'Analitica trafic web' : 'Web traffic analytics'}
                   />
                 </div>
               </div>

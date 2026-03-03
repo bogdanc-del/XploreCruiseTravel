@@ -6,7 +6,13 @@
  * Updates in cruises.json: price_from, image_url, departure_date, departure_dates
  * Stores enriched data in: cruises-enriched.json (gallery, cabin types, etc.)
  *
- * Run daily via cron: 0 4 * * * node scripts/sync-cruises-api.mjs
+ * Runs automatically via GitHub Actions daily at 04:00 UTC (07:00 EET).
+ * Can also be run manually: node scripts/sync-cruises-api.mjs
+ *
+ * Environment variables (optional — has defaults):
+ *   PRICE_API_KEY  — croaziere.net API key
+ *   PRICE_API_URL  — API base URL
+ *   SKIP_ROUTE_MAPS — set to 'true' to skip route map generation
  *
  * Strategy:
  * 1. Load existing cruise IDs from cruises.json
@@ -23,10 +29,11 @@ import { fileURLToPath } from 'url'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const ROOT = join(__dirname, '..')
 
-const API_KEY = 'e4315add3071b92740bf093748432bfb'
-const API_BASE = 'https://www.croaziere.net/api/v1.1/'
+const API_KEY = process.env.PRICE_API_KEY || 'e4315add3071b92740bf093748432bfb'
+const API_BASE = process.env.PRICE_API_URL || 'https://www.croaziere.net/api/v1.1/'
 const BATCH_SIZE = 50
 const DELAY_MS = 500
+const SKIP_ROUTE_MAPS = process.env.SKIP_ROUTE_MAPS === 'true'
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
@@ -230,7 +237,8 @@ async function main() {
   logStep(`Log written to ${logFile}`)
 
   // Generate route map images for cruises that don't have one yet
-  if (changes > 0) {
+  const hasChanges = changes.price > 0 || changes.image > 0 || changes.departures > 0
+  if (hasChanges && !SKIP_ROUTE_MAPS) {
     logStep('Generating route map images for new/updated cruises...')
     try {
       const { execSync } = await import('child_process')
@@ -243,6 +251,8 @@ async function main() {
     } catch (err) {
       logStep(`Route map generation failed (non-fatal): ${err.message}`)
     }
+  } else if (SKIP_ROUTE_MAPS) {
+    logStep('Route map generation skipped (SKIP_ROUTE_MAPS=true)')
   }
 }
 

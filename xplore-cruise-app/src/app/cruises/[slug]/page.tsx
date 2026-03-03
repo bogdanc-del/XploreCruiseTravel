@@ -109,7 +109,8 @@ function apiToCruise(data: Record<string, unknown>): Cruise {
     _itinerary: itinerary,
     _cabin_types: (data.cabin_types || []) as { name: string; price_from: number }[],
     _disembarkation_port: (data.disembarkation_port as string) || '',
-  } as Cruise & { _itinerary: typeof itinerary; _cabin_types: { name: string; price_from: number }[]; _disembarkation_port: string }
+    _date_prices: (data.date_prices || []) as { date: string; price_from: number; cabin_count: number }[],
+  } as Cruise & { _itinerary: typeof itinerary; _cabin_types: { name: string; price_from: number }[]; _disembarkation_port: string; _date_prices: { date: string; price_from: number; cabin_count: number }[] }
 }
 
 function CruiseDetailContent() {
@@ -264,8 +265,23 @@ function CruiseDetailContent() {
     .filter(d => new Date(d) >= now)
     .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
   const hasMultipleDates = allDepartureDates.length > 1
-  const priceEur = cruise.price_from
+
+  // Per-date pricing from enriched API data
+  const datePrices = ((cruise as Cruise & { _date_prices?: { date: string; price_from: number; cabin_count: number }[] })._date_prices || [])
+  const datePriceMap = new Map(datePrices.map(dp => [dp.date, dp]))
+
+  // Find cheapest date for "best price" badge
+  const cheapestDatePrice = datePrices.length > 0
+    ? datePrices.reduce((min, dp) => dp.price_from < min.price_from ? dp : min, datePrices[0])
+    : null
+
+  // Compute dynamic price based on selected departure date
+  const selectedDate = allDepartureDates[selectedDateIdx] || ''
+  const selectedDatePriceData = selectedDate ? datePriceMap.get(selectedDate) : null
+  const priceEur = selectedDatePriceData?.price_from || cruise.price_from
   const priceRon = Math.round(priceEur * rateWithMargin)
+  const basePriceEur = cruise.price_from
+  const priceIsForSelectedDate = !!selectedDatePriceData
 
   // Price tracking computed values
   const syncedAgo = timeAgo(cruise.last_synced_at, locale as 'en' | 'ro')
@@ -740,16 +756,33 @@ function CruiseDetailContent() {
                   </span>
                 )}
 
-                <p className="text-xs text-navy-400 uppercase tracking-wider mb-1">{t('cruise_from')}</p>
+                <p className="text-xs text-navy-400 uppercase tracking-wider mb-1">
+                  {priceIsForSelectedDate
+                    ? (locale === 'ro' ? 'Preț pentru data selectată' : 'Price for selected date')
+                    : t('cruise_from')}
+                </p>
                 <div className="flex items-baseline gap-2 mb-1">
-                  <span className="text-3xl font-bold text-navy-900">
+                  <span className="text-3xl font-bold text-navy-900 tabular-nums transition-all duration-300">
                     &euro;{priceEur.toLocaleString()}
                   </span>
                   <span className="text-sm text-navy-500">{t('cruise_per_person')}</span>
                 </div>
 
-                {/* Previous price strikethrough */}
-                {previousPrice && previousPrice !== priceEur && priceChanged && (
+                {/* Show base price reference when viewing a date-specific price */}
+                {priceIsForSelectedDate && priceEur !== basePriceEur && (
+                  <p className="text-xs text-navy-400 mb-0.5">
+                    {locale === 'ro' ? 'Preț general de la' : 'General price from'}{' '}
+                    <span className={priceEur < basePriceEur ? 'line-through' : ''}>&euro;{basePriceEur.toLocaleString()}</span>
+                    {priceEur < basePriceEur && (
+                      <span className="text-emerald-600 font-medium ml-1">
+                        -{Math.round(((basePriceEur - priceEur) / basePriceEur) * 100)}%
+                      </span>
+                    )}
+                  </p>
+                )}
+
+                {/* Previous price strikethrough (from sync) */}
+                {!priceIsForSelectedDate && previousPrice && previousPrice !== priceEur && priceChanged && (
                   <p className="text-xs text-navy-400 mb-0.5">
                     {t('price_was')} <span className="line-through">&euro;{previousPrice.toLocaleString()}</span>
                   </p>
@@ -797,27 +830,15 @@ function CruiseDetailContent() {
                 {/* Departure info */}
                 <div className="mt-6 pt-6 border-t border-navy-100 space-y-3">
                   {hasMultipleDates ? (
-                    <div>
-                      <p className="text-xs text-navy-500 mb-1.5">{locale === 'ro' ? 'Data plecare' : 'Departure Date'}</p>
-                      <div className="flex flex-wrap gap-1.5">
-                        {allDepartureDates.map((d, i) => (
-                          <button
-                            key={d}
-                            onClick={() => setSelectedDateIdx(i)}
-                            className={`text-xs px-2.5 py-1.5 rounded-full border transition-colors ${
-                              i === selectedDateIdx
-                                ? 'bg-navy-700 text-white border-navy-700'
-                                : 'bg-white text-navy-700 border-navy-200 hover:border-navy-400'
-                            }`}
-                          >
-                            {formatDate(d)}
-                          </button>
-                        ))}
-                      </div>
-                      <p className="text-[10px] text-gold-600 mt-1.5">
-                        {allDepartureDates.length} {locale === 'ro' ? 'date disponibile' : 'dates available'}
-                      </p>
-                    </div>
+                    <DepartureDatePicker
+                      dates={allDepartureDates}
+                      datePriceMap={datePriceMap}
+                      cheapestDate={cheapestDatePrice?.date || null}
+                      selectedIdx={selectedDateIdx}
+                      onSelect={setSelectedDateIdx}
+                      formatDate={formatDate}
+                      locale={locale}
+                    />
                   ) : (
                     <SidebarRow label={t('cruise_departure')} value={departureDate} />
                   )}
@@ -899,7 +920,7 @@ function CruiseDetailContent() {
         onClose={() => setShowLeadForm(false)}
         cruiseTitle={title}
         cruiseSlug={cruise.slug}
-        cruisePrice={cruise.price_from}
+        cruisePrice={priceEur}
         source="detail"
       />
       <ChatWidget />
@@ -935,6 +956,157 @@ function SidebarRow({ label, value }: { label: string; value: string }) {
     <div className="flex justify-between items-start text-sm">
       <span className="text-navy-400">{label}</span>
       <span className="text-navy-800 font-medium text-right max-w-[180px]">{value}</span>
+    </div>
+  )
+}
+
+// ============================================================
+// Departure Date Picker — beautiful per-date pricing display
+// ============================================================
+
+interface DatePriceInfo { date: string; price_from: number; cabin_count: number }
+
+function DepartureDatePicker({
+  dates,
+  datePriceMap,
+  cheapestDate,
+  selectedIdx,
+  onSelect,
+  formatDate,
+  locale,
+}: {
+  dates: string[]
+  datePriceMap: Map<string, DatePriceInfo>
+  cheapestDate: string | null
+  selectedIdx: number
+  onSelect: (idx: number) => void
+  formatDate: (d: string) => string
+  locale: string
+}) {
+  const [expanded, setExpanded] = useState(false)
+  const COLLAPSED_COUNT = 4
+  const showExpand = dates.length > COLLAPSED_COUNT
+  const visibleDates = expanded ? dates : dates.slice(0, COLLAPSED_COUNT)
+
+  // Group dates by month for compact display
+  const formatDateShort = (dateStr: string) => {
+    const d = new Date(dateStr)
+    return {
+      day: d.getDate(),
+      month: d.toLocaleDateString(locale === 'ro' ? 'ro-RO' : 'en-GB', { month: 'short' }),
+      year: d.getFullYear(),
+      weekday: d.toLocaleDateString(locale === 'ro' ? 'ro-RO' : 'en-GB', { weekday: 'short' }),
+      full: formatDate(dateStr),
+    }
+  }
+
+  return (
+    <div>
+      <div className="flex items-center justify-between mb-2">
+        <p className="text-xs font-semibold text-navy-700 uppercase tracking-wider flex items-center gap-1.5">
+          <svg className="w-3.5 h-3.5 text-gold-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 9v9.75" />
+          </svg>
+          {locale === 'ro' ? 'Date de plecare' : 'Departure Dates'}
+        </p>
+        <span className="text-[10px] text-navy-400 bg-navy-50 px-2 py-0.5 rounded-full">
+          {dates.length} {locale === 'ro' ? 'opțiuni' : 'options'}
+        </span>
+      </div>
+
+      <div className="space-y-1.5 max-h-[280px] overflow-y-auto pr-0.5 scrollbar-thin">
+        {visibleDates.map((d, i) => {
+          // Compute actual index in full dates array
+          const actualIdx = expanded ? i : i
+          const dateInfo = formatDateShort(d)
+          const priceData = datePriceMap.get(d)
+          const isCheapest = cheapestDate === d && dates.length > 1
+          const isSelected = actualIdx === selectedIdx
+
+          return (
+            <button
+              key={d}
+              onClick={() => onSelect(actualIdx)}
+              className={`w-full text-left rounded-lg border transition-all duration-200 group ${
+                isSelected
+                  ? 'bg-navy-800 border-navy-700 text-white shadow-md ring-1 ring-navy-600'
+                  : 'bg-white border-navy-100 hover:border-navy-300 hover:shadow-sm'
+              }`}
+            >
+              <div className="flex items-center justify-between px-3 py-2.5">
+                {/* Date info */}
+                <div className="flex items-center gap-2.5 min-w-0">
+                  {/* Date badge */}
+                  <div className={`flex-shrink-0 w-10 h-10 rounded-lg flex flex-col items-center justify-center text-center leading-none ${
+                    isSelected
+                      ? 'bg-gold-500 text-navy-900'
+                      : 'bg-navy-50 text-navy-700 group-hover:bg-navy-100'
+                  }`}>
+                    <span className="text-sm font-bold">{dateInfo.day}</span>
+                    <span className="text-[9px] uppercase font-medium">{dateInfo.month}</span>
+                  </div>
+                  {/* Date details */}
+                  <div className="min-w-0">
+                    <p className={`text-xs font-medium truncate ${isSelected ? 'text-white' : 'text-navy-800'}`}>
+                      {dateInfo.full}
+                    </p>
+                    <div className="flex items-center gap-1.5 mt-0.5">
+                      {isCheapest && (
+                        <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full ${
+                          isSelected
+                            ? 'bg-emerald-400/20 text-emerald-300'
+                            : 'bg-emerald-50 text-emerald-700'
+                        }`}>
+                          {locale === 'ro' ? '✦ Cel mai bun preț' : '✦ Best price'}
+                        </span>
+                      )}
+                      {priceData && priceData.cabin_count > 0 && (
+                        <span className={`text-[9px] ${isSelected ? 'text-navy-300' : 'text-navy-400'}`}>
+                          {priceData.cabin_count} {locale === 'ro' ? 'cabine' : 'cabins'}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                {/* Price */}
+                {priceData ? (
+                  <div className="flex-shrink-0 text-right ml-2">
+                    <p className={`text-sm font-bold tabular-nums ${
+                      isSelected
+                        ? 'text-gold-400'
+                        : isCheapest ? 'text-emerald-600' : 'text-navy-800'
+                    }`}>
+                      &euro;{priceData.price_from.toLocaleString()}
+                    </p>
+                    <p className={`text-[9px] ${isSelected ? 'text-navy-400' : 'text-navy-400'}`}>
+                      {locale === 'ro' ? '/pers.' : '/pp'}
+                    </p>
+                  </div>
+                ) : (
+                  <div className="flex-shrink-0">
+                    <svg className={`w-4 h-4 ${isSelected ? 'text-gold-400' : 'text-navy-300'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                    </svg>
+                  </div>
+                )}
+              </div>
+            </button>
+          )
+        })}
+      </div>
+
+      {/* Expand/collapse button */}
+      {showExpand && (
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="w-full mt-2 text-center text-xs text-gold-600 hover:text-gold-700 font-medium py-1.5 rounded-md hover:bg-gold-50 transition-colors"
+        >
+          {expanded
+            ? (locale === 'ro' ? `↑ Arată mai puțin` : `↑ Show less`)
+            : (locale === 'ro' ? `+ Arată toate ${dates.length} datele` : `+ Show all ${dates.length} dates`)
+          }
+        </button>
+      )}
     </div>
   )
 }

@@ -16,7 +16,8 @@
     "test:e2e:webkit": "playwright test --project=webkit",
     "test:a11y": "playwright test e2e/a11y.spec.ts --project=chromium",
     "i18n-audit": "npx tsx scripts/i18n-audit.ts",
-    "generate-route-maps": "node scripts/generate-route-maps.mjs"
+    "generate-route-maps": "node scripts/generate-route-maps.mjs",
+    "sync:cruises": "node scripts/sync-cruises-api.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
@@ -27,6 +28,7 @@
     "lucide-react": "^0.475.0",
     "next": "^15.3.0",
     "next-intl": "^4.1.0",
+    "nodemailer": "^8.0.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-leaflet": "^5.0.0",
@@ -39,6 +41,7 @@
     "@tailwindcss/postcss": "^4.1.0",
     "@types/leaflet": "^1.9.21",
     "@types/node": "^22.0.0",
+    "@types/nodemailer": "^7.0.11",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
     "eslint": "^9.0.0",

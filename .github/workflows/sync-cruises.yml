@@ -1,0 +1,102 @@
+# ============================================================
+# Daily Cruise Data Sync
+#
+# Runs the cruise data sync script from croaziere.net API,
+# commits updated JSON files, and pushes to trigger
+# Vercel/Netlify auto-deploy with fresh cruise data.
+#
+# Schedule: Daily at 04:00 UTC (07:00 EET Romania time)
+# Manual:   Can be triggered via Actions → Run workflow
+# ============================================================
+
+name: Daily Cruise Sync
+
+on:
+  schedule:
+    # Daily at 04:00 UTC (07:00 EET Romania)
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+    # Allow manual trigger from GitHub Actions UI
+    inputs:
+      skip_route_maps:
+        description: 'Skip route map generation (faster sync)'
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: xplore-cruise-app
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: xplore-cruise-app/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run cruise data sync
+        env:
+          PRICE_API_KEY: ${{ secrets.PRICE_API_KEY }}
+          PRICE_API_URL: ${{ secrets.PRICE_API_URL }}
+          SKIP_ROUTE_MAPS: ${{ github.event.inputs.skip_route_maps || 'false' }}
+        run: node scripts/sync-cruises-api.mjs
+
+      - name: Check for data changes
+        id: changes
+        run: |
+          git diff --stat public/data/ || true
+          if git diff --quiet public/data/; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "No cruise data changes detected"
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "Cruise data changes detected:"
+            git diff --stat public/data/
+          fi
+
+      - name: Commit and push updated cruise data
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          cd ..
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add xplore-cruise-app/public/data/cruises.json
+          git add xplore-cruise-app/public/data/cruises-index.json
+          git add xplore-cruise-app/public/data/cruises-enriched.json
+          git add xplore-cruise-app/public/images/routes/ 2>/dev/null || true
+          git commit -m "chore: daily cruise data sync $(date -u +%Y-%m-%d)
+
+          Automated sync from croaziere.net API.
+          Prices, images, and departure dates updated."
+          git push
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "## Cruise Sync Results" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.changes.outputs.changed }}" == "true" ]; then
+            echo "Data updated and committed." >> $GITHUB_STEP_SUMMARY
+          else
+            echo "No data changes — skipped commit." >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Sync log:" >> $GITHUB_STEP_SUMMARY
+          if [ -f logs/sync-log.jsonl ]; then
+            tail -1 logs/sync-log.jsonl >> $GITHUB_STEP_SUMMARY
+          fi

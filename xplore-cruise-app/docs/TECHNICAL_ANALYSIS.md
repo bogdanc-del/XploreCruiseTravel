@@ -531,6 +531,37 @@ git push → GitHub Actions
   └── Deploy to Vercel (production)
 ```
 
+### 9.4 Automated Data Sync (GitHub Actions)
+
+**Workflow:** `.github/workflows/sync-cruises.yml`
+
+```
+Daily at 04:00 UTC (07:00 EET) → GitHub Actions
+  ├── Checkout repository
+  ├── npm ci (install deps)
+  ├── node scripts/sync-cruises-api.mjs
+  │   ├── Batch-fetch 8,400+ cruise IDs (50/batch, 500ms delay)
+  │   ├── Update prices, images, departures
+  │   ├── Write cruises.json, cruises-enriched.json, cruises-index.json
+  │   └── Generate route map images (if data changed)
+  ├── git diff public/data/ → detect changes
+  ├── If changed: commit + push → Vercel auto-redeploy
+  └── Write job summary
+```
+
+| Property | Value |
+|----------|-------|
+| Schedule | `0 4 * * *` (daily 04:00 UTC) |
+| Manual trigger | workflow_dispatch (GitHub Actions UI) |
+| Timeout | 30 minutes |
+| Required secrets | `PRICE_API_KEY`, `PRICE_API_URL` (optional) |
+| Commit author | `github-actions[bot]` |
+
+**Why GitHub Actions (not Vercel Cron):**
+- Vercel serverless functions have read-only filesystem — cannot persist JSON files
+- Cruise sync takes 2-5 minutes — exceeds Vercel function timeout limits
+- GitHub Actions can commit data changes back to git → triggers Vercel redeploy
+
 ---
 
 ## 10. Monitoring & Observability

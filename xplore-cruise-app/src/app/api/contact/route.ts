@@ -1,7 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { notifyNewLead, notifyNewContact } from '@/lib/email'
 
 // ============================================================
 // Contact API — POST /api/contact
+//
+// Handles both lead capture ("Solicita oferta") and contact forms.
+// Persists to Supabase, sends email notification to
+// xplorecruisetravel@gmail.com, and logs to console.
 // ============================================================
 
 export async function POST(request: NextRequest) {
@@ -62,6 +67,32 @@ export async function POST(request: NextRequest) {
         console.error('Supabase contact insert error:', dbError)
         // Fall through to still return success
       }
+    }
+
+    // ----- Email notification to xplorecruisetravel@gmail.com -----
+    const isLeadRequest = !!(cruiseTitle || cruiseSlug || source === 'lead_form')
+
+    if (isLeadRequest) {
+      // Lead capture form ("Solicita oferta") — includes cruise context
+      notifyNewLead({
+        name: name.trim(),
+        email: email.trim(),
+        phone: phone?.trim(),
+        message: message.trim(),
+        cruiseTitle,
+        cruiseSlug,
+        cruisePrice,
+        source: source || 'lead_form',
+        guidedContext: guidedContext || null,
+      }).catch(() => {}) // Fire-and-forget, never blocks response
+    } else {
+      // General contact form message
+      notifyNewContact({
+        name: name.trim(),
+        email: email.trim(),
+        phone: phone?.trim(),
+        message: message.trim(),
+      }).catch(() => {}) // Fire-and-forget, never blocks response
     }
 
     // Log the contact message

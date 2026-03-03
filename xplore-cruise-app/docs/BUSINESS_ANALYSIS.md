@@ -257,7 +257,7 @@ Three CTA variants are being tested:
 |------|-----------|--------|------------|
 | Low organic traffic initially | High | Medium | SEO optimization, 8,400+ indexed pages, sitemap |
 | AI chat costs escalate | Medium | Low | Claude API usage monitoring, rate limiting |
-| Cruise data staleness | Medium | Medium | Daily API sync from croaziere.net, freshness labels |
+| Cruise data staleness | Low | Medium | Automated daily sync via GitHub Actions (04:00 UTC), freshness labels |
 | BNR rate unavailable | Low | Low | Fallback chain: 10-day feed → hardcoded rate (4.97) |
 | Competitor launches similar site | Low | Medium | Differentiation via consulting + AI + guided flow |
 | GDPR complaint | Low | High | Consent checkboxes, privacy policy, data handling policies |
@@ -339,7 +339,7 @@ At average cruise commission of 200-500 EUR per sale:
 - [x] Cruise data API sync (croaziere.net, replaces scraping)
 
 ### Planned (Phase 2)
-- [ ] Email notifications on new leads (SMTP integration)
+- [x] Email notifications on new leads (SMTP integration)
 - [ ] CRM integration (HubSpot or similar)
 - [ ] Newsletter signup and campaigns
 - [ ] Retargeting pixel integration (Facebook, Google Ads)
