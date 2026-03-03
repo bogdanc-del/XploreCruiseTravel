@@ -266,6 +266,10 @@ export async function trackPageView(page: string, cruiseId?: string) {
 }
 
 // --- EUR to RON conversion ---
+// DEPRECATED: Use useExchangeRate() hook from ExchangeRateContext instead.
+// The dynamic BNR rate is now fetched from /api/exchange-rate and provided
+// via React context. See src/context/ExchangeRateContext.tsx
+// Kept for backward compatibility with any non-React code.
 export function eurToRon(eur: number, rate = 4.97): number {
   return Math.round(eur * rate)
 }

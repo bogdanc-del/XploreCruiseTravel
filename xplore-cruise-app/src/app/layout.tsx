@@ -3,6 +3,7 @@ import { Playfair_Display, Inter } from 'next/font/google'
 import '@/styles/globals.css'
 import { LocaleProvider } from '@/i18n/context'
 import { GuidedFlowProvider } from '@/context/GuidedFlowContext'
+import { ExchangeRateProvider } from '@/context/ExchangeRateContext'
 import GuidedFlowOverlay from '@/components/guided/GuidedFlowOverlay'
 import SkipToContent from '@/components/ui/SkipToContent'
 
@@ -95,11 +96,13 @@ export default function RootLayout({
     <html lang="ro" className={`${playfairDisplay.variable} ${inter.variable}`}>
       <body className="min-h-screen bg-white font-body text-navy-900 antialiased">
         <LocaleProvider>
-          <GuidedFlowProvider>
-            <SkipToContent />
-            {children}
-            <GuidedFlowOverlay />
-          </GuidedFlowProvider>
+          <ExchangeRateProvider>
+            <GuidedFlowProvider>
+              <SkipToContent />
+              {children}
+              <GuidedFlowOverlay />
+            </GuidedFlowProvider>
+          </ExchangeRateProvider>
         </LocaleProvider>
       </body>
     </html>

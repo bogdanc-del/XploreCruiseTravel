@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import type { Locale } from '@/i18n/translations'
 import { t } from '@/i18n/translations'
-import { eurToRon } from '@/lib/supabase'
+import { useExchangeRate } from '@/context/ExchangeRateContext'
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
 import { getBestImageUrl } from '@/data/ship-images'
@@ -34,6 +34,7 @@ export default function GuidedResultCard({
   onRequestOffer,
   onCardClick,
 }: GuidedResultCardProps) {
+  const { rateWithMargin } = useExchangeRate()
   const title = locale === 'ro' ? cruise.t : cruise.t
   const destination = locale === 'ro' ? cruise.dr : cruise.d
   const nightsLabel = cruise.n === 1
@@ -46,7 +47,7 @@ export default function GuidedResultCard({
       )
     : ''
   const priceEur = cruise.p
-  const priceRon = eurToRon(priceEur)
+  const priceRon = Math.round(priceEur * rateWithMargin)
   const imageUrl = getBestImageUrl(cruise.img, cruise.sn, cruise.cl)
 
   return (

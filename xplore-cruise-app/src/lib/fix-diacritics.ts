@@ -2,7 +2,7 @@
 // Romanian Diacritics Fixer
 // ============================================================
 // Fixes common Romanian words in cruise titles and destinations
-// that were scraped without proper diacritics (ă, â, î, ș, ț).
+// that were imported without proper diacritics (ă, â, î, ș, ț).
 // ============================================================
 
 /**

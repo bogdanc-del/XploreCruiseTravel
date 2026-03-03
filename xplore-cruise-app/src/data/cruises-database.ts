@@ -3,7 +3,7 @@
 // ============================================================
 import type { Cruise } from '@/lib/supabase'
 
-// --- ScrapedCruise: raw shape from the croaziere.net scraper ---
+// --- ScrapedCruise: raw shape from the croaziere.net API data ---
 export interface ScrapedCruise {
   id: string; slug: string; title: string
   cruise_type: 'ocean' | 'river' | 'luxury'

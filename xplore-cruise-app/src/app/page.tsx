@@ -14,7 +14,6 @@ import { useGuidedFlow } from '@/context/GuidedFlowContext'
 import ChatWidget from '@/components/chat/ChatWidget'
 import ReviewsSection from '@/components/reviews/ReviewsSection'
 import TestimonialsSection from '@/components/testimonials/TestimonialsSection'
-import { eurToRon } from '@/lib/supabase'
 import type { Cruise } from '@/lib/supabase'
 import { FEATURED_CRUISES } from '@/data/cruises-database'
 

@@ -4,8 +4,8 @@ import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import type { Cruise } from '@/lib/supabase'
-import { eurToRon } from '@/lib/supabase'
 import type { Locale } from '@/i18n/translations'
+import { useExchangeRate } from '@/context/ExchangeRateContext'
 import { t } from '@/i18n/translations'
 import Badge from '@/components/ui/Badge'
 import Button from '@/components/ui/Button'
@@ -27,6 +27,7 @@ interface CruiseCardProps {
 }
 
 export default function CruiseCard({ cruise, locale }: CruiseCardProps) {
+  const { rateWithMargin } = useExchangeRate()
   const title = locale === 'ro' && cruise.title_ro ? cruise.title_ro : cruise.title
   const destination =
     locale === 'ro' && cruise.destination_ro
@@ -55,9 +56,9 @@ export default function CruiseCard({ cruise, locale }: CruiseCardProps) {
     : ''
 
   const priceEur = priceMin
-  const priceRon = eurToRon(priceEur)
+  const priceRon = Math.round(priceEur * rateWithMargin)
 
-  // Use HD image mapping — upgrades low-quality scraped thumbnails
+  // Use HD image mapping — upgrades low-quality API thumbnails
   const imageUrl = getBestImageUrl(cruise.image_url, cruise.ship_name, cruise.cruise_line)
 
   // Price freshness & urgency

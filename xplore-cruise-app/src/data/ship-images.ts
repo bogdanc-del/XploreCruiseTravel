@@ -2,7 +2,7 @@
 // HD Ship & Cruise Line Images
 // ============================================================
 // Maps ships and cruise lines to high-quality Unsplash images
-// Used as fallback/override when scraped images are low quality
+// Used as fallback/override when API-sourced images are low quality
 // ============================================================
 
 /**
@@ -206,7 +206,7 @@ export function getBestImageUrl(
     return getHDImage(shipName, cruiseLine) ?? undefined
   }
 
-  // If the image is from croaziere.net (scraped thumbnails = low quality), prefer HD
+  // If the image is from croaziere.net (API thumbnails = low quality), prefer HD
   if (originalUrl.includes('croaziere.net')) {
     return getHDImage(shipName, cruiseLine) ?? originalUrl
   }

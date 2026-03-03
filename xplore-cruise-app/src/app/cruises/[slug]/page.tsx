@@ -16,8 +16,8 @@ import ChatWidget from '@/components/chat/ChatWidget'
 import dynamic from 'next/dynamic'
 
 import RouteMapStatic from '@/components/cruise/RouteMapStatic'
-import { eurToRon } from '@/lib/supabase'
 import type { Cruise } from '@/lib/supabase'
+import { useExchangeRate } from '@/context/ExchangeRateContext'
 import { timeAgo, isPriceRecentlyChanged } from '@/lib/time-ago'
 import { trackCruiseDetailView, trackCtaClick, trackCtaImpression } from '@/lib/analytics'
 import { getAssignedVariant, CTA_VARIANTS, type CTAVariant } from '@/lib/ab-testing'
@@ -115,6 +115,7 @@ function apiToCruise(data: Record<string, unknown>): Cruise {
 function CruiseDetailContent() {
   const t = useT()
   const { locale } = useLocale()
+  const { rateWithMargin } = useExchangeRate()
   const params = useParams()
   const slug = params.slug as string
 
@@ -264,7 +265,7 @@ function CruiseDetailContent() {
     .sort((a, b) => new Date(a).getTime() - new Date(b).getTime())
   const hasMultipleDates = allDepartureDates.length > 1
   const priceEur = cruise.price_from
-  const priceRon = eurToRon(priceEur)
+  const priceRon = Math.round(priceEur * rateWithMargin)
 
   // Price tracking computed values
   const syncedAgo = timeAgo(cruise.last_synced_at, locale as 'en' | 'ro')
