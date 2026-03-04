@@ -15,7 +15,7 @@ const pages = [
 
 for (const pg of pages) {
   test(`Accessibility audit: ${pg.name} (${pg.path})`, async ({ page }) => {
-    await page.goto(pg.path, { waitUntil: 'networkidle' })
+    await page.goto(pg.path, { waitUntil: 'load' })
 
     const results = await new AxeBuilder({ page })
       .withTags(['wcag2a', 'wcag2aa'])
@@ -48,7 +48,7 @@ for (const pg of pages) {
 // Separate test to track color-contrast violations as non-blocking
 for (const pg of pages) {
   test(`Color contrast audit (non-blocking): ${pg.name}`, async ({ page }) => {
-    await page.goto(pg.path, { waitUntil: 'networkidle' })
+    await page.goto(pg.path, { waitUntil: 'load' })
 
     const results = await new AxeBuilder({ page })
       .withRules(['color-contrast'])

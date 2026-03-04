@@ -9,7 +9,8 @@ const pages = ['/', '/cruises', '/about', '/contact']
 
 for (const pagePath of pages) {
   test(`Internal links on ${pagePath} are valid`, async ({ page }) => {
-    await page.goto(pagePath, { waitUntil: 'networkidle' })
+    test.setTimeout(60_000)
+    await page.goto(pagePath, { waitUntil: 'load' })
 
     const links = await page.locator('a[href^="/"]').evaluateAll((anchors) =>
       [...new Set(anchors.map((a) => (a as HTMLAnchorElement).getAttribute('href')!))]
@@ -29,7 +30,7 @@ for (const pagePath of pages) {
 }
 
 test('CTAs: phone/email/WhatsApp links are correct', async ({ page }) => {
-  await page.goto('/contact', { waitUntil: 'networkidle' })
+  await page.goto('/contact', { waitUntil: 'load' })
 
   // Phone link
   const phoneLink = page.locator('a[href^="tel:"]').first()

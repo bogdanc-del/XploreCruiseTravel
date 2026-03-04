@@ -24,7 +24,7 @@ for (const route of routes) {
       }
     })
 
-    const response = await page.goto(route.path, { waitUntil: 'networkidle' })
+    const response = await page.goto(route.path, { waitUntil: 'load' })
     expect(response?.status()).toBeLessThan(400)
 
     // Filter out known benign errors (e.g., favicon, dev mode warnings)
@@ -40,12 +40,14 @@ for (const route of routes) {
 }
 
 test('Cruise detail page loads (first slug)', async ({ page }) => {
+  test.setTimeout(60_000)
   // Navigate to cruises, click the first card to get a valid slug
-  await page.goto('/cruises', { waitUntil: 'networkidle' })
+  await page.goto('/cruises', { waitUntil: 'load' })
+  await page.locator('a[href^="/cruises/"]').first().waitFor({ timeout: 15_000 })
   const firstCard = page.locator('a[href^="/cruises/"]').first()
   const href = await firstCard.getAttribute('href')
   expect(href).toBeTruthy()
 
-  const response = await page.goto(href!, { waitUntil: 'networkidle' })
+  const response = await page.goto(href!, { waitUntil: 'load' })
   expect(response?.status()).toBeLessThan(400)
 })

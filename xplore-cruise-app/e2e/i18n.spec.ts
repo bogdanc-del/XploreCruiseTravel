@@ -23,7 +23,7 @@ async function clickLangToggle(page: Page) {
 
 test.describe('i18n / Language switch', () => {
   test('Language switch on homepage preserves route', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'networkidle' })
+    await page.goto('/', { waitUntil: 'load' })
     await page.waitForTimeout(500) // Wait for hydration
 
     // Default locale is RO — body should contain "Croaziere" text somewhere visible
@@ -41,7 +41,7 @@ test.describe('i18n / Language switch', () => {
   })
 
   test('Language switch on /cruises preserves route', async ({ page }) => {
-    await page.goto('/cruises', { waitUntil: 'networkidle' })
+    await page.goto('/cruises', { waitUntil: 'load' })
     await page.waitForTimeout(500)
 
     // Switch to EN
@@ -60,7 +60,7 @@ test.describe('i18n / Language switch', () => {
   })
 
   test('Language switch on /contact preserves route', async ({ page }) => {
-    await page.goto('/contact', { waitUntil: 'networkidle' })
+    await page.goto('/contact', { waitUntil: 'load' })
     await page.waitForTimeout(500)
 
     await clickLangToggle(page)
@@ -71,7 +71,7 @@ test.describe('i18n / Language switch', () => {
   })
 
   test('No visible translation keys in RO mode', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'networkidle' })
+    await page.goto('/', { waitUntil: 'load' })
     await page.waitForTimeout(500)
 
     // Check that no raw translation keys (snake_case patterns) are visible in the body
@@ -82,7 +82,7 @@ test.describe('i18n / Language switch', () => {
   })
 
   test('No visible translation keys in EN mode', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'networkidle' })
+    await page.goto('/', { waitUntil: 'load' })
     await page.waitForTimeout(500)
 
     // Switch to EN

@@ -8,22 +8,24 @@ import { test, expect } from '@playwright/test'
  */
 
 test.describe('Lead Capture Form', () => {
+  test.setTimeout(60_000)
+
   test.beforeEach(async ({ page }) => {
     // Navigate to a cruise detail page
-    await page.goto('/cruises', { waitUntil: 'networkidle' })
-    await page.waitForTimeout(500)
+    await page.goto('/cruises', { waitUntil: 'load' })
+    await page.locator('a[href^="/cruises/"]').first().waitFor({ timeout: 15_000 })
 
     // Click on the first cruise card link
     const firstCard = page.locator('a[href^="/cruises/"]').first()
     await firstCard.click()
-    await page.waitForLoadState('networkidle')
-    await page.waitForTimeout(500)
+    await page.waitForLoadState('load')
+    await page.waitForTimeout(2000)
   })
 
   test('"Request an offer" button opens the lead capture form', async ({ page }) => {
     // Find and click the "Solicita oferta" / "Request an offer" button
     const offerBtn = page.locator(
-      'button:has-text("Solicita"), button:has-text("Request an offer"), button:has-text("Solicită")'
+      'button:has-text("Solicită ofertă"), button:has-text("Request an offer"), button:has-text("Obține preț"), button:has-text("Get personalized"), button:has-text("Vorbește cu"), button:has-text("Talk to")'
     )
     await offerBtn.first().click()
 
@@ -41,7 +43,7 @@ test.describe('Lead Capture Form', () => {
   test('Validation: empty fields show error', async ({ page }) => {
     // Open lead form
     const offerBtn = page.locator(
-      'button:has-text("Solicita"), button:has-text("Request an offer"), button:has-text("Solicită")'
+      'button:has-text("Solicită ofertă"), button:has-text("Request an offer"), button:has-text("Obține preț"), button:has-text("Get personalized"), button:has-text("Vorbește cu"), button:has-text("Talk to")'
     )
     await offerBtn.first().click()
     await page.waitForTimeout(500)
@@ -62,7 +64,7 @@ test.describe('Lead Capture Form', () => {
   test('Validation: invalid email shows error', async ({ page }) => {
     // Open lead form
     const offerBtn = page.locator(
-      'button:has-text("Solicita"), button:has-text("Request an offer"), button:has-text("Solicită")'
+      'button:has-text("Solicită ofertă"), button:has-text("Request an offer"), button:has-text("Obține preț"), button:has-text("Get personalized"), button:has-text("Vorbește cu"), button:has-text("Talk to")'
     )
     await offerBtn.first().click()
     await page.waitForTimeout(500)
@@ -88,7 +90,7 @@ test.describe('Lead Capture Form', () => {
   test('Validation: missing GDPR consent shows error', async ({ page }) => {
     // Open lead form
     const offerBtn = page.locator(
-      'button:has-text("Solicita"), button:has-text("Request an offer"), button:has-text("Solicită")'
+      'button:has-text("Solicită ofertă"), button:has-text("Request an offer"), button:has-text("Obține preț"), button:has-text("Get personalized"), button:has-text("Vorbește cu"), button:has-text("Talk to")'
     )
     await offerBtn.first().click()
     await page.waitForTimeout(500)
@@ -113,7 +115,7 @@ test.describe('Lead Capture Form', () => {
 
   test('Escape key closes the modal', async ({ page }) => {
     const offerBtn = page.locator(
-      'button:has-text("Solicita"), button:has-text("Request an offer"), button:has-text("Solicită")'
+      'button:has-text("Solicită ofertă"), button:has-text("Request an offer"), button:has-text("Obține preț"), button:has-text("Get personalized"), button:has-text("Vorbește cu"), button:has-text("Talk to")'
     )
     await offerBtn.first().click()
 
@@ -129,7 +131,7 @@ test.describe('Lead Capture Form', () => {
 
     // Open lead form
     const offerBtn = page.locator(
-      'button:has-text("Solicita"), button:has-text("Request an offer"), button:has-text("Solicită")'
+      'button:has-text("Solicită ofertă"), button:has-text("Request an offer"), button:has-text("Obține preț"), button:has-text("Get personalized"), button:has-text("Vorbește cu"), button:has-text("Talk to")'
     )
     await offerBtn.first().click()
     await page.waitForTimeout(500)
@@ -175,7 +177,7 @@ test.describe('Lead Capture Form', () => {
     // Get the current URL and append ?offer=1
     const currentUrl = page.url()
     const separator = currentUrl.includes('?') ? '&' : '?'
-    await page.goto(`${currentUrl}${separator}offer=1`, { waitUntil: 'networkidle' })
+    await page.goto(`${currentUrl}${separator}offer=1`, { waitUntil: 'load' })
     await page.waitForTimeout(1000)
 
     // Modal should auto-open

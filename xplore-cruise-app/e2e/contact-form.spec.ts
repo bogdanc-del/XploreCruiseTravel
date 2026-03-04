@@ -6,7 +6,7 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Contact form', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/contact', { waitUntil: 'networkidle' })
+    await page.goto('/contact', { waitUntil: 'load' })
   })
 
   test('shows validation errors for empty required fields', async ({ page }) => {
