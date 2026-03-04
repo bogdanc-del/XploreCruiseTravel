@@ -19,6 +19,71 @@ interface RoomEntry {
   price: number
 }
 
+// ============================================================
+// Smart cabin description generator — based on room name keywords
+// ============================================================
+
+function getCabinSubTypeFeatures(name: string, category: keyof CabinImageSet, locale: 'en' | 'ro'): string[] {
+  const low = name.toLowerCase()
+  const features: string[] = []
+
+  // Guarantee-specific
+  if (low.includes('garantat') || low.includes('guarante')) {
+    features.push(locale === 'ro'
+      ? 'Cabina este alocată de companie — nu poți alege locația exactă'
+      : 'Cabin assigned by the cruise line — exact location cannot be chosen')
+    features.push(locale === 'ro' ? 'Cel mai bun preț disponibil' : 'Best available price')
+  }
+
+  // Obstructed view
+  if (low.includes('obstru') || low.includes('obstructed') || low.includes('restricted')) {
+    features.push(locale === 'ro'
+      ? 'Vedere parțial obstrucționată (barcă de salvare sau structură)'
+      : 'Partially obstructed view (lifeboat or structure)')
+  }
+
+  // Based on normalized category
+  switch (category) {
+    case 'interior':
+      features.push(locale === 'ro' ? 'Pat dublu sau 2 paturi twin' : 'Double or twin beds')
+      features.push(locale === 'ro' ? 'Baie privată cu duș' : 'Private bathroom with shower')
+      features.push(locale === 'ro' ? 'TV, aer condiționat, seif' : 'TV, air conditioning, safe')
+      if (!low.includes('garantat') && !low.includes('guarante')) {
+        features.push(locale === 'ro' ? 'Aprox. 12-17 m²' : 'Approx. 12-17 sqm')
+      }
+      break
+    case 'ocean_view':
+      features.push(locale === 'ro' ? 'Fereastră sau hublou cu vedere la mare' : 'Window or porthole with sea views')
+      features.push(locale === 'ro' ? 'Pat dublu sau 2 paturi twin' : 'Double or twin beds')
+      features.push(locale === 'ro' ? 'Baie privată cu duș' : 'Private bathroom with shower')
+      features.push(locale === 'ro' ? 'Aprox. 15-20 m²' : 'Approx. 15-20 sqm')
+      break
+    case 'balcony':
+      features.push(locale === 'ro' ? 'Balcon privat cu mobilier' : 'Private furnished balcony')
+      features.push(locale === 'ro' ? 'Vedere panoramică la mare' : 'Panoramic sea view')
+      features.push(locale === 'ro' ? 'Pat dublu sau 2 paturi twin' : 'Double or twin beds')
+      features.push(locale === 'ro' ? 'Baie privată cu duș' : 'Private bathroom with shower')
+      features.push(locale === 'ro' ? 'Aprox. 20-30 m² (incl. balcon)' : 'Approx. 20-30 sqm (incl. balcony)')
+      break
+    case 'suite':
+      features.push(locale === 'ro' ? 'Zonă de zi separată' : 'Separate living area')
+      features.push(locale === 'ro' ? 'Balcon privat (de obicei mai mare)' : 'Private balcony (usually larger)')
+      features.push(locale === 'ro' ? 'Îmbarcare prioritară' : 'Priority boarding')
+      features.push(locale === 'ro' ? 'Servicii exclusive la bord' : 'Exclusive onboard services')
+      if (low.includes('grand') || low.includes('royal') || low.includes('owner')) {
+        features.push(locale === 'ro' ? 'Serviciu de butler' : 'Butler service')
+        features.push(locale === 'ro' ? 'Acces lounge privat' : 'Private lounge access')
+      }
+      if (low.includes('yacht') || low.includes('haven')) {
+        features.push(locale === 'ro' ? 'Acces exclusiv la zona Yacht Club/Haven' : 'Exclusive Yacht Club/Haven area access')
+        features.push(locale === 'ro' ? 'Restaurant și bar privat' : 'Private restaurant and bar')
+      }
+      break
+  }
+
+  return features
+}
+
 export interface SelectedCabin {
   name: string
   category: string
@@ -39,6 +104,13 @@ interface CabinSelectorProps {
 // Group rooms by normalized category for the selected date
 // ============================================================
 
+/** Sub-type within a category (e.g., "Cabina interioara garantata" within Interior) */
+interface CabinSubType {
+  name: string          // API room name (e.g., "Cabina interioara garantata")
+  code: string          // API category code (e.g., "IS")
+  price: number         // Best price for this sub-type
+}
+
 interface CabinGroup {
   category: keyof CabinImageSet
   label: string
@@ -47,6 +119,7 @@ interface CabinGroup {
   cabinCount: number
   rooms: RoomEntry[]
   image: string
+  subTypes: CabinSubType[]  // Individual sub-categories within this group
 }
 
 function groupRoomsByCategory(
@@ -58,10 +131,10 @@ function groupRoomsByCategory(
   // Filter rooms for the selected date
   const dateRooms = rooms.filter(r => r.date === selectedDate && r.price > 0)
 
-  // Group by normalized category
+  // Group by normalized category (using room name for accurate detection)
   const groups = new Map<keyof CabinImageSet, RoomEntry[]>()
   for (const room of dateRooms) {
-    const cat = normalizeCabinCategory(room.category)
+    const cat = normalizeCabinCategory(room.category, room.name)
     const arr = groups.get(cat)
     if (arr) arr.push(room)
     else groups.set(cat, [room])
@@ -74,6 +147,18 @@ function groupRoomsByCategory(
     .map(cat => {
       const rms = groups.get(cat)!
       const priceFrom = Math.min(...rms.map(r => r.price))
+
+      // Build sub-types: group by room name within this category
+      const subMap = new Map<string, { name: string; code: string; price: number }>()
+      for (const r of rms) {
+        const key = r.name || r.category
+        const existing = subMap.get(key)
+        if (!existing || r.price < existing.price) {
+          subMap.set(key, { name: r.name || r.category, code: r.category, price: r.price })
+        }
+      }
+      const subTypes = [...subMap.values()].sort((a, b) => a.price - b.price)
+
       return {
         category: cat,
         label: getCabinCategoryLabel(cat, locale),
@@ -82,6 +167,7 @@ function groupRoomsByCategory(
         cabinCount: rms.length,
         rooms: rms,
         image: getCabinImage(cruiseLine, cat),
+        subTypes,
       }
     })
 }
@@ -158,8 +244,8 @@ export default function CabinSelector({
   }
 
   const selectLabel = locale === 'ro' ? 'Selectează' : 'Select'
-  const selectedLabel = locale === 'ro' ? 'Selectat ✓' : 'Selected ✓'
   const deselectLabel = locale === 'ro' ? 'Deselectează' : 'Deselect'
+  const featuresTitle = locale === 'ro' ? 'Ce include cabina' : 'Cabin features'
 
   return (
     <div className="space-y-4">
@@ -171,6 +257,12 @@ export default function CabinSelector({
         {cabinGroups.map(group => {
           const isSelected = selectedCategory === group.category
           const priceRon = Math.round(group.priceFrom * rateWithMargin)
+          // Get features for the cheapest sub-type in this category
+          const categoryFeatures = getCabinSubTypeFeatures(
+            group.subTypes[0]?.name || '',
+            group.category,
+            locale as 'en' | 'ro'
+          )
 
           return (
             <div
@@ -208,18 +300,52 @@ export default function CabinSelector({
                 {/* Category label overlay */}
                 <div className="absolute bottom-0 left-0 right-0 p-3">
                   <p className="text-white font-semibold text-sm">{group.label}</p>
-                  <p className="text-white/70 text-xs">
-                    {group.cabinCount} {locale === 'ro' ? 'opțiuni' : 'options'}
-                  </p>
                 </div>
               </div>
 
-              {/* Description + Price + Select Button */}
+              {/* Description + Sub-types + Features + Price + Select Button */}
               <div className="p-3">
-                <p className="text-[11px] text-navy-500 leading-snug mb-2 line-clamp-2">
+                <p className="text-[11px] text-navy-500 leading-snug mb-3 line-clamp-2">
                   {group.description}
                 </p>
-                <div className="flex items-end justify-between gap-2">
+
+                {/* Features panel — always visible, shows what the cabin includes */}
+                {categoryFeatures.length > 0 && (
+                  <div className="mb-3 py-2 px-2.5 rounded-lg bg-navy-50/60 border border-navy-100">
+                    <p className="text-[10px] font-semibold text-navy-400 uppercase tracking-wider mb-1.5">
+                      {featuresTitle}
+                    </p>
+                    <ul className="space-y-1">
+                      {categoryFeatures.map((feat, i) => (
+                        <li key={i} className="flex items-start gap-1.5 text-[11px] text-navy-600 leading-snug">
+                          <svg className="w-3 h-3 text-gold-500 flex-shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clipRule="evenodd" />
+                          </svg>
+                          <span>{feat}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {/* Sub-types list — shows individual cabin types with their prices */}
+                {group.subTypes.length > 1 && (
+                  <div className="mb-3 space-y-1.5">
+                    <p className="text-[10px] font-semibold text-navy-400 uppercase tracking-wider">
+                      {locale === 'ro' ? 'Tipuri disponibile' : 'Available types'}
+                    </p>
+                    {group.subTypes.map((sub, idx) => (
+                      <div key={idx} className="flex items-center justify-between gap-2 text-xs">
+                        <span className="text-navy-600 truncate">{sub.name}</span>
+                        <span className="font-semibold text-navy-800 whitespace-nowrap">
+                          &euro;{sub.price.toLocaleString()}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                <div className="flex items-end justify-between gap-2 pt-2 border-t border-navy-100">
                   <div>
                     <p className="text-xs text-navy-400">
                       {t('cruise_from', locale)}
