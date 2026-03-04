@@ -30,6 +30,7 @@ import BeveragePackageTable from '@/components/cruise/BeveragePackageTable'
 import CruiseLineTerms from '@/components/cruise/CruiseLineTerms'
 import CabinSelector from '@/components/cruise/CabinSelector'
 import type { SelectedCabin } from '@/components/cruise/CabinSelector'
+import VideoEmbed from '@/components/cruise/VideoEmbed'
 import { CRUISE_LINE_TERMS } from '@/data/cruise-line-terms'
 import { getShipInfo } from '@/data/ship-images'
 import { getCruiseBySlugLocal, getSimilarCruises, FEATURED_CRUISES } from '@/data/cruises-database'
@@ -549,23 +550,17 @@ function CruiseDetailContent() {
                         )}
                       </div>
 
-                      {/* YouTube video embed */}
+                      {/* YouTube video embed — uses lazy-load VideoEmbed component */}
                       {shipInfo.youtube_id && (
                         <div className="border-t border-navy-200">
                           <div className="p-4">
                             <p className="text-xs font-medium text-navy-500 uppercase tracking-wider mb-3">
                               {t('ship_video' as 'loading')}
                             </p>
-                            <div className="relative w-full rounded-lg overflow-hidden" style={{ aspectRatio: '16 / 9' }}>
-                              <iframe
-                                src={`https://www.youtube.com/embed/${shipInfo.youtube_id}?rel=0`}
-                                title={`${cruise.ship_name} tour video`}
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                allowFullScreen
-                                className="absolute inset-0 w-full h-full"
-                                loading="lazy"
-                              />
-                            </div>
+                            <VideoEmbed
+                              videoId={shipInfo.youtube_id}
+                              title={`${cruise.ship_name} — ${locale === 'ro' ? 'Tur Virtual' : 'Ship Tour'}`}
+                            />
                           </div>
                         </div>
                       )}
