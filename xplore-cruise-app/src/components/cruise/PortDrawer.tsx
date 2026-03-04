@@ -7,9 +7,20 @@ import { getPortInfo } from '@/data/ports'
 import VideoEmbed from './VideoEmbed'
 import ExcursionCard from './ExcursionCard'
 
+/** API excursion from enriched data (compact format expanded by route) */
+interface ApiExcursion {
+  id: number
+  name: string
+  description?: string
+  pdf: string
+  image: string
+}
+
 interface PortDrawerProps {
   portName: string | null
   onClose: () => void
+  /** API excursions for this cruise (optional, merged with hardcoded port excursions) */
+  apiExcursions?: ApiExcursion[]
 }
 
 /**
@@ -17,7 +28,7 @@ interface PortDrawerProps {
  * Desktop: slides from right. Mobile: slides from bottom.
  * Contains: photo, description, highlights, YouTube video, excursion cards.
  */
-export default function PortDrawer({ portName, onClose }: PortDrawerProps) {
+export default function PortDrawer({ portName, onClose, apiExcursions = [] }: PortDrawerProps) {
   const { locale } = useLocale()
   const drawerRef = useRef<HTMLDivElement>(null)
   const previousFocusRef = useRef<HTMLElement | null>(null)
@@ -83,16 +94,56 @@ export default function PortDrawer({ portName, onClose }: PortDrawerProps) {
 
   if (!isOpen) return null
 
-  // If we don't have port info, show a minimal drawer
+  // If we don't have port info, show a minimal drawer with API excursions if available
   if (!portInfo) {
     return (
       <DrawerShell ref={drawerRef} onClose={onClose}>
-        <div className="p-6 text-center">
-          <p className="text-navy-500">
+        {/* Header — port name only (no image available) */}
+        <div className="relative h-28 sm:h-32 bg-gradient-to-br from-navy-800 to-navy-900 flex-shrink-0">
+          {/* Close button */}
+          <button
+            onClick={onClose}
+            className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-white hover:bg-white/30 transition-colors"
+            aria-label={locale === 'ro' ? 'Inchide' : 'Close'}
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+            </svg>
+          </button>
+          <div className="absolute bottom-0 left-0 right-0 p-4">
+            <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mb-2">
+              <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+              </svg>
+            </div>
+            <h2 className="text-xl font-bold text-white font-[family-name:var(--font-heading)]">
+              {portName}
+            </h2>
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-5 space-y-5">
+          <p className="text-sm text-navy-500 italic">
             {locale === 'ro'
-              ? `Informatii despre ${portName} vor fi disponibile in curand.`
-              : `Information about ${portName} will be available soon.`}
+              ? 'Informatii detaliate despre acest port vor fi disponibile in curand.'
+              : 'Detailed information about this port will be available soon.'}
           </p>
+
+          {/* Show API excursions if available */}
+          {apiExcursions.length > 0 && (
+            <div>
+              <h3 className="text-sm font-semibold text-navy-800 mb-3 flex items-center gap-1.5">
+                <CompassIcon />
+                {locale === 'ro' ? 'Excursii disponibile' : 'Available Excursions'}
+              </h3>
+              <div className="space-y-3">
+                {apiExcursions.map((exc) => (
+                  <ApiExcursionItem key={exc.id} excursion={exc} locale={locale} />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </DrawerShell>
     )
@@ -175,7 +226,7 @@ export default function PortDrawer({ portName, onClose }: PortDrawerProps) {
           </div>
         )}
 
-        {/* Excursions */}
+        {/* Excursions — hardcoded port data */}
         {portInfo.excursions.length > 0 && (
           <div>
             <h3 className="text-sm font-semibold text-navy-800 mb-3 flex items-center gap-1.5">
@@ -185,6 +236,21 @@ export default function PortDrawer({ portName, onClose }: PortDrawerProps) {
             <div className="space-y-3">
               {portInfo.excursions.map((exc, i) => (
                 <ExcursionCard key={i} excursion={exc} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* API Excursions — from cruise-specific enriched data */}
+        {apiExcursions.length > 0 && (
+          <div>
+            <h3 className="text-sm font-semibold text-navy-800 mb-3 flex items-center gap-1.5">
+              <CompassIcon />
+              {locale === 'ro' ? 'Excursii opționale' : 'Optional Excursions'}
+            </h3>
+            <div className="space-y-3">
+              {apiExcursions.map((exc) => (
+                <ApiExcursionItem key={exc.id} excursion={exc} locale={locale} />
               ))}
             </div>
           </div>
@@ -220,6 +286,10 @@ const DrawerShell = forwardRef<
         aria-modal="true"
         className="fixed z-[61] bg-white shadow-2xl flex flex-col inset-x-0 bottom-0 max-h-[85vh] rounded-t-2xl sm:inset-y-0 sm:right-0 sm:left-auto sm:w-[480px] sm:max-h-none sm:rounded-none sm:rounded-l-2xl animate-slide-in-right"
       >
+        {/* Mobile drag handle indicator */}
+        <div className="sm:hidden flex justify-center pt-2 pb-0 flex-shrink-0">
+          <div className="w-10 h-1 rounded-full bg-navy-300" />
+        </div>
         {children}
       </div>
 
@@ -252,6 +322,44 @@ const DrawerShell = forwardRef<
     </>
   )
 })
+
+// API Excursion Item — compact card for excursions from enriched data
+function ApiExcursionItem({ excursion, locale }: { excursion: ApiExcursion; locale: string }) {
+  return (
+    <div className="flex gap-3 rounded-xl border border-navy-200 bg-white p-2.5 hover:shadow-md hover:border-gold-300 transition-all duration-200">
+      {excursion.image && (
+        <div className="relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-navy-100">
+          <Image
+            src={excursion.image}
+            alt={excursion.name}
+            fill
+            sizes="80px"
+            className="object-cover"
+            onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
+          />
+        </div>
+      )}
+      <div className="flex-1 min-w-0 flex flex-col justify-between py-0.5">
+        <p className="font-semibold text-navy-900 text-sm leading-tight line-clamp-2">
+          {excursion.name}
+        </p>
+        {excursion.pdf && (
+          <a
+            href={excursion.pdf}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 text-xs text-gold-600 hover:text-gold-700 font-medium mt-1"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+            </svg>
+            {locale === 'ro' ? 'Detalii (PDF)' : 'Details (PDF)'}
+          </a>
+        )}
+      </div>
+    </div>
+  )
+}
 
 // Icons
 function StarIcon() {

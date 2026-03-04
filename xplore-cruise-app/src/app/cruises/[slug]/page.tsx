@@ -1388,6 +1388,7 @@ function CruiseDetailContent() {
       <PortDrawer
         portName={selectedPort}
         onClose={() => setSelectedPort(null)}
+        apiExcursions={excursions}
       />
 
       <LeadCaptureForm
