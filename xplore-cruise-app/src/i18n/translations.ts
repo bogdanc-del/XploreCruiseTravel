@@ -349,6 +349,23 @@ export const translations = {
     children_policy_api: 'Children Policy (Cruise-Specific)',
     children_policy_source: 'Source: cruise line official terms for this specific itinerary.',
 
+    // GDPR Terms Section
+    gdpr_section_title: 'Data Protection (GDPR)',
+    gdpr_commitment: 'XPLORE CRUISE TRAVEL SRL is committed to protecting your personal data in accordance with Regulation (EU) 2016/679 (GDPR).',
+    gdpr_rights_title: 'Your Rights',
+    gdpr_right_access: 'Right of access',
+    gdpr_right_rectification: 'Right to rectification',
+    gdpr_right_erasure: 'Right to erasure',
+    gdpr_right_restrict: 'Right to restrict processing',
+    gdpr_right_portability: 'Right to data portability',
+    gdpr_right_object: 'Right to object',
+    gdpr_contact: 'To exercise your rights, contact us at xplorecruisetravel@gmail.com',
+    gdpr_full_policy: 'Full GDPR Policy',
+
+    // Itinerary layout
+    itinerary_ports_title: 'Ports of Call',
+    itinerary_route_title: 'Route Map',
+
     // Common
     loading: 'Loading...',
     error: 'Something went wrong',
@@ -705,6 +722,23 @@ export const translations = {
     // Children's Policy
     children_policy_api: 'Politica pentru Copii (Specifică Croazierei)',
     children_policy_source: 'Sursa: termenii oficiali ai companiei de croaziere pentru acest itinerariu specific.',
+
+    // GDPR Terms Section
+    gdpr_section_title: 'Protecția Datelor (GDPR)',
+    gdpr_commitment: 'XPLORE CRUISE TRAVEL SRL se angajează să protejeze datele dumneavoastră personale în conformitate cu Regulamentul (UE) 2016/679 (GDPR).',
+    gdpr_rights_title: 'Drepturile Dumneavoastră',
+    gdpr_right_access: 'Dreptul de acces',
+    gdpr_right_rectification: 'Dreptul la rectificare',
+    gdpr_right_erasure: 'Dreptul la ștergere',
+    gdpr_right_restrict: 'Dreptul la restricționarea prelucrării',
+    gdpr_right_portability: 'Dreptul la portabilitatea datelor',
+    gdpr_right_object: 'Dreptul la opoziție',
+    gdpr_contact: 'Pentru a vă exercita drepturile, contactați-ne la xplorecruisetravel@gmail.com',
+    gdpr_full_policy: 'Politica GDPR Completă',
+
+    // Itinerary layout
+    itinerary_ports_title: 'Porturi de Escală',
+    itinerary_route_title: 'Harta Traseului',
 
     // Common
     loading: 'Se încarcă...',

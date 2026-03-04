@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useMemo } from 'react'
 import { useT, useLocale } from '@/i18n/context'
 
 interface Message {
@@ -8,6 +8,107 @@ interface Message {
   role: 'user' | 'assistant'
   content: string
   timestamp: Date
+}
+
+/**
+ * Simple markdown-to-HTML converter for chatbot messages.
+ * Handles: **bold**, *italic*, [links](url), `code`, bullet lists, numbered lists, line breaks
+ */
+function renderMarkdown(text: string): string {
+  let html = text
+    // Escape HTML entities first
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+
+  // Code blocks (```)
+  html = html.replace(/```([\s\S]*?)```/g, '<pre class="bg-navy-100 rounded px-2 py-1 my-1 text-xs overflow-x-auto"><code>$1</code></pre>')
+
+  // Inline code (`text`)
+  html = html.replace(/`([^`]+)`/g, '<code class="bg-navy-100 rounded px-1 py-0.5 text-xs">$1</code>')
+
+  // Bold (**text** or __text__)
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong class="font-semibold">$1</strong>')
+  html = html.replace(/__(.+?)__/g, '<strong class="font-semibold">$1</strong>')
+
+  // Italic (*text* or _text_) — be careful not to match already-processed **
+  html = html.replace(/(?<!\*)\*(?!\*)(.+?)(?<!\*)\*(?!\*)/g, '<em>$1</em>')
+
+  // Links [text](url)
+  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer" class="text-gold-600 underline hover:text-gold-700">$1</a>')
+
+  // Process line by line for lists
+  const lines = html.split('\n')
+  const processed: string[] = []
+  let inList = false
+  let listType: 'ul' | 'ol' = 'ul'
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i]
+    const bulletMatch = line.match(/^[\s]*[-•*]\s+(.+)/)
+    const numberMatch = line.match(/^[\s]*(\d+)[.)]\s+(.+)/)
+
+    if (bulletMatch) {
+      if (!inList || listType !== 'ul') {
+        if (inList) processed.push(listType === 'ul' ? '</ul>' : '</ol>')
+        processed.push('<ul class="list-disc ml-4 space-y-0.5">')
+        inList = true
+        listType = 'ul'
+      }
+      processed.push(`<li>${bulletMatch[1]}</li>`)
+    } else if (numberMatch) {
+      if (!inList || listType !== 'ol') {
+        if (inList) processed.push(listType === 'ul' ? '</ul>' : '</ol>')
+        processed.push('<ol class="list-decimal ml-4 space-y-0.5">')
+        inList = true
+        listType = 'ol'
+      }
+      processed.push(`<li>${numberMatch[2]}</li>`)
+    } else {
+      if (inList) {
+        processed.push(listType === 'ul' ? '</ul>' : '</ol>')
+        inList = false
+      }
+      // Regular line — convert double newlines to paragraph breaks
+      if (line.trim() === '') {
+        processed.push('<br/>')
+      } else {
+        processed.push(line)
+      }
+    }
+  }
+  if (inList) {
+    processed.push(listType === 'ul' ? '</ul>' : '</ol>')
+  }
+
+  return processed.join('\n')
+}
+
+/** Memoized component that renders a single chat message with markdown support */
+function ChatMessage({ msg }: { msg: Message }) {
+  const html = useMemo(() => {
+    if (msg.role === 'user') return null
+    return renderMarkdown(msg.content)
+  }, [msg.content, msg.role])
+
+  return (
+    <div className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+      <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+        msg.role === 'user'
+          ? 'bg-gradient-to-br from-gold-400 to-gold-500 text-white rounded-br-md'
+          : 'bg-white text-navy-800 shadow-sm border border-navy-100 rounded-bl-md'
+      }`}>
+        {msg.role === 'user' ? (
+          <div className="whitespace-pre-wrap">{msg.content}</div>
+        ) : (
+          <div
+            className="chat-markdown [&_strong]:font-semibold [&_em]:italic [&_a]:text-gold-600 [&_a]:underline [&_code]:bg-navy-100 [&_code]:rounded [&_code]:px-1 [&_code]:text-xs [&_pre]:my-1 [&_ul]:list-disc [&_ul]:ml-4 [&_ol]:list-decimal [&_ol]:ml-4 [&_li]:mb-0.5 [&_br]:block"
+            dangerouslySetInnerHTML={{ __html: html || msg.content }}
+          />
+        )}
+      </div>
+    </div>
+  )
 }
 
 export default function ChatWidget() {
@@ -139,15 +240,7 @@ export default function ChatWidget() {
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-navy-50/50">
             {messages.map(msg => (
-              <div key={msg.id} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
-                  msg.role === 'user'
-                    ? 'bg-gradient-to-br from-gold-400 to-gold-500 text-white rounded-br-md'
-                    : 'bg-white text-navy-800 shadow-sm border border-navy-100 rounded-bl-md'
-                }`}>
-                  <div className="whitespace-pre-wrap">{msg.content}</div>
-                </div>
-              </div>
+              <ChatMessage key={msg.id} msg={msg} />
             ))}
             {isLoading && (
               <div className="flex justify-start">

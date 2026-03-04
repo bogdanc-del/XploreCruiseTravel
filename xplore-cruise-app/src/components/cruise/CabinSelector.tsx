@@ -157,6 +157,10 @@ export default function CabinSelector({
     )
   }
 
+  const selectLabel = locale === 'ro' ? 'Selectează' : 'Select'
+  const selectedLabel = locale === 'ro' ? 'Selectat ✓' : 'Selected ✓'
+  const deselectLabel = locale === 'ro' ? 'Deselectează' : 'Deselect'
+
   return (
     <div className="space-y-4">
       <p className="text-sm text-navy-500">
@@ -169,13 +173,12 @@ export default function CabinSelector({
           const priceRon = Math.round(group.priceFrom * rateWithMargin)
 
           return (
-            <button
+            <div
               key={group.category}
-              onClick={() => handleSelect(group)}
-              className={`relative overflow-hidden rounded-xl border-2 text-left transition-all duration-200 hover:shadow-md ${
+              className={`relative overflow-hidden rounded-xl border-2 text-left transition-all duration-200 ${
                 isSelected
                   ? 'border-gold-500 shadow-lg ring-2 ring-gold-200'
-                  : 'border-navy-200 hover:border-gold-300'
+                  : 'border-navy-200 hover:border-gold-300 hover:shadow-md'
               }`}
             >
               {/* Cabin image */}
@@ -211,27 +214,42 @@ export default function CabinSelector({
                 </div>
               </div>
 
-              {/* Description + Price */}
+              {/* Description + Price + Select Button */}
               <div className="p-3">
                 <p className="text-[11px] text-navy-500 leading-snug mb-2 line-clamp-2">
                   {group.description}
                 </p>
-                <p className="text-xs text-navy-400">
-                  {t('cruise_from', locale)}
-                </p>
-                <p className="text-lg font-bold text-navy-900">
-                  &euro;{group.priceFrom.toLocaleString()}
-                  <span className="text-xs font-normal text-navy-400">
-                    {t('cruise_per_person', locale)}
-                  </span>
-                </p>
-                {locale === 'ro' && (
-                  <p className="text-xs text-gold-600">
-                    ~{priceRon.toLocaleString()} Lei
-                  </p>
-                )}
+                <div className="flex items-end justify-between gap-2">
+                  <div>
+                    <p className="text-xs text-navy-400">
+                      {t('cruise_from', locale)}
+                    </p>
+                    <p className="text-lg font-bold text-navy-900">
+                      &euro;{group.priceFrom.toLocaleString()}
+                      <span className="text-xs font-normal text-navy-400">
+                        {t('cruise_per_person', locale)}
+                      </span>
+                    </p>
+                    {locale === 'ro' && (
+                      <p className="text-xs text-gold-600">
+                        ~{priceRon.toLocaleString()} Lei
+                      </p>
+                    )}
+                  </div>
+                  {/* Explicit Select / Deselect button */}
+                  <button
+                    onClick={() => handleSelect(group)}
+                    className={`flex-shrink-0 px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-200 ${
+                      isSelected
+                        ? 'bg-gold-500 text-white hover:bg-gold-600 active:scale-95'
+                        : 'bg-navy-700 text-white hover:bg-navy-800 active:scale-95'
+                    }`}
+                  >
+                    {isSelected ? deselectLabel : selectLabel}
+                  </button>
+                </div>
               </div>
-            </button>
+            </div>
           )
         })}
       </div>

@@ -345,10 +345,12 @@ function CruiseDetailContent() {
   // Ship info (description, specs, video)
   const shipInfo = getShipInfo(cruise.ship_name)
 
+  // Only show Cabins tab when rooms data is available
+  const hasCabinData = rooms.length > 0
   const tabs: { key: TabKey; label: string }[] = [
     { key: 'overview', label: t('detail_overview') },
     { key: 'itinerary', label: t('detail_itinerary') },
-    { key: 'cabins', label: t('cabin_select_title' as 'detail_cabins') },
+    ...(hasCabinData ? [{ key: 'cabins' as TabKey, label: t('cabin_select_title' as 'detail_cabins') }] : []),
     { key: 'included', label: t('detail_included') },
     { key: 'beverages', label: t('detail_beverages') },
     { key: 'cancellation', label: t('detail_cancellation') },
@@ -575,77 +577,86 @@ function CruiseDetailContent() {
               {/* Tab Content: Itinerary — enhanced with PortHighlight */}
               {activeTab === 'itinerary' && (
                 <div>
-                  {/* Route Map — static image with interactive fallback */}
-                  <RouteMapStatic
-                    routeMapUrl={cruise.route_map_url}
-                    departurePort={cruise.departure_port}
-                    portsOfCall={cruise.ports_of_call}
-                    onPortClick={handlePortClick}
-                    isOneWay={isOneWay}
-                    className="mb-8"
-                  />
+                  {/* 2-column layout: ports timeline left, route map right on desktop */}
+                  <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-8">
+                    {/* Left: Ports Timeline */}
+                    <div>
+                      <h3 className="text-lg font-bold text-navy-900 font-[family-name:var(--font-heading)] mb-6">
+                        {t('itinerary_ports_title' as 'cruise_ports')}
+                      </h3>
+                      <div className="relative">
+                        {/* Timeline line */}
+                        <div className="absolute left-4 top-2 bottom-2 w-0.5 bg-navy-200" />
 
-                  <h3 className="text-lg font-bold text-navy-900 font-[family-name:var(--font-heading)] mb-6">
-                    {t('cruise_ports')}
-                  </h3>
-                  <div className="relative">
-                    {/* Timeline line */}
-                    <div className="absolute left-4 top-2 bottom-2 w-0.5 bg-navy-200" />
-
-                    <div className="space-y-0">
-                      {/* Departure */}
-                      <div className="relative flex items-start gap-5 pb-6">
-                        <div className="relative z-10 flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-gold-400 to-gold-500 flex items-center justify-center">
-                          <AnchorIcon className="w-4 h-4 text-white" />
-                        </div>
-                        <div className="pt-1">
-                          <p className="text-xs text-gold-600 font-medium uppercase tracking-wider mb-0.5">
-                            {locale === 'ro' ? 'Plecare' : 'Departure'}
-                          </p>
-                          <p className="font-semibold text-navy-900">{cruise.departure_port}</p>
-                          {(hasMultipleDates || departureDate) && (
-                            <p className="text-xs text-navy-500 mt-0.5">
-                              {hasMultipleDates ? formatDate(allDepartureDates[selectedDateIdx]) : departureDate}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Ports — interactive PortHighlight components with enriched times */}
-                      {ports.map((port, i) => {
-                        // Try to find matching enriched itinerary entry for arrival/departure times
-                        const portOriginal = portsOriginal[i] || port
-                        const enrichedEntry = itineraryEnriched.find(
-                          ie => ie.name && (
-                            ie.name.toLowerCase().includes(portOriginal.toLowerCase()) ||
-                            portOriginal.toLowerCase().includes(ie.name.toLowerCase())
-                          )
-                        )
-                        return (
+                        <div className="space-y-0">
+                          {/* Departure — interactive: click to explore departure port */}
                           <PortHighlight
-                            key={i}
-                            portName={portOriginal}
-                            dayNumber={skipFirst ? i + 2 : i + 2}
-                            arrivalTime={enrichedEntry?.from_hour || null}
-                            departureTime={enrichedEntry?.till_hour || null}
+                            portName={cruise.departure_port}
+                            dayNumber={1}
+                            departureTime={
+                              itineraryEnriched.find(ie => ie.day === 1)?.till_hour || null
+                            }
                             onClick={handlePortClick}
+                            isEmbarkDisembark="embark"
+                            embarkLabel={locale === 'ro' ? 'Plecare' : 'Departure'}
+                            dateLabel={hasMultipleDates ? formatDate(allDepartureDates[selectedDateIdx]) : departureDate}
                           />
-                        )
-                      })}
 
-                      {/* Arrival / Return */}
-                      <div className="relative flex items-start gap-5">
-                        <div className="relative z-10 flex-shrink-0 w-8 h-8 rounded-full bg-gradient-to-br from-gold-400 to-gold-500 flex items-center justify-center">
-                          <AnchorIcon className="w-4 h-4 text-white" />
-                        </div>
-                        <div className="pt-1">
-                          <p className="text-xs text-gold-600 font-medium uppercase tracking-wider mb-0.5">
-                            {isOneWay
+                          {/* Ports — interactive PortHighlight components with enriched times */}
+                          {ports.map((port, i) => {
+                            // Try to find matching enriched itinerary entry for arrival/departure times
+                            const portOriginal = portsOriginal[i] || port
+                            const enrichedEntry = itineraryEnriched.find(
+                              ie => ie.name && (
+                                ie.name.toLowerCase().includes(portOriginal.toLowerCase()) ||
+                                portOriginal.toLowerCase().includes(ie.name.toLowerCase())
+                              )
+                            )
+                            return (
+                              <PortHighlight
+                                key={i}
+                                portName={portOriginal}
+                                dayNumber={skipFirst ? i + 2 : i + 2}
+                                arrivalTime={enrichedEntry?.from_hour || null}
+                                departureTime={enrichedEntry?.till_hour || null}
+                                onClick={handlePortClick}
+                              />
+                            )
+                          })}
+
+                          {/* Arrival / Return — interactive: click to explore arrival port */}
+                          <PortHighlight
+                            portName={arrivalPort || cruise.departure_port}
+                            dayNumber={ports.length + 2}
+                            arrivalTime={
+                              itineraryEnriched.length > 0
+                                ? itineraryEnriched[itineraryEnriched.length - 1]?.from_hour || null
+                                : null
+                            }
+                            onClick={handlePortClick}
+                            isEmbarkDisembark="disembark"
+                            embarkLabel={isOneWay
                               ? (locale === 'ro' ? 'Sosire' : 'Arrival')
                               : (locale === 'ro' ? 'Întoarcere' : 'Return')}
-                          </p>
-                          <p className="font-semibold text-navy-900">{arrivalPort}</p>
+                          />
                         </div>
+                      </div>
+                    </div>
+
+                    {/* Right: Route Map — sticky on desktop, shown above on mobile */}
+                    <div className="order-first lg:order-last">
+                      <h3 className="text-lg font-bold text-navy-900 font-[family-name:var(--font-heading)] mb-4 hidden lg:block">
+                        {t('itinerary_route_title' as 'map_title')}
+                      </h3>
+                      <div className="lg:sticky lg:top-28">
+                        <RouteMapStatic
+                          routeMapUrl={cruise.route_map_url}
+                          departurePort={cruise.departure_port}
+                          portsOfCall={cruise.ports_of_call}
+                          onPortClick={handlePortClick}
+                          isOneWay={isOneWay}
+                          className="mb-4 lg:mb-0"
+                        />
                       </div>
                     </div>
                   </div>
@@ -679,15 +690,21 @@ function CruiseDetailContent() {
                     onSelect={setSelectedCabin}
                   />
 
-                  {/* Show selected cabin info */}
+                  {/* Show selected cabin info + CTA to proceed */}
                   {selectedCabin && (
                     <div className="mt-4 p-4 rounded-lg bg-gold-50 border border-gold-200">
                       <p className="text-xs text-gold-600 font-medium uppercase tracking-wider mb-1">
                         {t('cabin_selected' as 'loading')}
                       </p>
-                      <p className="text-sm font-semibold text-navy-900">
+                      <p className="text-sm font-semibold text-navy-900 mb-3">
                         {selectedCabin.name || selectedCabin.category} — &euro;{selectedCabin.price.toLocaleString()}{t('cruise_per_person')}
                       </p>
+                      <button
+                        onClick={() => setShowLeadForm(true)}
+                        className="w-full py-2.5 rounded-lg bg-gold-500 text-white text-sm font-semibold hover:bg-gold-600 active:scale-[0.98] transition-all"
+                      >
+                        {locale === 'ro' ? 'Solicită ofertă pentru această cabină' : 'Request offer for this cabin'}
+                      </button>
                     </div>
                   )}
                 </div>
@@ -917,6 +934,48 @@ function CruiseDetailContent() {
                       />
                     </div>
                   )}
+
+                  {/* GDPR / Data Protection Section */}
+                  <div className="mt-6 rounded-lg border border-blue-200 bg-blue-50/50 overflow-hidden">
+                    <div className="px-4 py-3 bg-blue-100/50 border-b border-blue-200">
+                      <h4 className="text-sm font-semibold text-blue-800 flex items-center gap-2">
+                        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z" />
+                        </svg>
+                        {t('gdpr_section_title' as 'loading')}
+                      </h4>
+                    </div>
+                    <div className="px-4 py-3">
+                      <p className="text-sm text-navy-600 leading-relaxed mb-3">
+                        {t('gdpr_commitment' as 'loading')}
+                      </p>
+                      <p className="text-xs font-semibold text-navy-700 mb-2">
+                        {t('gdpr_rights_title' as 'loading')}:
+                      </p>
+                      <div className="grid grid-cols-2 gap-1.5 mb-3">
+                        {(['gdpr_right_access', 'gdpr_right_rectification', 'gdpr_right_erasure', 'gdpr_right_restrict', 'gdpr_right_portability', 'gdpr_right_object'] as const).map((key) => (
+                          <div key={key} className="flex items-center gap-1.5 text-xs text-navy-600">
+                            <svg className="w-3 h-3 text-blue-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                            </svg>
+                            {t(key as 'loading')}
+                          </div>
+                        ))}
+                      </div>
+                      <p className="text-xs text-navy-500 mb-2">
+                        {t('gdpr_contact' as 'loading')}
+                      </p>
+                      <Link
+                        href="/gdpr"
+                        className="inline-flex items-center gap-1 text-xs font-medium text-blue-600 hover:text-blue-800 transition-colors"
+                      >
+                        {t('gdpr_full_policy' as 'loading')}
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                        </svg>
+                      </Link>
+                    </div>
+                  </div>
                 </div>
               )}
 
