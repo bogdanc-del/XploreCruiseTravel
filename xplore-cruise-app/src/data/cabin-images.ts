@@ -228,3 +228,31 @@ export function getCabinCategoryLabel(category: string, locale: 'en' | 'ro'): st
   }
   return labels[normalized][locale]
 }
+
+// ============================================================
+// Cabin Category Descriptions — shown in the CabinSelector
+// ============================================================
+
+const CABIN_DESCRIPTIONS: Record<keyof CabinImageSet, { en: string; ro: string }> = {
+  interior: {
+    en: 'Comfortable cabin without a window. Ideal for guests who spend most of their time exploring the ship and ports.',
+    ro: 'Cabina confortabila fara fereastra. Ideala pentru oaspetii care isi petrec timpul explorind nava si porturile.',
+  },
+  ocean_view: {
+    en: 'Cabin with a window or porthole offering natural light and sea views. A great balance of comfort and value.',
+    ro: 'Cabina cu fereastra sau hublou ce ofera lumina naturala si vedere la mare. Un echilibru excelent intre confort si pret.',
+  },
+  balcony: {
+    en: 'Spacious cabin with a private balcony. Enjoy sunrise over the sea and fresh ocean air from your own terrace.',
+    ro: 'Cabina spatioasa cu balcon privat. Bucurati-va de rasaritul peste mare si aer proaspat de pe propria terasa.',
+  },
+  suite: {
+    en: 'Premium suite with separate living area, priority boarding, and exclusive amenities. The ultimate cruise experience.',
+    ro: 'Suita premium cu zona de zi separata, imbarcare prioritara si facilitati exclusive. Experienta suprema de croaziera.',
+  },
+}
+
+export function getCabinDescription(category: string, locale: 'en' | 'ro'): string {
+  const normalized = normalizeCabinCategory(category)
+  return CABIN_DESCRIPTIONS[normalized][locale]
+}

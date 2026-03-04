@@ -337,6 +337,18 @@ export const translations = {
     cabin_no_data: 'Cabin details not available. Contact us for pricing.',
     cabin_selected: 'Selected cabin',
 
+    // Ship Info
+    ship_about: 'About the Ship',
+    ship_year: 'Year Built',
+    ship_passengers: 'Passengers',
+    ship_tonnage: 'Gross Tonnage',
+    ship_video: 'Ship Tour Video',
+    ship_specs: 'Ship Specifications',
+
+    // Children's Policy
+    children_policy_api: 'Children Policy (Cruise-Specific)',
+    children_policy_source: 'Source: cruise line official terms for this specific itinerary.',
+
     // Common
     loading: 'Loading...',
     error: 'Something went wrong',
@@ -681,6 +693,18 @@ export const translations = {
     cabin_no_date: 'Selectează o dată de plecare pentru a vedea opțiunile de cabine',
     cabin_no_data: 'Detaliile cabinelor nu sunt disponibile. Contactați-ne pentru prețuri.',
     cabin_selected: 'Cabina selectată',
+
+    // Ship Info
+    ship_about: 'Despre Navă',
+    ship_year: 'An construcție',
+    ship_passengers: 'Pasageri',
+    ship_tonnage: 'Tonaj brut',
+    ship_video: 'Video Tur Navă',
+    ship_specs: 'Specificații Navă',
+
+    // Children's Policy
+    children_policy_api: 'Politica pentru Copii (Specifică Croazierei)',
+    children_policy_source: 'Sursa: termenii oficiali ai companiei de croaziere pentru acest itinerariu specific.',
 
     // Common
     loading: 'Se încarcă...',

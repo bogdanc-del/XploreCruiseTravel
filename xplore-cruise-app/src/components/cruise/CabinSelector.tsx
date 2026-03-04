@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { useMemo, useState } from 'react'
 import type { Locale } from '@/i18n/translations'
 import { t } from '@/i18n/translations'
-import { normalizeCabinCategory, getCabinImage, getCabinCategoryLabel } from '@/data/cabin-images'
+import { normalizeCabinCategory, getCabinImage, getCabinCategoryLabel, getCabinDescription } from '@/data/cabin-images'
 import type { CabinImageSet } from '@/data/cabin-images'
 import { useExchangeRate } from '@/context/ExchangeRateContext'
 
@@ -42,6 +42,7 @@ interface CabinSelectorProps {
 interface CabinGroup {
   category: keyof CabinImageSet
   label: string
+  description: string
   priceFrom: number
   cabinCount: number
   rooms: RoomEntry[]
@@ -76,6 +77,7 @@ function groupRoomsByCategory(
       return {
         category: cat,
         label: getCabinCategoryLabel(cat, locale),
+        description: getCabinDescription(cat, locale),
         priceFrom,
         cabinCount: rms.length,
         rooms: rms,
@@ -209,8 +211,11 @@ export default function CabinSelector({
                 </div>
               </div>
 
-              {/* Price */}
+              {/* Description + Price */}
               <div className="p-3">
+                <p className="text-[11px] text-navy-500 leading-snug mb-2 line-clamp-2">
+                  {group.description}
+                </p>
                 <p className="text-xs text-navy-400">
                   {t('cruise_from', locale)}
                 </p>

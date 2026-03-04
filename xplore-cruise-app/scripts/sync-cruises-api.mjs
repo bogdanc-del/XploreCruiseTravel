@@ -158,6 +158,10 @@ async function main() {
       is_promo: api.is_promo === 1 || api.is_promo === '1',
       is_bestdeal: api.is_bestdeal === 1 || api.is_bestdeal === '1',
       promo_price: api.price_promo ? Number(api.price_promo) : null,
+      // Preserve API HTML for specific terms (children's policy, included/excluded details)
+      included_html: api.included || '',
+      excluded_html: api.not_included || api.excluded || '',
+      cancellation_html: api.cancelation || api.cancellation || '',
     }
   }
 

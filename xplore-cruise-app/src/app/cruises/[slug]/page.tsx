@@ -31,6 +31,7 @@ import CruiseLineTerms from '@/components/cruise/CruiseLineTerms'
 import CabinSelector from '@/components/cruise/CabinSelector'
 import type { SelectedCabin } from '@/components/cruise/CabinSelector'
 import { CRUISE_LINE_TERMS } from '@/data/cruise-line-terms'
+import { getShipInfo } from '@/data/ship-images'
 import { getCruiseBySlugLocal, getSimilarCruises, FEATURED_CRUISES } from '@/data/cruises-database'
 import { getBestImageUrl } from '@/data/ship-images'
 
@@ -331,12 +332,18 @@ function CruiseDetailContent() {
     _is_promo?: boolean; _is_bestdeal?: boolean; _promo_price?: number | null
     _rooms?: { name: string; category: string; date: string; price: number }[]
     _itinerary_enriched?: { id: string | number; name: string; day: number; from_hour: string; till_hour: string }[]
+    _included_html?: string; _excluded_html?: string; _cancellation_html?: string
   }
   const isPromo = cruiseExt._is_promo || false
   const isBestDeal = cruiseExt._is_bestdeal || false
   const promoPrice = cruiseExt._promo_price || null
   const rooms = cruiseExt._rooms || []
   const itineraryEnriched = cruiseExt._itinerary_enriched || []
+  const includedHtml = cruiseExt._included_html || ''
+  const excludedHtml = cruiseExt._excluded_html || ''
+
+  // Ship info (description, specs, video)
+  const shipInfo = getShipInfo(cruise.ship_name)
 
   const tabs: { key: TabKey; label: string }[] = [
     { key: 'overview', label: t('detail_overview') },
@@ -496,6 +503,70 @@ function CruiseDetailContent() {
                   {description && (
                     <div className="prose prose-navy max-w-none">
                       <p className="text-navy-600 leading-relaxed">{description}</p>
+                    </div>
+                  )}
+
+                  {/* Ship Info — description, specs, and video */}
+                  {shipInfo && cruise.ship_name && (
+                    <div className="rounded-xl border border-navy-200 overflow-hidden">
+                      <div className="p-5">
+                        <h3 className="text-base font-bold text-navy-900 font-[family-name:var(--font-heading)] mb-3 flex items-center gap-2">
+                          <span className="w-7 h-7 rounded-full bg-navy-100 flex items-center justify-center">
+                            <svg className="w-4 h-4 text-navy-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                              <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
+                            </svg>
+                          </span>
+                          {t('ship_about' as 'loading')} — {cruise.ship_name}
+                        </h3>
+                        <p className="text-sm text-navy-600 leading-relaxed mb-4">
+                          {locale === 'ro' ? shipInfo.description_ro : shipInfo.description_en}
+                        </p>
+
+                        {/* Ship specs */}
+                        {(shipInfo.year_built || shipInfo.passengers || shipInfo.tonnage) && (
+                          <div className="flex flex-wrap gap-4 text-xs">
+                            {shipInfo.year_built && (
+                              <div className="flex items-center gap-1.5 bg-navy-50 rounded-lg px-3 py-1.5">
+                                <span className="text-navy-400">{t('ship_year' as 'loading')}:</span>
+                                <span className="font-semibold text-navy-700">{shipInfo.year_built}</span>
+                              </div>
+                            )}
+                            {shipInfo.passengers && (
+                              <div className="flex items-center gap-1.5 bg-navy-50 rounded-lg px-3 py-1.5">
+                                <span className="text-navy-400">{t('ship_passengers' as 'loading')}:</span>
+                                <span className="font-semibold text-navy-700">{shipInfo.passengers.toLocaleString()}</span>
+                              </div>
+                            )}
+                            {shipInfo.tonnage && shipInfo.tonnage > 0 && (
+                              <div className="flex items-center gap-1.5 bg-navy-50 rounded-lg px-3 py-1.5">
+                                <span className="text-navy-400">{t('ship_tonnage' as 'loading')}:</span>
+                                <span className="font-semibold text-navy-700">{shipInfo.tonnage.toLocaleString()} GT</span>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* YouTube video embed */}
+                      {shipInfo.youtube_id && (
+                        <div className="border-t border-navy-200">
+                          <div className="p-4">
+                            <p className="text-xs font-medium text-navy-500 uppercase tracking-wider mb-3">
+                              {t('ship_video' as 'loading')}
+                            </p>
+                            <div className="relative w-full rounded-lg overflow-hidden" style={{ aspectRatio: '16 / 9' }}>
+                              <iframe
+                                src={`https://www.youtube.com/embed/${shipInfo.youtube_id}?rel=0`}
+                                title={`${cruise.ship_name} tour video`}
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                                className="absolute inset-0 w-full h-full"
+                                loading="lazy"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
@@ -806,6 +877,46 @@ function CruiseDetailContent() {
                         : 'Terms and conditions are not available. Contact us for details.'}
                     </p>
                   )}
+
+                  {/* API-sourced children's policy (cruise-specific from croaziere.net) */}
+                  {includedHtml && (
+                    <div className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50/50 overflow-hidden">
+                      <div className="px-4 py-3 bg-emerald-100/50 border-b border-emerald-200">
+                        <h4 className="text-sm font-semibold text-emerald-800 flex items-center gap-2">
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
+                          </svg>
+                          {t('children_policy_api' as 'loading')}
+                        </h4>
+                      </div>
+                      <div
+                        className="px-4 py-3 text-sm text-navy-700 leading-relaxed [&_br]:block [&_b]:font-semibold [&_ul]:list-disc [&_ul]:ml-4 [&_li]:mb-1"
+                        dangerouslySetInnerHTML={{ __html: includedHtml }}
+                      />
+                      <div className="px-4 py-2 border-t border-emerald-200">
+                        <p className="text-[10px] text-emerald-600 italic">
+                          {t('children_policy_source' as 'loading')}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {excludedHtml && (
+                    <div className="mt-3 rounded-lg border border-amber-200 bg-amber-50/50 overflow-hidden">
+                      <div className="px-4 py-3 bg-amber-100/50 border-b border-amber-200">
+                        <h4 className="text-sm font-semibold text-amber-800 flex items-center gap-2">
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                          </svg>
+                          {locale === 'ro' ? 'Nu este inclus (specific croazierei)' : 'Not Included (cruise-specific)'}
+                        </h4>
+                      </div>
+                      <div
+                        className="px-4 py-3 text-sm text-navy-700 leading-relaxed [&_br]:block [&_b]:font-semibold [&_ul]:list-disc [&_ul]:ml-4 [&_li]:mb-1"
+                        dangerouslySetInnerHTML={{ __html: excludedHtml }}
+                      />
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -1089,9 +1200,9 @@ function InfoCard({ icon, label, value, suffix }: { icon: React.ReactNode; label
 
 function SidebarRow({ label, value }: { label: string; value: string }) {
   return (
-    <div className="flex justify-between items-start text-sm">
-      <span className="text-navy-400">{label}</span>
-      <span className="text-navy-800 font-medium text-right max-w-[180px]">{value}</span>
+    <div className="flex justify-between items-start gap-3 text-sm">
+      <span className="text-navy-400 flex-shrink-0">{label}</span>
+      <span className="text-navy-800 font-medium text-right break-words min-w-0">{value}</span>
     </div>
   )
 }

@@ -174,6 +174,138 @@ export const SHIP_IMAGES: Record<string, string> = {
 }
 
 // ============================================================
+// Ship Descriptions & Videos — for the Overview tab
+// ============================================================
+
+export interface ShipInfo {
+  description_en: string
+  description_ro: string
+  year_built?: number
+  passengers?: number
+  tonnage?: number
+  youtube_id?: string
+}
+
+export const SHIP_INFO: Record<string, ShipInfo> = {
+  // ── MSC Cruises ──
+  'MSC World Europa': {
+    description_en: 'MSC World Europa is one of the largest and most innovative cruise ships at sea, featuring 22 decks, world-class dining, and the longest dry slide at sea.',
+    description_ro: 'MSC World Europa este una dintre cele mai mari si inovatoare nave de croaziera, cu 22 punti, restaurante de top si cel mai lung tobogan uscat de pe mare.',
+    year_built: 2022, passengers: 6762, tonnage: 205700, youtube_id: 'TK4GZiJCQoM',
+  },
+  'MSC Meraviglia': {
+    description_en: 'MSC Meraviglia offers a spectacular indoor promenade with LED sky, Cirque du Soleil shows, and Mediterranean-inspired design.',
+    description_ro: 'MSC Meraviglia ofera o promenada interioara spectaculoasa cu cer LED, spectacole Cirque du Soleil si design inspirat din Mediterana.',
+    year_built: 2017, passengers: 5714, tonnage: 171598, youtube_id: 'xr-U3E1z83w',
+  },
+  'MSC Grandiosa': {
+    description_en: 'MSC Grandiosa features a stunning Swarovski crystal staircase, indoor promenade, and diverse entertainment for all ages.',
+    description_ro: 'MSC Grandiosa dispune de o scara spectaculoasa din cristal Swarovski, promenada interioara si divertisment divers pentru toate varstele.',
+    year_built: 2019, passengers: 6334, tonnage: 181541, youtube_id: 'PLmqbbXxWdQ',
+  },
+  'MSC Fantasia': {
+    description_en: 'MSC Fantasia combines elegance with entertainment, featuring the exclusive MSC Yacht Club and a spectacular water park.',
+    description_ro: 'MSC Fantasia combina eleganta cu divertismentul, oferind exclusivul MSC Yacht Club si un parc acvatic spectaculos.',
+    year_built: 2008, passengers: 3900, tonnage: 137936,
+  },
+  'MSC Splendida': {
+    description_en: 'MSC Splendida is a stunning vessel with Swarovski crystal details, a zen garden, and the Top 18 exclusive sundeck.',
+    description_ro: 'MSC Splendida este o nava impresionanta cu detalii din cristal Swarovski, gradina zen si terasa exclusiva Top 18.',
+    year_built: 2009, passengers: 3900, tonnage: 137936,
+  },
+  'MSC Magnifica': {
+    description_en: 'MSC Magnifica offers classic Italian elegance, a full-size tennis court, and panoramic top-deck swimming pools.',
+    description_ro: 'MSC Magnifica ofera eleganta italiana clasica, un teren de tenis de dimensiuni reale si piscine panoramice.',
+    year_built: 2010, passengers: 3223, tonnage: 95128,
+  },
+  'MSC Opera': {
+    description_en: 'MSC Opera is a mid-size ship offering an intimate cruise experience with Italian design and warm hospitality.',
+    description_ro: 'MSC Opera este o nava de dimensiuni medii ce ofera o experienta intima de croaziera cu design italian.',
+    year_built: 2004, passengers: 2150, tonnage: 65591,
+  },
+  // ── Costa Cruises ──
+  'Costa Toscana': {
+    description_en: 'Costa Toscana is powered by LNG, featuring stunning Italian design, over 15 restaurants, and a three-deck atrium.',
+    description_ro: 'Costa Toscana functioneaza cu GNL, oferind design italian impresionant, peste 15 restaurante si un atrium pe trei punti.',
+    year_built: 2021, passengers: 6554, tonnage: 185010, youtube_id: 'dEH0xtXMmXo',
+  },
+  'Costa Smeralda': {
+    description_en: 'Costa Smeralda is an eco-friendly ship with innovative Italian cuisine, world-class spa, and colorful Murano glass details.',
+    description_ro: 'Costa Smeralda este o nava ecologica cu bucatarie italiana inovatoare, spa de clasa mondiala si detalii din sticla Murano.',
+    year_built: 2019, passengers: 6554, tonnage: 185010, youtube_id: '2q-1DHHAQ6o',
+  },
+  'Costa Serena': {
+    description_en: 'Costa Serena is inspired by celestial mythology, featuring elegant Italian design, spacious cabins, and a grand central atrium.',
+    description_ro: 'Costa Serena este inspirata de mitologia celesta, cu design italian elegant, cabine spatioase si un atrium central grandios.',
+    year_built: 2007, passengers: 3780, tonnage: 114147,
+  },
+  'Costa Pacifica': {
+    description_en: 'Costa Pacifica celebrates Italian music with a rich entertainment program, refined cuisine, and a relaxing spa.',
+    description_ro: 'Costa Pacifica celebreaza muzica italiana cu un program de divertisment bogat, bucatarie rafinata si un spa relaxant.',
+    year_built: 2009, passengers: 3780, tonnage: 114147,
+  },
+  'Costa Diadema': {
+    description_en: 'Costa Diadema is the flagship of Costa Cruises, featuring open-air promenades, infinity pools, and panoramic dining.',
+    description_ro: 'Costa Diadema este nava amiral a Costa Cruises, cu promenade in aer liber, piscine infinity si restaurante panoramice.',
+    year_built: 2014, passengers: 4947, tonnage: 132500,
+  },
+  'Costa Favolosa': {
+    description_en: 'Costa Favolosa draws inspiration from fairy tales with lavish interiors, a 4D cinema, and extensive entertainment.',
+    description_ro: 'Costa Favolosa se inspira din basme cu interioare grandioase, un cinema 4D si divertisment amplu.',
+    year_built: 2011, passengers: 3800, tonnage: 114147,
+  },
+  // ── Royal Caribbean ──
+  'Icon of the Seas': {
+    description_en: 'Icon of the Seas is the world\'s largest cruise ship, featuring 8 neighborhoods, a waterpark, and an ice-skating rink.',
+    description_ro: 'Icon of the Seas este cea mai mare nava de croaziera din lume, cu 8 cartiere tematice, parc acvatic si patinoar.',
+    year_built: 2024, passengers: 7600, tonnage: 250800, youtube_id: '6Y4fPWagSik',
+  },
+  'Allure of the Seas': {
+    description_en: 'Allure of the Seas offers world-class entertainment with a Broadway theater, zip line, surf simulator, and Central Park.',
+    description_ro: 'Allure of the Seas ofera divertisment de clasa mondiala cu teatru Broadway, tiroliana, simulator de surf si Central Park.',
+    year_built: 2010, passengers: 6780, tonnage: 225282,
+  },
+  'Explorer of the Seas': {
+    description_en: 'Explorer of the Seas features a rock climbing wall, ice skating rink, and the signature Royal Promenade.',
+    description_ro: 'Explorer of the Seas dispune de perete de escalada, patinoar si emblematica Royal Promenade.',
+    year_built: 2000, passengers: 3840, tonnage: 137308,
+  },
+  // ── Norwegian Cruise Line ──
+  'Norwegian Prima': {
+    description_en: 'Norwegian Prima features the largest go-kart track at sea, The Drop waterslide, and upscale Mandara Spa.',
+    description_ro: 'Norwegian Prima dispune de cea mai mare pista de karting pe mare, tobogan The Drop si spa-ul exclusiv Mandara.',
+    year_built: 2022, passengers: 3215, tonnage: 142500, youtube_id: 'P4PgxCOl3kA',
+  },
+  'Norwegian Breakaway': {
+    description_en: 'Norwegian Breakaway offers a vibrant waterfront, extensive dining, and an exhilarating ropes course.',
+    description_ro: 'Norwegian Breakaway ofera un waterfront vibrant, restaurante diverse si un circuit de franghii captivant.',
+    year_built: 2013, passengers: 3963, tonnage: 145655,
+  },
+  // ── Celebrity Cruises ──
+  'Celebrity Beyond': {
+    description_en: 'Celebrity Beyond is a luxury-forward ship with the Magic Carpet platform, rooftop garden, and Michelin-level dining.',
+    description_ro: 'Celebrity Beyond este o nava premium cu platforma Magic Carpet, gradina pe acoperis si restaurante de nivel Michelin.',
+    year_built: 2022, passengers: 3260, tonnage: 140600, youtube_id: '3kM_9rLGQ5U',
+  },
+  'Celebrity Edge': {
+    description_en: 'Celebrity Edge revolutionized cruise design with the Magic Carpet, Eden garden lounge, and open-air resort deck.',
+    description_ro: 'Celebrity Edge a revolutionat designul de croaziera cu Magic Carpet, lounge-ul Eden si puntea resort in aer liber.',
+    year_built: 2018, passengers: 2918, tonnage: 129500,
+  },
+  // ── Viking ──
+  'Viking Longship Hild': {
+    description_en: 'Viking Longship Hild is an award-winning river cruise ship with all-veranda staterooms and Scandinavian design.',
+    description_ro: 'Viking Longship Hild este o nava de croaziera fluviala premiata, cu toate cabinele cu veranda si design scandinav.',
+    year_built: 2014, passengers: 190,
+  },
+}
+
+export function getShipInfo(shipName?: string): ShipInfo | null {
+  if (!shipName) return null
+  return SHIP_INFO[shipName] || null
+}
+
+// ============================================================
 // Helper function
 // ============================================================
 
