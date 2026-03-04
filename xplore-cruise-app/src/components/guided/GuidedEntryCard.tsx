@@ -35,7 +35,7 @@ export default function GuidedEntryCard({ variant, onStart, locale }: GuidedEntr
             <button
               type="button"
               onClick={onStart}
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-gold-500 to-gold-600 text-white font-semibold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-gold-500 to-gold-600 text-white font-semibold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 active:scale-95 cursor-pointer transition-all duration-200"
             >
               {t('guided_entry_cta', locale)}
               <ArrowRightIcon className="w-4 h-4" />
@@ -67,7 +67,7 @@ export default function GuidedEntryCard({ variant, onStart, locale }: GuidedEntr
         <button
           type="button"
           onClick={onStart}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-gradient-to-r from-gold-500 to-gold-600 text-white font-semibold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200"
+          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-gradient-to-r from-gold-500 to-gold-600 text-white font-semibold text-sm shadow-md hover:shadow-lg hover:-translate-y-0.5 active:scale-95 cursor-pointer transition-all duration-200"
         >
           {t('guided_entry_cta', locale)}
           <ArrowRightIcon className="w-4 h-4" />
@@ -92,7 +92,7 @@ export default function GuidedEntryCard({ variant, onStart, locale }: GuidedEntr
         <button
           type="button"
           onClick={onStart}
-          className="inline-flex items-center gap-2 px-8 py-3.5 rounded-lg bg-gradient-to-r from-gold-500 to-gold-600 text-white font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
+          className="inline-flex items-center gap-2 px-8 py-3.5 rounded-lg bg-gradient-to-r from-gold-500 to-gold-600 text-white font-semibold shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:scale-95 cursor-pointer transition-all duration-200"
         >
           {t('guided_entry_cta', locale)}
           <ArrowRightIcon className="w-4 h-4" />

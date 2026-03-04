@@ -162,12 +162,12 @@ function CruiseDetailContent() {
     }
   }, [searchParams])
 
-  // Try FEATURED_CRUISES first (has rich content)
-  const featuredCruise = getCruiseBySlugLocal(slug)
+  // Get enrichment data from featured cruises (descriptions, tags, advisor notes)
+  const featuredEnrichment = getCruiseBySlugLocal(slug)
 
-  // If not in featured, fetch from API
+  // ALWAYS fetch from API (even if we have featured enrichment)
   useEffect(() => {
-    if (featuredCruise || !slug) return
+    if (!slug) return
     setApiLoading(true)
     fetch(`/api/cruises/${encodeURIComponent(slug)}`)
       .then(r => {
@@ -182,9 +182,21 @@ function CruiseDetailContent() {
         setApiError(true)
         setApiLoading(false)
       })
-  }, [slug, featuredCruise])
+  }, [slug])
 
-  const cruise = featuredCruise || apiCruise
+  // API data is the BASE, featured enrichment overlays on top
+  const cruise = apiCruise
+    ? {
+        ...apiCruise,
+        // Overlay featured enrichment if available
+        ...(featuredEnrichment?.description ? { description: featuredEnrichment.description } : {}),
+        ...(featuredEnrichment?.description_ro ? { description_ro: featuredEnrichment.description_ro } : {}),
+        ...(featuredEnrichment?.advisor_note ? { advisor_note: featuredEnrichment.advisor_note } : {}),
+        ...(featuredEnrichment?.advisor_note_ro ? { advisor_note_ro: featuredEnrichment.advisor_note_ro } : {}),
+        ...(featuredEnrichment?.tags?.length ? { tags: featuredEnrichment.tags } : {}),
+        featured: !!featuredEnrichment,
+      }
+    : null
 
   // Track detail page view + assign CTA variant once cruise is loaded
   useEffect(() => {
@@ -205,15 +217,15 @@ function CruiseDetailContent() {
 
   // Set document title during loading to avoid "Croazieră Negăsită" flash
   useEffect(() => {
-    if (!featuredCruise && apiLoading) {
+    if (apiLoading) {
       document.title = locale === 'ro'
         ? 'Se încarcă croaziera... | XploreCruiseTravel'
         : 'Loading cruise... | XploreCruiseTravel'
     }
-  }, [apiLoading, featuredCruise, locale])
+  }, [apiLoading, locale])
 
   // Loading state
-  if (!featuredCruise && apiLoading) {
+  if (apiLoading) {
     return (
       <>
         <Header />

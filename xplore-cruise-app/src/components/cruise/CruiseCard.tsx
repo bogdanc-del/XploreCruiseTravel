@@ -74,8 +74,8 @@ export default function CruiseCard({ cruise, locale }: CruiseCardProps) {
 
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-xl bg-white shadow-card transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover">
-      {/* Image */}
-      <div className="relative aspect-[4/3] overflow-hidden">
+      {/* Image — clickable, navigates to cruise detail */}
+      <Link href={`/cruises/${cruise.slug}`} className="relative block aspect-[4/3] overflow-hidden cursor-pointer">
         {imageUrl ? (
           <Image
             src={imageUrl}
@@ -173,7 +173,7 @@ export default function CruiseCard({ cruise, locale }: CruiseCardProps) {
             </span>
           </div>
         )}
-      </div>
+      </Link>
 
       {/* Content */}
       <div className="flex flex-1 flex-col p-5">

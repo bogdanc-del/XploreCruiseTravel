@@ -169,7 +169,21 @@ async function main() {
   logStep(`  Prices updated: ${changes.price}`)
   logStep(`  Images updated: ${changes.image}`)
   logStep(`  Departures updated: ${changes.departures}`)
-  logStep(`  Not found: ${changes.notFound}`)
+  logStep(`  Not found in API: ${changes.notFound}`)
+
+  // Remove cruises that no longer exist in the API (expired/discontinued)
+  const beforeCount = cruises.length
+  const activeCruises = cruises.filter(c => {
+    const sourceId = String(c.source_id || c.id)
+    return apiMap.has(sourceId)
+  })
+  const removedCount = beforeCount - activeCruises.length
+  if (removedCount > 0) {
+    logStep(`  Removed ${removedCount} expired cruises not found in API`)
+    // Replace the cruises array content
+    cruises.length = 0
+    cruises.push(...activeCruises)
+  }
 
   // Remove heavy fields from cruises.json to keep it lean (<100MB)
   for (const cruise of cruises) {

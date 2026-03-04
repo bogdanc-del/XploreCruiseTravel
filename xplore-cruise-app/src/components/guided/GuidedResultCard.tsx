@@ -65,8 +65,8 @@ export default function GuidedResultCard({
         ))}
       </div>
 
-      {/* Image */}
-      <div className="relative aspect-[16/9] overflow-hidden">
+      {/* Image — clickable, navigates to cruise detail */}
+      <Link href={`/cruises/${cruise.s}`} onClick={onCardClick} className="relative block aspect-[16/9] overflow-hidden cursor-pointer">
         {imageUrl ? (
           <Image
             src={imageUrl}
@@ -94,7 +94,7 @@ export default function GuidedResultCard({
           </div>
         )}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-navy-900/60 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-      </div>
+      </Link>
 
       {/* Content */}
       <div className="flex flex-1 flex-col p-5">
