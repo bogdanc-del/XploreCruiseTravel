@@ -216,7 +216,33 @@ const CATEGORY_MAP: Record<string, keyof CabinImageSet> = {
   interior: 'interior', ocean_view: 'ocean_view', balcony: 'balcony', suite: 'suite',
 }
 
-export function normalizeCabinCategory(category: string): keyof CabinImageSet {
+/**
+ * Normalize cabin category from API code to our 4 types.
+ * @param category - The API category code (e.g., "OS", "4D", "BA")
+ * @param roomName - Optional room name from API (e.g., "Suita Ocean", "Cabina interioara")
+ *                   When provided, name-based detection takes priority over code-based.
+ */
+export function normalizeCabinCategory(category: string, roomName?: string): keyof CabinImageSet {
+  // If we have a descriptive room name, use it first (most reliable)
+  if (roomName) {
+    const nameLower = roomName.toLowerCase()
+    // Suite detection from name (highest priority — catches OS="Suita Ocean", VS="Suita Vista" etc.)
+    if (nameLower.includes('suite') || nameLower.includes('suita') || nameLower.includes('penthouse')
+        || nameLower.includes('yacht') || nameLower.includes('haven') || nameLower.includes('owner')
+        || nameLower.includes('royal') || nameLower.includes('grand')) return 'suite'
+    // Balcony detection from name
+    if (nameLower.includes('balcon') || nameLower.includes('verand') || nameLower.includes('terac')
+        || nameLower.includes('french balcon')) return 'balcony'
+    // Interior detection from name
+    if (nameLower.includes('interioara') || nameLower.includes('interior') || nameLower.includes('inside')
+        || nameLower.includes('inner') || nameLower.includes('intern')) return 'interior'
+    // Ocean view / exterior detection from name
+    if (nameLower.includes('exterioara') || nameLower.includes('exterior') || nameLower.includes('ocean view')
+        || nameLower.includes('outside') || nameLower.includes('geam') || nameLower.includes('porthole')
+        || nameLower.includes('hublou') || nameLower.includes('fereast')) return 'ocean_view'
+  }
+
+  // Fallback: code-based normalization
   if (!category) return 'interior'
   const trimmed = category.trim()
 
@@ -229,7 +255,7 @@ export function normalizeCabinCategory(category: string): keyof CabinImageSet {
   const lower = trimmed.toLowerCase()
   if (CATEGORY_MAP[lower]) return CATEGORY_MAP[lower]
 
-  // Keyword-based fuzzy matching
+  // Keyword-based fuzzy matching on the code itself
   if (lower.includes('suite') || lower.includes('suita') || lower.includes('penthouse') || lower.includes('yacht') || lower.includes('haven')) return 'suite'
   if (lower.includes('balcon') || lower.includes('verand') || lower.includes('terac') || lower.includes('french')) return 'balcony'
   if (lower.includes('ocean') || lower.includes('exterior') || lower.includes('outside') || lower.includes('extern') || lower.includes('view') || lower.includes('porthole')) return 'ocean_view'

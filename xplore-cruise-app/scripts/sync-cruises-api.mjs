@@ -140,39 +140,83 @@ async function main() {
     }
 
     // --- Enriched data (separate file, loaded on-demand by detail page) ---
-    enrichedData[sourceId] = {
-      gallery: apiImages,
-      rooms: (api.rooms || []).map(r => ({
-        name: r.name || '',
-        category: r.category || '',
-        date: r.date || '',
-        price: Number(r.price) || 0,
-      })),
-      itinerary: (api.itinerary || []).map(it => ({
-        id: it.id,
-        name: it.name,
-        day: it.day,
-        from_hour: it.from_hour || '',
-        till_hour: it.till_hour || '',
-      })),
-      is_promo: api.is_promo === 1 || api.is_promo === '1',
-      is_bestdeal: api.is_bestdeal === 1 || api.is_bestdeal === '1',
-      promo_price: api.price_promo ? Number(api.price_promo) : null,
-      // Preserve API HTML for specific terms (included/excluded/cancellation details)
-      included_html: api.included || '',
-      excluded_html: api.not_included || api.excluded || '',
-      cancellation_html: api.cancelation || api.cancellation || '',
-      // Port excursions with PDF links and images
-      excursions: (api.excursions || []).map(ex => ({
-        id: ex.id,
-        name: ex.name || '',
-        description: ex.description || '',
-        pdf: ex.pdf || '',
-        image: ex.image || '',
-      })),
-      // Flight included flag
-      plane_included: api.plane_included === 1 || api.plane_included === '1',
+    // Uses compact format to keep file under 100 MB:
+    //   rooms: [{n, c, dp: [[date, price], ...]}]  (grouped by name+category)
+    //   itinerary: [{d, p, a, t}]  (day, port, arrival, till)
+    //   gallery: stripped of common URL prefix
+    //   excursions: [{id, n, pdf, img}]  (no description, stripped URL prefix)
+    const GALLERY_PREFIX = 'https://www.croaziere.net/uploads/images/'
+    const EXC_PREFIX = 'https://www.croaziere.net'
+
+    // Strip inline CSS from HTML
+    const stripStyles = (html) => {
+      if (!html) return ''
+      return html
+        .replace(/\s*style="[^"]*"/gi, '')
+        .replace(/\s*class="[^"]*"/gi, '')
+        .replace(/\s*(?:width|height|border|cellspacing|cellpadding|align|valign)="[^"]*"/gi, '')
+        .replace(/<\/?font[^>]*>/gi, '')
+        .replace(/<span\s*>(.*?)<\/span>/gi, '$1')
+        .replace(/&nbsp;/gi, ' ')
+        .replace(/\s{2,}/g, ' ')
+        .replace(/<p\s*>\s*<\/p>/gi, '')
+        .replace(/<li\s*>\s*<\/li>/gi, '')
+        .trim()
     }
+
+    // Compact rooms: group by name+category
+    const roomGroups = new Map()
+    for (const r of (api.rooms || [])) {
+      const price = Number(r.price) || 0
+      if (!r.date || price <= 0) continue
+      const gk = `${r.name || ''}|${r.category || ''}`
+      if (!roomGroups.has(gk)) roomGroups.set(gk, { n: r.name || '', c: r.category || '', dp: [] })
+      roomGroups.get(gk).dp.push([r.date, price])
+    }
+
+    // Strip gallery URL prefix
+    const compactGallery = apiImages.map(url =>
+      url.startsWith(GALLERY_PREFIX) ? url.substring(GALLERY_PREFIX.length) : url
+    )
+
+    // Build enriched entry, omit falsy/empty fields to save space
+    const entry = {}
+    if (compactGallery.length) entry.gallery = compactGallery
+    if (roomGroups.size) entry.rooms = Array.from(roomGroups.values())
+
+    const compactItin = (api.itinerary || []).map(it => {
+      const ci = { d: it.day, p: it.name || '' }
+      if (it.from_hour) ci.a = it.from_hour
+      if (it.till_hour) ci.t = it.till_hour
+      return ci
+    })
+    if (compactItin.length) entry.itinerary = compactItin
+
+    if (api.is_promo === 1 || api.is_promo === '1') entry.is_promo = true
+    if (api.is_bestdeal === 1 || api.is_bestdeal === '1') entry.is_bestdeal = true
+    if (api.price_promo) entry.promo_price = Number(api.price_promo)
+
+    const inclHtml = stripStyles(api.included || '')
+    const exclHtml = stripStyles(api.not_included || api.excluded || '')
+    const cancelHtml = stripStyles(api.cancelation || api.cancellation || '')
+    if (inclHtml) entry.included_html = inclHtml
+    if (exclHtml) entry.excluded_html = exclHtml
+    if (cancelHtml) entry.cancellation_html = cancelHtml
+
+    const compactExc = (api.excursions || []).filter(ex => ex.name).map(ex => {
+      const ce = { id: ex.id }
+      if (ex.name) ce.n = ex.name
+      const pdf = ex.pdf || ''
+      const img = ex.image || ''
+      if (pdf) ce.pdf = pdf.startsWith(EXC_PREFIX) ? pdf.substring(EXC_PREFIX.length) : pdf
+      if (img) ce.img = img.startsWith(EXC_PREFIX) ? img.substring(EXC_PREFIX.length) : img
+      return ce
+    })
+    if (compactExc.length) entry.excursions = compactExc
+
+    if (api.plane_included === 1 || api.plane_included === '1') entry.plane_included = true
+
+    enrichedData[sourceId] = entry
   }
 
   logStep('Merge complete:')
