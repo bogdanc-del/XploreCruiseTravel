@@ -158,10 +158,20 @@ async function main() {
       is_promo: api.is_promo === 1 || api.is_promo === '1',
       is_bestdeal: api.is_bestdeal === 1 || api.is_bestdeal === '1',
       promo_price: api.price_promo ? Number(api.price_promo) : null,
-      // Preserve API HTML for specific terms (children's policy, included/excluded details)
+      // Preserve API HTML for specific terms (included/excluded/cancellation details)
       included_html: api.included || '',
       excluded_html: api.not_included || api.excluded || '',
       cancellation_html: api.cancelation || api.cancellation || '',
+      // Port excursions with PDF links and images
+      excursions: (api.excursions || []).map(ex => ({
+        id: ex.id,
+        name: ex.name || '',
+        description: ex.description || '',
+        pdf: ex.pdf || '',
+        image: ex.image || '',
+      })),
+      // Flight included flag
+      plane_included: api.plane_included === 1 || api.plane_included === '1',
     }
   }
 

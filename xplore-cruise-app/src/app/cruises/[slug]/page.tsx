@@ -114,6 +114,10 @@ function apiToCruise(data: Record<string, unknown>): Cruise {
     _rooms: (data._rooms || []) as { name: string; category: string; date: string; price: number }[],
     // Enriched itinerary with arrival/departure times
     _itinerary_enriched: (data._itinerary_enriched || []) as { id: string | number; name: string; day: number; from_hour: string; till_hour: string }[],
+    // Port excursions from API
+    _excursions: (data._excursions || []) as { id: number; name: string; description: string; pdf: string; image: string }[],
+    // Flight included flag
+    _plane_included: data._plane_included === true,
   } as Cruise & {
     _itinerary: typeof itinerary
     _cabin_types: { name: string; price_from: number }[]
@@ -124,6 +128,8 @@ function apiToCruise(data: Record<string, unknown>): Cruise {
     _promo_price: number | null
     _rooms: { name: string; category: string; date: string; price: number }[]
     _itinerary_enriched: { id: string | number; name: string; day: number; from_hour: string; till_hour: string }[]
+    _excursions: { id: number; name: string; description: string; pdf: string; image: string }[]
+    _plane_included: boolean
   }
 }
 
@@ -338,6 +344,8 @@ function CruiseDetailContent() {
     _rooms?: { name: string; category: string; date: string; price: number }[]
     _itinerary_enriched?: { id: string | number; name: string; day: number; from_hour: string; till_hour: string }[]
     _included_html?: string; _excluded_html?: string; _cancellation_html?: string
+    _excursions?: { id: number; name: string; description: string; pdf: string; image: string }[]
+    _plane_included?: boolean
   }
   const isPromo = cruiseExt._is_promo || false
   const isBestDeal = cruiseExt._is_bestdeal || false
@@ -346,6 +354,9 @@ function CruiseDetailContent() {
   const itineraryEnriched = cruiseExt._itinerary_enriched || []
   const includedHtml = cruiseExt._included_html || ''
   const excludedHtml = cruiseExt._excluded_html || ''
+  const cancellationHtml = cruiseExt._cancellation_html || ''
+  const excursions = cruiseExt._excursions || []
+  const planeIncluded = cruiseExt._plane_included || false
 
   // Ship info (description, specs, video)
   const shipInfo = getShipInfo(cruise.ship_name)
@@ -730,6 +741,55 @@ function CruiseDetailContent() {
                       </div>
                     </div>
                   </div>
+
+                  {/* Port Excursions — from API */}
+                  {excursions.length > 0 && (
+                    <div className="mt-8">
+                      <h3 className="text-lg font-bold text-navy-900 font-[family-name:var(--font-heading)] mb-4 flex items-center gap-2">
+                        <span className="w-7 h-7 rounded-full bg-orange-100 flex items-center justify-center">
+                          <svg className="w-4 h-4 text-orange-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
+                          </svg>
+                        </span>
+                        {locale === 'ro' ? 'Excursii opționale disponibile' : 'Optional excursions available'}
+                      </h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        {excursions.map((exc) => (
+                          <div key={exc.id} className="rounded-xl border border-navy-200 overflow-hidden hover:shadow-md transition-shadow">
+                            {exc.image && (
+                              <div className="relative h-28 overflow-hidden">
+                                <Image
+                                  src={exc.image}
+                                  alt={exc.name}
+                                  fill
+                                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                                  className="object-cover"
+                                  onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none' }}
+                                />
+                              </div>
+                            )}
+                            <div className="p-3">
+                              <p className="text-sm font-semibold text-navy-800 mb-1">{exc.name}</p>
+                              {exc.pdf && (
+                                <a
+                                  href={exc.pdf}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center gap-1.5 text-xs text-gold-600 hover:text-gold-700 font-medium"
+                                >
+                                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                                  </svg>
+                                  {locale === 'ro' ? 'Vezi detalii (PDF)' : 'View details (PDF)'}
+                                </a>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 
@@ -790,6 +850,27 @@ function CruiseDetailContent() {
                         ? `Politica standard ${cruise.cruise_line} — poate varia în funcție de itinerar și categorie.`
                         : `Standard ${cruise.cruise_line} policy — may vary by itinerary and cabin category.`}
                     </p>
+                  )}
+
+                  {/* Flight included banner */}
+                  {planeIncluded && (
+                    <div className="flex items-center gap-3 p-4 rounded-lg bg-blue-50 border border-blue-200">
+                      <span className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                        <svg className="w-4 h-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+                        </svg>
+                      </span>
+                      <div>
+                        <p className="text-sm font-semibold text-blue-800">
+                          {locale === 'ro' ? 'Zbor inclus în preț!' : 'Flight included in price!'}
+                        </p>
+                        <p className="text-xs text-blue-600">
+                          {locale === 'ro'
+                            ? 'Această croazieră include transportul aerian.'
+                            : 'This cruise includes air transportation.'}
+                        </p>
+                      </div>
+                    </div>
                   )}
 
                   {/* API-sourced HTML (cruise-specific from croaziere.net) — when available, show first */}
@@ -979,7 +1060,23 @@ function CruiseDetailContent() {
                 </div>
               )}
 
-              {activeTab === 'cancellation' && !cruiseLineTerms && (
+              {/* API-sourced cancellation policy (cruise-specific, detailed HTML table) */}
+              {activeTab === 'cancellation' && cancellationHtml && (
+                <div className="mt-4 rounded-lg border border-amber-200 bg-amber-50/50 overflow-hidden">
+                  <div className="px-4 py-3 bg-amber-100/50 border-b border-amber-200">
+                    <h4 className="text-sm font-semibold text-amber-800 flex items-center gap-2">
+                      <ShieldIcon className="w-4 h-4" />
+                      {locale === 'ro' ? 'Politica de anulare detaliată (specific acestei croaziere)' : 'Detailed cancellation policy (cruise-specific)'}
+                    </h4>
+                  </div>
+                  <div
+                    className="px-4 py-3 text-sm text-navy-700 leading-relaxed overflow-x-auto [&_table]:w-full [&_table]:border-collapse [&_td]:px-2 [&_td]:py-1.5 [&_td]:border [&_td]:border-navy-200 [&_th]:px-2 [&_th]:py-1.5 [&_th]:border [&_th]:border-navy-200 [&_th]:bg-navy-50 [&_br]:block [&_b]:font-semibold [&_strong]:font-semibold [&_ul]:list-disc [&_ul]:ml-4 [&_li]:mb-1 [&_p]:mb-2"
+                    dangerouslySetInnerHTML={{ __html: cancellationHtml }}
+                  />
+                </div>
+              )}
+
+              {activeTab === 'cancellation' && !cruiseLineTerms && !cancellationHtml && (
                 <p className="text-sm text-navy-500">
                   {locale === 'ro'
                     ? 'Politica de anulare nu este disponibilă pentru această croazieră. Contactați-ne pentru detalii.'

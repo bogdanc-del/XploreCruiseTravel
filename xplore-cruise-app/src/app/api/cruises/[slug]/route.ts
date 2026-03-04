@@ -110,10 +110,18 @@ export async function GET(
     id: string | number; name: string; day: number; from_hour: string; till_hour: string
   }[]
 
-  // API-sourced HTML for terms (children's policy, included/excluded specifics)
+  // API-sourced HTML for terms (included/excluded specifics, cancellation policy)
   const _included_html = (enrichedEntry?.included_html as string) || ''
   const _excluded_html = (enrichedEntry?.excluded_html as string) || ''
   const _cancellation_html = (enrichedEntry?.cancellation_html as string) || ''
+
+  // Port excursions from API
+  const _excursions = (enrichedEntry?.excursions || []) as {
+    id: number; name: string; description: string; pdf: string; image: string
+  }[]
+
+  // Flight included flag
+  const _plane_included = enrichedEntry?.plane_included === true
 
   // Add back constant fields for client compatibility
   return NextResponse.json(
@@ -131,6 +139,8 @@ export async function GET(
       _included_html,
       _excluded_html,
       _cancellation_html,
+      _excursions,
+      _plane_included,
     },
     {
       headers: {
