@@ -581,7 +581,7 @@ function CruiseDetailContent() {
                 </div>
               )}
 
-              {/* Tab Content: Itinerary — enhanced with PortHighlight */}
+              {/* Tab Content: Itinerary — uses enriched itinerary as primary source */}
               {activeTab === 'itinerary' && (
                 <div>
                   {/* 2-column layout: ports timeline left, route map right on desktop */}
@@ -596,56 +596,127 @@ function CruiseDetailContent() {
                         <div className="absolute left-4 top-2 bottom-2 w-0.5 bg-navy-200" />
 
                         <div className="space-y-0">
-                          {/* Departure — interactive: click to explore departure port */}
-                          <PortHighlight
-                            portName={cruise.departure_port}
-                            dayNumber={1}
-                            departureTime={
-                              itineraryEnriched.find(ie => ie.day === 1)?.till_hour || null
-                            }
-                            onClick={handlePortClick}
-                            isEmbarkDisembark="embark"
-                            embarkLabel={locale === 'ro' ? 'Plecare' : 'Departure'}
-                            dateLabel={hasMultipleDates ? formatDate(allDepartureDates[selectedDateIdx]) : departureDate}
-                          />
+                          {itineraryEnriched.length > 0 ? (
+                            /* ===== Enriched itinerary: precise day numbers, times, sea days ===== */
+                            (() => {
+                              const totalEntries = itineraryEnriched.length
+                              return itineraryEnriched.map((entry, idx) => {
+                                const isFirst = idx === 0
+                                const isLast = idx === totalEntries - 1
+                                const isSeaDay = entry.id === 0 || entry.id === '0' || entry.name === 'Pe mare' || entry.name === 'At Sea'
 
-                          {/* Ports — interactive PortHighlight components with enriched times */}
-                          {ports.map((port, i) => {
-                            // Try to find matching enriched itinerary entry for arrival/departure times
-                            const portOriginal = portsOriginal[i] || port
-                            const enrichedEntry = itineraryEnriched.find(
-                              ie => ie.name && (
-                                ie.name.toLowerCase().includes(portOriginal.toLowerCase()) ||
-                                portOriginal.toLowerCase().includes(ie.name.toLowerCase())
-                              )
-                            )
-                            return (
+                                // First entry = embarkation port
+                                if (isFirst) {
+                                  return (
+                                    <PortHighlight
+                                      key={`itin-${idx}`}
+                                      portName={entry.name || cruise.departure_port}
+                                      dayNumber={entry.day}
+                                      departureTime={entry.till_hour || null}
+                                      onClick={handlePortClick}
+                                      isEmbarkDisembark="embark"
+                                      embarkLabel={locale === 'ro' ? 'Plecare' : 'Departure'}
+                                      dateLabel={hasMultipleDates ? formatDate(allDepartureDates[selectedDateIdx]) : departureDate}
+                                    />
+                                  )
+                                }
+
+                                // Last entry = disembarkation port
+                                if (isLast) {
+                                  const lastPortName = entry.name || arrivalPort || cruise.departure_port
+                                  return (
+                                    <PortHighlight
+                                      key={`itin-${idx}`}
+                                      portName={lastPortName}
+                                      dayNumber={entry.day}
+                                      arrivalTime={entry.from_hour || null}
+                                      onClick={handlePortClick}
+                                      isEmbarkDisembark="disembark"
+                                      embarkLabel={isOneWay
+                                        ? (locale === 'ro' ? 'Sosire' : 'Arrival')
+                                        : (locale === 'ro' ? 'Întoarcere' : 'Return')}
+                                    />
+                                  )
+                                }
+
+                                // Sea day — special styling, not clickable
+                                if (isSeaDay) {
+                                  return (
+                                    <div
+                                      key={`itin-${idx}`}
+                                      className="relative flex items-start gap-5 pb-6"
+                                    >
+                                      {/* Sea day node — blue wave */}
+                                      <div className="relative z-10 flex-shrink-0 w-8 h-8 rounded-full bg-sky-100 border-2 border-sky-300 flex items-center justify-center">
+                                        <svg className="w-4 h-4 text-sky-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                                          <path strokeLinecap="round" strokeLinejoin="round" d="M2 12c1.5-2 3.5-2 5 0s3.5 2 5 0 3.5-2 5 0 3.5 2 5 0" />
+                                        </svg>
+                                      </div>
+                                      <div className="flex-1 pt-0.5">
+                                        <p className="text-xs font-medium uppercase tracking-wider mb-1 text-sky-500">
+                                          {locale === 'ro' ? `Ziua ${entry.day}` : `Day ${entry.day}`}
+                                        </p>
+                                        <p className="font-semibold text-navy-400 italic">
+                                          {locale === 'ro' ? '🌊 Zi pe mare' : '🌊 At Sea'}
+                                        </p>
+                                        <p className="text-xs text-navy-300 mt-0.5">
+                                          {locale === 'ro'
+                                            ? 'Relaxare la bord — piscină, spa, spectacole'
+                                            : 'Relax on board — pool, spa, entertainment'}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  )
+                                }
+
+                                // Regular port stop — clickable with times
+                                return (
+                                  <PortHighlight
+                                    key={`itin-${idx}`}
+                                    portName={entry.name}
+                                    dayNumber={entry.day}
+                                    arrivalTime={entry.from_hour || null}
+                                    departureTime={entry.till_hour || null}
+                                    onClick={handlePortClick}
+                                  />
+                                )
+                              })
+                            })()
+                          ) : (
+                            /* ===== Fallback: use ports_of_call (no enriched data) ===== */
+                            <>
+                              {/* Departure port */}
                               <PortHighlight
-                                key={i}
-                                portName={portOriginal}
-                                dayNumber={skipFirst ? i + 2 : i + 2}
-                                arrivalTime={enrichedEntry?.from_hour || null}
-                                departureTime={enrichedEntry?.till_hour || null}
+                                portName={cruise.departure_port}
+                                dayNumber={1}
                                 onClick={handlePortClick}
+                                isEmbarkDisembark="embark"
+                                embarkLabel={locale === 'ro' ? 'Plecare' : 'Departure'}
+                                dateLabel={hasMultipleDates ? formatDate(allDepartureDates[selectedDateIdx]) : departureDate}
                               />
-                            )
-                          })}
 
-                          {/* Arrival / Return — interactive: click to explore arrival port */}
-                          <PortHighlight
-                            portName={arrivalPort || cruise.departure_port}
-                            dayNumber={ports.length + 2}
-                            arrivalTime={
-                              itineraryEnriched.length > 0
-                                ? itineraryEnriched[itineraryEnriched.length - 1]?.from_hour || null
-                                : null
-                            }
-                            onClick={handlePortClick}
-                            isEmbarkDisembark="disembark"
-                            embarkLabel={isOneWay
-                              ? (locale === 'ro' ? 'Sosire' : 'Arrival')
-                              : (locale === 'ro' ? 'Întoarcere' : 'Return')}
-                          />
+                              {/* Middle ports */}
+                              {ports.map((port, i) => (
+                                <PortHighlight
+                                  key={i}
+                                  portName={portsOriginal[i] || port}
+                                  dayNumber={i + 2}
+                                  onClick={handlePortClick}
+                                />
+                              ))}
+
+                              {/* Arrival / Return port */}
+                              <PortHighlight
+                                portName={arrivalPort || cruise.departure_port}
+                                dayNumber={ports.length + 2}
+                                onClick={handlePortClick}
+                                isEmbarkDisembark="disembark"
+                                embarkLabel={isOneWay
+                                  ? (locale === 'ro' ? 'Sosire' : 'Arrival')
+                                  : (locale === 'ro' ? 'Întoarcere' : 'Return')}
+                              />
+                            </>
+                          )}
                         </div>
                       </div>
                     </div>
