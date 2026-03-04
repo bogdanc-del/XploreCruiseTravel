@@ -212,7 +212,7 @@ export default function LeadCaptureForm({
   // Submit
   const handleSubmit = async () => {
     // Validate
-    if (!formData.name.trim() || !formData.email.trim() || !formData.phone.trim()) {
+    if (!formData.name.trim() || !formData.email.trim()) {
       setError(t('lead_form_fill_required'))
       return
     }
@@ -339,19 +339,41 @@ export default function LeadCaptureForm({
         {/* Body */}
         <div className="px-6 py-6">
           {isSuccess ? (
-            /* Success State */
-            <div className="text-center py-6">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-green-100 flex items-center justify-center">
+            /* Warm Success State — builds trust and sets expectations */
+            <div className="text-center py-4">
+              <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-green-100 flex items-center justify-center">
                 <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                 </svg>
               </div>
-              <h3 className="text-xl font-bold text-navy-900 font-[family-name:var(--font-heading)] mb-2">
+              <h3 className="text-xl font-bold text-navy-900 font-[family-name:var(--font-heading)] mb-1">
                 {t('lead_form_success_title')}
               </h3>
-              <p className="text-navy-600 text-sm leading-relaxed mb-6">
-                {t('lead_form_success')}
+              <p className="text-navy-500 text-xs mb-4">
+                {t('lead_form_success_response' as Parameters<typeof t>[0])}
               </p>
+
+              {/* Next steps */}
+              <div className="text-left bg-navy-50 rounded-lg p-4 mb-4">
+                <p className="text-xs font-semibold text-navy-700 mb-2">
+                  {t('lead_form_success_detail' as Parameters<typeof t>[0])}
+                </p>
+                <ol className="space-y-2 text-xs text-navy-600">
+                  <li className="flex items-start gap-2">
+                    <span className="flex-shrink-0 w-5 h-5 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center text-[10px] font-bold mt-0.5">1</span>
+                    {t('lead_form_success_step1' as Parameters<typeof t>[0])}
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="flex-shrink-0 w-5 h-5 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center text-[10px] font-bold mt-0.5">2</span>
+                    {t('lead_form_success_step2' as Parameters<typeof t>[0])}
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="flex-shrink-0 w-5 h-5 rounded-full bg-gold-100 text-gold-700 flex items-center justify-center text-[10px] font-bold mt-0.5">3</span>
+                    {t('lead_form_success_step3' as Parameters<typeof t>[0])}
+                  </li>
+                </ol>
+              </div>
+
               <Button onClick={handleClose} variant="primary" size="md">
                 {t('close')}
               </Button>
@@ -399,21 +421,21 @@ export default function LeadCaptureForm({
                   />
                 </div>
 
-                {/* Phone */}
+                {/* Phone (optional) */}
                 <div>
                   <label className="block text-xs font-medium text-navy-600 mb-1.5">
-                    {t('lead_form_phone')} <span className="text-red-400">*</span>
+                    {t('lead_form_phone')}
                   </label>
                   <input
                     type="tel"
                     name="phone"
                     value={formData.phone}
                     onChange={(e) => updateField('phone', e.target.value)}
-                    required
                     autoComplete="tel"
                     placeholder="+40 7XX XXX XXX"
                     className="w-full px-4 py-2.5 rounded-lg border border-navy-200 bg-white text-navy-900 text-sm placeholder:text-navy-300 focus:outline-none focus:ring-2 focus:ring-gold-400 focus:border-gold-400 transition-colors"
                   />
+                  <p className="mt-1 text-[10px] text-navy-400">{t('lead_form_phone_helper' as Parameters<typeof t>[0])}</p>
                 </div>
 
                 {/* Message */}

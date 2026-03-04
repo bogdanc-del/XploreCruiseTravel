@@ -34,6 +34,7 @@ const API_BASE = process.env.PRICE_API_URL || 'https://www.croaziere.net/api/v1.
 const BATCH_SIZE = 50
 const DELAY_MS = 500
 const SKIP_ROUTE_MAPS = process.env.SKIP_ROUTE_MAPS === 'true'
+const MIN_NIGHTS = 3  // Skip cruises with fewer than 3 nights (no business value)
 
 function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms))
@@ -69,8 +70,16 @@ async function main() {
   const indexPath = join(ROOT, 'public', 'data', 'cruises-index.json')
   const enrichedPath = join(ROOT, 'public', 'data', 'cruises-enriched.json')
 
-  const cruises = JSON.parse(readFileSync(cruisesPath, 'utf8'))
+  let cruises = JSON.parse(readFileSync(cruisesPath, 'utf8'))
   logStep(`Loaded ${cruises.length} existing cruises`)
+
+  // Filter out short cruises (1-2 nights) — no business value for repositioning cruises
+  const beforeFilter = cruises.length
+  cruises = cruises.filter(c => (c.nights || 0) >= MIN_NIGHTS)
+  const shortRemoved = beforeFilter - cruises.length
+  if (shortRemoved > 0) {
+    logStep(`Filtered out ${shortRemoved} cruises with fewer than ${MIN_NIGHTS} nights (${cruises.length} remaining)`)
+  }
 
   // Collect all IDs
   const allIds = [...new Set(cruises.map(c => String(c.source_id || c.id)))]
@@ -266,7 +275,7 @@ async function main() {
   // Rebuild compact index
   logStep('Rebuilding cruises-index.json...')
   const index = cruises
-    .filter(c => c.price_from > 0)
+    .filter(c => c.price_from > 0 && (c.nights || 0) >= MIN_NIGHTS)
     .map(c => ({
       id: c.id || c.source_id,
       s: c.slug,

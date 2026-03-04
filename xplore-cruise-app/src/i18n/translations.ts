@@ -264,6 +264,16 @@ export const translations = {
     lead_form_gdpr: 'I consent to the processing of my personal data in accordance with GDPR regulations and our Privacy Policy.',
     lead_form_fill_required: 'Please fill in all required fields.',
     lead_form_invalid_email: 'Please enter a valid email address.',
+    header_cta: 'Get a free quote',
+    lead_form_phone_helper: 'Optional — helps us reach you faster',
+    lead_form_success_detail: 'Here\'s what happens next:',
+    lead_form_success_step1: 'You\'ll receive a confirmation email',
+    lead_form_success_step2: 'Daniela will prepare a personalized offer',
+    lead_form_success_step3: 'No-obligation conversation about your cruise',
+    lead_form_success_response: 'We\'ll respond within 2 hours (Mon-Fri, 9-18)',
+    departure_countdown: 'Departing in {days} days',
+    departure_countdown_soon: 'Departing soon!',
+    mobile_cta_from: 'from',
 
     // Budget ranges
     budget_under_500: 'Under €500',
@@ -638,6 +648,16 @@ export const translations = {
     lead_form_gdpr: 'Consimt la prelucrarea datelor mele personale conform reglementărilor GDPR și Politicii de Confidențialitate.',
     lead_form_fill_required: 'Vă rugăm completați toate câmpurile obligatorii.',
     lead_form_invalid_email: 'Vă rugăm introduceți o adresă de email validă.',
+    header_cta: 'Solicită ofertă gratuită',
+    lead_form_phone_helper: 'Opțional — ne ajută să vă contactăm mai rapid',
+    lead_form_success_detail: 'Iată ce urmează:',
+    lead_form_success_step1: 'Vei primi un email de confirmare',
+    lead_form_success_step2: 'Daniela va pregăti o ofertă personalizată',
+    lead_form_success_step3: 'Conversație fără obligații despre croaziera ta',
+    lead_form_success_response: 'Răspundem în maxim 2 ore (Luni-Vineri, 9-18)',
+    departure_countdown: 'Plecare în {days} zile',
+    departure_countdown_soon: 'Plecare în curând!',
+    mobile_cta_from: 'de la',
 
     // Budget ranges
     budget_under_500: 'Sub €500',

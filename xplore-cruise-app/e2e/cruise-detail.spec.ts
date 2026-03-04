@@ -73,10 +73,10 @@ test('Itinerary tab renders timeline with ports', async ({ page }) => {
   if (await itinTab.count()) await itinTab.first().click()
   await page.waitForTimeout(500)
 
-  // Verify timeline nodes exist (rounded-full circles in the timeline)
-  const timeline = page.locator('.rounded-full')
-  const nodeCount = await timeline.count()
-  expect(nodeCount).toBeGreaterThanOrEqual(2) // at least embarkation + disembarkation
+  // Verify itinerary content exists — look for day labels (Day X / Ziua X)
+  const dayLabels = page.locator('text=/Day \\d+|Ziua \\d+/i')
+  const dayCount = await dayLabels.count()
+  expect(dayCount).toBeGreaterThanOrEqual(2) // at least embarkation + disembarkation
 })
 
 // ── Cabin Selector ─────────────────────────────────────

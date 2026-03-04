@@ -58,10 +58,15 @@ test.describe('Contact form', () => {
       await textarea.first().fill('This is a test message for QA validation.')
     }
 
-    // Check GDPR consent if exists
-    const gdprCheckbox = page.locator('input[type="checkbox"]').first()
-    if (await gdprCheckbox.count() > 0) {
-      await gdprCheckbox.check({ force: true })
+    // Check GDPR consent if exists — click label to avoid click interception
+    const gdprLabel = page.locator('label[for="gdpr-consent"]')
+    if (await gdprLabel.count() > 0) {
+      await gdprLabel.click()
+    } else {
+      const gdprCheckbox = page.locator('input[type="checkbox"]').first()
+      if (await gdprCheckbox.count() > 0) {
+        await gdprCheckbox.check({ force: true })
+      }
     }
 
     // Mock the API to avoid real submissions
@@ -97,9 +102,14 @@ test.describe('Contact form', () => {
       await textarea.first().fill('Test message.')
     }
 
-    const gdprCheckbox = page.locator('input[type="checkbox"]').first()
-    if (await gdprCheckbox.count() > 0) {
-      await gdprCheckbox.check({ force: true })
+    const gdprLabel = page.locator('label[for="gdpr-consent"]')
+    if (await gdprLabel.count() > 0) {
+      await gdprLabel.click()
+    } else {
+      const gdprCheckbox = page.locator('input[type="checkbox"]').first()
+      if (await gdprCheckbox.count() > 0) {
+        await gdprCheckbox.check({ force: true })
+      }
     }
 
     // Mock API failure

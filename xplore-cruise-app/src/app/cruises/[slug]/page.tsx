@@ -36,6 +36,7 @@ import { getShipInfo } from '@/data/ship-images'
 import { getCruiseBySlugLocal, getSimilarCruises, FEATURED_CRUISES } from '@/data/cruises-database'
 import { getBestImageUrl } from '@/data/ship-images'
 import { getCruiseInclusions } from '@/data/cruise-inclusions'
+import TestimonialsSection from '@/components/testimonials/TestimonialsSection'
 
 // ============================================================
 // Tab types
@@ -1278,6 +1279,27 @@ function CruiseDetailContent() {
                 {!syncedAgo && locale === 'ro' && <div className="mb-3" />}
                 {!syncedAgo && locale !== 'ro' && <div className="mb-3" />}
 
+                {/* Urgency: departure countdown */}
+                {(() => {
+                  const depDate = selectedDateIdx >= 0 && allDepartureDates[selectedDateIdx]
+                    ? new Date(allDepartureDates[selectedDateIdx])
+                    : cruise.departure_date ? new Date(cruise.departure_date) : null
+                  if (!depDate) return null
+                  const daysUntil = Math.ceil((depDate.getTime() - Date.now()) / 86_400_000)
+                  if (daysUntil < 1 || daysUntil > 180) return null
+                  return (
+                    <div className="mb-3 flex items-center gap-2 rounded-lg bg-amber-50 border border-amber-200 px-3 py-2 text-xs font-semibold text-amber-800">
+                      <svg className="h-4 w-4 flex-shrink-0 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                      </svg>
+                      {daysUntil <= 7
+                        ? t('departure_countdown_soon' as Parameters<typeof t>[0])
+                        : (t('departure_countdown' as Parameters<typeof t>[0]) as string).replace('{days}', String(daysUntil))
+                      }
+                    </div>
+                  )
+                })()}
+
                 {/* A/B tested CTA buttons — variant: {ctaVariant} */}
                 <Button
                   onClick={() => {
@@ -1384,6 +1406,9 @@ function CruiseDetailContent() {
         </section>
       )}
 
+      {/* Social Proof — testimonials for trust at decision point */}
+      <TestimonialsSection variant="detail" tags={cruise.cruise_type ? [cruise.cruise_type] : undefined} />
+
       {/* Port Drawer — slides out when a port is clicked */}
       <PortDrawer
         portName={selectedPort}
@@ -1407,6 +1432,31 @@ function CruiseDetailContent() {
         source="detail"
       />
       <ChatWidget />
+
+      {/* Mobile Sticky CTA bar — visible only on small screens, hidden when form is open */}
+      {!showLeadForm && (
+        <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden border-t border-navy-200 bg-white/95 backdrop-blur-md shadow-[0_-4px_12px_rgba(0,0,0,0.1)] px-4 py-3 flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-xs text-navy-500 truncate">{t('mobile_cta_from' as Parameters<typeof t>[0])}</p>
+            <p className="text-lg font-bold text-navy-900">
+              &euro;{(promoPrice && promoPrice < priceEur ? promoPrice : priceEur).toLocaleString()}
+              <span className="text-xs font-normal text-navy-400">{t('cruise_per_person')}</span>
+            </p>
+          </div>
+          <Button
+            onClick={() => {
+              setShowLeadForm(true)
+              trackCtaClick(locale, cruise.slug, 'mobile_sticky_cta', ctaVariant)
+            }}
+            variant="primary"
+            size="md"
+            className="flex-shrink-0 whitespace-nowrap"
+          >
+            {t(CTA_VARIANTS[ctaVariant].primaryKey as Parameters<typeof t>[0])}
+          </Button>
+        </div>
+      )}
+
       </main>
       <Footer />
     </>

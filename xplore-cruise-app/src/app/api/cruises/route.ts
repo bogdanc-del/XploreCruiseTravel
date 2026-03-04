@@ -71,6 +71,7 @@ interface GroupedCruise extends CruiseIndex {
 }
 
 // Load & expand index once at startup (cached in module scope)
+// v2: filtered short cruises + deals mode
 let cruiseIndex: CruiseIndex[] | null = null
 let filterMeta: {
   destinations: { slug: string; name: string; name_ro: string }[]
@@ -111,7 +112,8 @@ function loadIndex(): CruiseIndex[] {
   try {
     const filePath = join(process.cwd(), 'public', 'data', 'cruises-index.json')
     const compact: CompactCruise[] = JSON.parse(readFileSync(filePath, 'utf8'))
-    cruiseIndex = compact.map(expand)
+    // Filter out short cruises (1-2 nights) — no business value
+    cruiseIndex = compact.filter(c => c.n >= 3).map(expand)
     return cruiseIndex!
   } catch {
     console.error('Failed to load cruises-index.json')
@@ -247,6 +249,7 @@ export async function GET(request: NextRequest) {
   const departureWindow = searchParams.get('departure') || ''
   const sortBy = searchParams.get('sort') || 'featured'
   const promoOnly = searchParams.get('promo') === '1'
+  const dealsMode = searchParams.get('deals') === '1' // Best value deals (fallback when no promos)
 
   // Compute departure date bounds
   let departureMaxDate: number | null = null
@@ -279,8 +282,8 @@ export async function GET(request: NextRequest) {
     if (minNights > 0 && c.nights < minNights) return false
     if (maxNights > 0 && c.nights > maxNights) return false
     if (c.price_from <= 0) return false
-    // Promo filter
-    if (promoOnly && !c.is_promo && !c.is_bestdeal) return false
+    // Promo filter (strict — only API-flagged promos)
+    if (promoOnly && !dealsMode && !c.is_promo && !c.is_bestdeal) return false
     // Departure date filter
     if (departureMaxDate && c.departure_date) {
       const depTime = new Date(c.departure_date).getTime()
@@ -288,6 +291,49 @@ export async function GET(request: NextRequest) {
     }
     return true
   })
+
+  // Deals mode: return best-value cruises with upcoming departures
+  // Prioritizes: API-flagged promos → price drops → cheapest per night
+  if (dealsMode || promoOnly) {
+    const now = Date.now()
+    const sixMonths = now + 180 * 86_400_000
+
+    // Step 1: Try explicit promos first
+    const explicitPromos = filtered.filter(c => c.is_promo || c.is_bestdeal)
+
+    if (explicitPromos.length > 0) {
+      // We have real promos — use them
+      filtered = explicitPromos
+    } else if (dealsMode || promoOnly) {
+      // No API promos — show best deals: cheapest cruises with upcoming departures
+      const withUpcoming = filtered.filter(c => {
+        if (!c.departure_date) return true // include if no date data
+        const dep = new Date(c.departure_date).getTime()
+        return dep >= now && dep <= sixMonths
+      })
+
+      // Sort by price per night (best value)
+      const source = withUpcoming.length > 20 ? withUpcoming : filtered
+      source.sort((a, b) => {
+        const ppnA = a.nights > 0 ? a.price_from / a.nights : a.price_from
+        const ppnB = b.nights > 0 ? b.price_from / b.nights : b.price_from
+        return ppnA - ppnB
+      })
+
+      // Take top deals (diverse destinations)
+      const seen = new Set<string>()
+      const deals: typeof source = []
+      for (const c of source) {
+        // Diversify by destination
+        const key = c.destination_slug
+        if (seen.size < 4 && seen.has(key)) continue // limit same-destination in top picks
+        seen.add(key)
+        deals.push(c)
+        if (deals.length >= limit * 2) break // get enough for pagination
+      }
+      filtered = deals
+    }
+  }
 
   // Group routes if requested (BEFORE sorting so sort applies to groups)
   let results: (CruiseIndex | GroupedCruise)[] = isGrouped

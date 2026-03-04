@@ -161,7 +161,7 @@ export default function CruisesPage() {
   const [selectedNightRanges, setSelectedNightRanges] = useState<Set<number>>(new Set())
   const [selectedDeparture, setSelectedDeparture] = useState('')
   const [sortBy, setSortBy] = useState('price_asc')
-  const [showFilters, setShowFilters] = useState(false)
+  const [showFilters, setShowFilters] = useState(true) // visible by default (hidden on mobile via CSS)
 
   // Compute effective minNights/maxNights from multi-selected ranges
   const { minNights, maxNights } = (() => {
@@ -354,8 +354,8 @@ export default function CruisesPage() {
               </button>
             </div>
 
-            {/* Filter bar (always visible on desktop, toggleable on mobile) */}
-            <div className={`mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 ${showFilters ? '' : 'hidden'}`}>
+            {/* Filter bar — always visible on lg+ desktop, toggleable on mobile/tablet */}
+            <div className={`mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 ${showFilters ? '' : 'hidden lg:grid'}`}>
               {/* Destination */}
               <select
                 value={selectedDestination}

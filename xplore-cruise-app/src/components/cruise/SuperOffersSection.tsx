@@ -27,7 +27,8 @@ export default function SuperOffersSection({ locale }: SuperOffersSectionProps) 
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    fetch('/api/cruises?promo=1&limit=6&sort=price_asc')
+    // deals=1 → returns best-value cruises (or explicit promos if available from API)
+    fetch('/api/cruises?deals=1&limit=6&sort=price_asc')
       .then(res => res.json())
       .then(data => {
         if (data.cruises && data.cruises.length > 0) {
@@ -71,7 +72,7 @@ export default function SuperOffersSection({ locale }: SuperOffersSectionProps) 
         </div>
 
         <div className="text-center mt-12">
-          <Button as="a" href="/cruises?promo=1" variant="primary" size="lg">
+          <Button as="a" href="/cruises?sort=price_asc" variant="primary" size="lg">
             {t('super_offers_see_all' as 'loading', locale)} →
           </Button>
         </div>

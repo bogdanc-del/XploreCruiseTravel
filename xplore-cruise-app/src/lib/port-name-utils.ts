@@ -26,7 +26,7 @@ export interface ParsedPortName {
  *   "Florenta / Pisa (Livorno)"   → slashParts: ["Florenta", "Pisa (Livorno)"]
  */
 export function parsePortName(rawName: string): ParsedPortName {
-  const raw = rawName.trim()
+  const raw = (rawName || '').trim()
   const city = raw.replace(/,.*$/, '').replace(/\s*\(.*\)/, '').trim()
   const parenMatch = raw.match(/\(([^)]+)\)/)
 

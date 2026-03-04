@@ -32,8 +32,8 @@ for (const pagePath of pages) {
 test('CTAs: phone/email/WhatsApp links are correct', async ({ page }) => {
   await page.goto('/contact', { waitUntil: 'load' })
 
-  // Phone link
-  const phoneLink = page.locator('a[href^="tel:"]').first()
+  // Phone link — use main content area (header has a mobile-only phone icon)
+  const phoneLink = page.locator('main a[href^="tel:"], footer a[href^="tel:"]').first()
   await expect(phoneLink).toBeVisible()
   const phoneHref = await phoneLink.getAttribute('href')
   expect(phoneHref).toContain('+40749558572')
