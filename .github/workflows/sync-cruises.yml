@@ -44,11 +44,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
-          cache-dependency-path: xplore-cruise-app/package-lock.json
-
-      - name: Install dependencies
-        run: npm ci
+          # No npm ci needed — sync script uses only Node.js built-ins (fs, path, fetch)
 
       - name: Run cruise data sync
         env:
