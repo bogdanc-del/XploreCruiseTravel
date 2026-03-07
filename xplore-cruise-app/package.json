@@ -23,6 +23,7 @@
     "@anthropic-ai/sdk": "^0.39.0",
     "@supabase/ssr": "^0.6.0",
     "@supabase/supabase-js": "^2.49.0",
+    "@swc/helpers": "^0.5.19",
     "clsx": "^2.1.1",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.475.0",
