@@ -109,6 +109,17 @@ async function main() {
 
   logStep(`API fetch complete: ${apiMap.size} cruises, ${errors} errors`)
 
+  // SAFETY: Abort if API is down — never overwrite good data with empty results
+  if (batches.length > 0 && apiMap.size === 0) {
+    logStep('ABORT: API returned 0 results — all batches failed. Keeping existing data intact.')
+    logStep(`(${errors} errors out of ${batches.length} batches)`)
+    process.exit(0) // exit cleanly so CI shows success, but no files are overwritten
+  }
+  if (batches.length > 0 && errors / batches.length > 0.5) {
+    logStep(`ABORT: API error rate too high (${errors}/${batches.length} = ${(errors/batches.length*100).toFixed(0)}%). Keeping existing data intact.`)
+    process.exit(0)
+  }
+
   // Merge into cruises.json — ONLY update lightweight fields
   const changes = { price: 0, image: 0, departures: 0, notFound: 0 }
   const enrichedData = {} // keyed by source_id
